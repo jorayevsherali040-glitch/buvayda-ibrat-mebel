@@ -1,0 +1,48 @@
+IBRAT MEBEL V3 — GITHUB IMAGES + FIRESTORE
+
+V3 DA NIMALAR BOR:
+- Firebase Storage talab qilinmaydi.
+- Rasmlar GitHub repository ichidagi images papkasidan olinadi.
+- Admin panel GitHub API orqali images papkasidagi rasmlarni avtomatik ro‘yxat qiladi.
+- Rasm tanlash, preview, mahsulot qo‘shish, tahrirlash va o‘chirish.
+- TOP, SOTILDI, ombor soni, eski narx, video, tartib raqami va yashirin mahsulot.
+- Qidiruv va kategoriya filtri.
+- Sevimlilar va savatcha.
+- Savatchani Telegram orqali yuborish.
+- Mobil telefon uchun mos dizayn.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub repository → Add file → Upload files.
+3. Quyidagi fayllarni eski fayllar ustidan yuklang:
+   index.html
+   admin.html
+   styles.css
+   app.js
+   admin.js
+   firebase-config.js
+   firestore.rules
+4. Commit changes bosing.
+5. logo.png va images papkangizni o‘chirmang.
+
+YANGI RASM QO‘SHISH:
+1. GitHub repository → images papkasi.
+2. Add file → Upload files.
+3. Rasmni yuklang va Commit changes bosing.
+4. GitHub Pages deploy tugashini kuting.
+5. Admin panelga kiring.
+6. “Rasmlarni yangilash” tugmasini bosing.
+7. Rasmni tanlang va mahsulotni saqlang.
+
+MUHIM:
+- Rasm nomlarida lotin harfi, raqam, tire va pastki chiziq ishlatish yaxshi:
+  deco-spalniy-01.jpg
+  oshxona_02.webp
+- 30.jpg, 31.jpg kabi nomlar ham ishlaydi.
+- Rasmni GitHub’dan o‘chirsangiz, saytda ham ko‘rinmay qoladi.
+
+ADMIN MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/admin.html
+
+SAYT MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/

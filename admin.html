@@ -74,15 +74,32 @@
             <option>Boshqa</option>
           </select>
 
-          <label for="productImageFile">Kompyuterdan rasm tanlash</label>
-          <input id="productImageFile" type="file" accept="image/*">
-          <div class="upload-progress" id="uploadProgress" hidden>
-            <div id="uploadProgressBar"></div>
-          </div>
-          <img class="image-preview" id="imagePreview" alt="Rasm ko‘rinishi" hidden>
+          <div class="github-image-box">
+            <div class="github-image-heading">
+              <div>
+                <label for="productImageSelect">GitHub’dagi rasmni tanlang</label>
+                <small>Rasmlar repository ichidagi <b>images</b> papkasidan olinadi.</small>
+              </div>
+              <button class="button button-light compact-button" id="refreshImagesButton" type="button">
+                Rasmlarni yangilash
+              </button>
+            </div>
 
-          <label for="productImage">Yoki rasm URL manzili</label>
-          <input id="productImage" type="url" placeholder="https://...">
+            <select id="productImageSelect">
+              <option value="">Rasm tanlang...</option>
+            </select>
+
+            <label for="productImageName">Yoki rasm nomini yozing</label>
+            <input id="productImageName" type="text" placeholder="Masalan: 30.jpg">
+
+            <img class="image-preview" id="imagePreview" alt="Rasm ko‘rinishi" hidden>
+
+            <a class="button button-dark full-width" id="openGithubImages"
+               href="https://github.com/jorayevsherali040-glitch/buvayda-ibrat-mebel/tree/main/images"
+               target="_blank" rel="noopener">
+              GitHub’ga yangi rasm yuklash
+            </a>
+          </div>
 
           <label for="productVideo">Video URL (ixtiyoriy)</label>
           <input id="productVideo" type="url" placeholder="YouTube yoki boshqa video havolasi">
@@ -95,6 +112,20 @@
             <div class="checkbox-stack">
               <label><input id="productFeatured" type="checkbox"> Top mahsulot</label>
               <label><input id="productSoldOut" type="checkbox"> Sotildi</label>
+            </div>
+          </div>
+
+          <div class="form-two">
+            <div>
+              <label for="productSort">Tartib raqami</label>
+              <input id="productSort" type="number" min="0" value="0">
+            </div>
+            <div>
+              <label for="productStatus">Holati</label>
+              <select id="productStatus">
+                <option value="active">Faol</option>
+                <option value="hidden">Yashirin</option>
+              </select>
             </div>
           </div>
 
