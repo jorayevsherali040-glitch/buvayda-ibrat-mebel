@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BUVAYDA IBRAT MEBEL | Mebel va servis</title>
+  <meta name="description" content="Buvayda Ibrat Mebel — mebel ishlab chiqarish, laminat kesish, kromka yopishtirish va professional mebel servis xizmatlari.">
+
+  <style>
+    :root{
+      --dark:#111111;
+      --dark-2:#1b1b1b;
+      --gold:#c99a52;
+      --gold-hover:#b88943;
+      --paper:#f5f5f3;
+      --muted:#6f6f6f;
+      --line:#e5e5e5;
+      --white:#ffffff;
+      --danger:#c0392b;
+      --success:#15803d;
+      --telegram:#229ED9;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--paper);
+      color:#1c1c1c;
+      line-height:1.6;
+    }
+
+    img{max-width:100%;display:block}
+    button,input,textarea,select{font:inherit}
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:rgba(15,15,15,.97);
+      padding:12px 6%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:25px;
+      box-shadow:0 4px 20px rgba(0,0,0,.15);
+    }
+
+    .brand{
+      color:white;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:270px;
+    }
+
+    .brand-logo{
+      width:56px;
+      height:56px;
+      background:white;
+      border-radius:9px;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+
+    .brand-logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .brand-name{
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:.7px;
+      white-space:nowrap;
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    nav a{
+      color:#eee;
+      text-decoration:none;
+      font-size:14px;
+      transition:.2s;
+    }
+
+    nav a:hover{color:var(--gold)}
+
+    .top-order{
+      background:var(--gold);
+      color:#111!important;
+      padding:10px 16px;
+      border-radius:8px;
+      font-weight:800;
+    }
+
+    .hero{
+      min-height:84vh;
+      display:flex;
+      align-items:center;
+      padding:80px 7%;
+      color:white;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.9),rgba(0,0,0,.45)),
+        url("https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1800&q=85");
+      background-size:cover;
+      background-position:center;
+    }
+
+    .hero-content{max-width:760px}
+
+    .eyebrow{
+      color:#e0ad5c;
+      font-weight:900;
+      letter-spacing:2px;
+      margin-bottom:15px;
+    }
+
+    .hero h1{
+      font-size:58px;
+      line-height:1.08;
+      margin-bottom:22px;
+    }
+
+    .hero p{
+      max-width:670px;
+      font-size:19px;
+      color:#e5e5e5;
+      margin-bottom:30px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-height:48px;
+      padding:12px 21px;
+      border:none;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .btn:hover{transform:translateY(-2px)}
+
+    .btn-gold{background:var(--gold);color:#111}
+    .btn-gold:hover{background:var(--gold-hover)}
+    .btn-white{background:white;color:#111}
+    .btn-dark{background:#222;color:white}
+    .btn-danger{background:var(--danger);color:white}
+    .btn-telegram{background:var(--telegram);color:white}
+
+    .stats{
+      width:86%;
+      max-width:1150px;
+      margin:-42px auto 0;
+      position:relative;
+      z-index:5;
+      background:white;
+      border-radius:15px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      box-shadow:0 12px 35px rgba(0,0,0,.13);
+      overflow:hidden;
+    }
+
+    .stat{
+      padding:25px 15px;
+      text-align:center;
+      border-right:1px solid #eee;
+    }
+
+    .stat:last-child{border-right:none}
+    .stat strong{display:block;font-size:25px}
+    .stat span{color:#777;font-size:14px}
+
+    section{padding:88px 7%}
+
+    .section-title{
+      max-width:760px;
+      margin:0 auto 44px;
+      text-align:center;
+    }
+
+    .section-title span{
+      color:#a77938;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:2px;
+    }
+
+    .section-title h2{
+      font-size:40px;
+      margin:8px 0 10px;
+    }
+
+    .section-title p{color:#666}
+
+    .about{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:55px;
+      align-items:center;
+    }
+
+    .about-image{
+      min-height:420px;
+      border-radius:18px;
+      background:url("logo.jpg") center/cover no-repeat, #ddd;
+      box-shadow:0 10px 35px rgba(0,0,0,.12);
+    }
+
+    .about h2{font-size:38px;margin-bottom:18px}
+    .about p{color:#626262;margin-bottom:14px}
+
+    .checks{
+      margin-top:24px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .check{
+      background:white;
+      padding:13px;
+      border-radius:9px;
+      font-weight:800;
+    }
+
+    .services-section{background:#111;color:white}
+    .services-section .section-title p{color:#aaa}
+
+    .services{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+
+    .service{
+      background:#1c1c1c;
+      border:1px solid #292929;
+      padding:29px;
+      border-radius:13px;
+      transition:.2s;
+    }
+
+    .service:hover{
+      transform:translateY(-5px);
+      border-color:var(--gold);
+    }
+
+    .service small{color:var(--gold);font-weight:900}
+    .service h3{font-size:21px;margin:13px 0 9px}
+    .service p{color:#aaa;font-size:15px}
+
+    .catalog-toolbar{
+      max-width:1100px;
+      margin:-20px auto 28px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .catalog-toolbar input,
+    .catalog-toolbar select{
+      flex:1;
+      min-width:220px;
+      padding:13px 14px;
+      border:1px solid #ddd;
+      border-radius:9px;
+      background:white;
+    }
+
+    .catalog{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:25px;
+    }
+
+    .product{
+      background:white;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 7px 25px rgba(0,0,0,.08);
+      transition:.2s;
+    }
+
+    .product:hover{transform:translateY(-5px)}
+
+    .product-image{
+      width:100%;
+      height:250px;
+      object-fit:cover;
+      background:#e8e8e8;
+    }
+
+    .product-info{padding:22px}
+    .product-info h3{font-size:21px;margin-bottom:7px}
+    .product-info p{color:#777;margin-bottom:14px;min-height:50px}
+    .price{font-weight:900;color:#9b6b2d;font-size:18px;margin-bottom:16px}
+    .category-badge{
+      display:inline-block;
+      background:#f0e6d7;
+      color:#77501e;
+      padding:4px 9px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:12px;
+    }
+
+    .empty-state{
+      grid-column:1/-1;
+      background:white;
+      border-radius:14px;
+      padding:45px 25px;
+      text-align:center;
+      color:#777;
+    }
+
+    .why{background:#e9e5de}
+
+    .why-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:20px;
+    }
+
+    .why-card{
+      background:white;
+      padding:27px;
+      border-radius:12px;
+    }
+
+    .why-card p{color:#777;font-size:14px}
+
+    .contact-section{background:#111;color:white}
+
+    .contact{
+      max-width:1100px;
+      margin:auto;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:45px;
+      align-items:start;
+    }
+
+    .contact-info h2{font-size:40px;margin-bottom:13px}
+    .contact-info>p{color:#aaa;margin-bottom:28px}
+    .contact-item{margin-bottom:18px}
+    .contact-item small{display:block;color:#999}
+    .contact-item a,.contact-item strong{color:white;text-decoration:none;font-size:18px}
+
+    .socials{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .order-form{
+      background:white;
+      color:#111;
+      padding:30px;
+      border-radius:15px;
+    }
+
+    .order-form h3{font-size:25px;margin-bottom:20px}
+
+    .order-form input,
+    .order-form select,
+    .order-form textarea{
+      width:100%;
+      padding:14px;
+      margin-bottom:12px;
+      border:1px solid #ddd;
+      border-radius:8px;
+    }
+
+    .order-form textarea{min-height:100px;resize:vertical}
+
+    .telegram-float{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:999;
+      border-radius:50px;
+      box-shadow:0 5px 20px rgba(0,0,0,.25);
+    }
+
+    footer{
+      background:#090909;
+      color:#777;
+      padding:25px 7%;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    footer strong{color:white}
+
+    /* ADMIN */
+    .admin-section{
+      min-height:100vh;
+      padding:100px 20px;
+      background:#111;
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .admin-section:target{display:flex}
+
+    .admin-shell{
+      width:100%;
+      max-width:1160px;
+    }
+
+    .admin-box{
+      background:white;
+      padding:30px;
+      border-radius:16px;
+      box-shadow:0 15px 45px rgba(0,0,0,.3);
+    }
+
+    .admin-login{
+      max-width:470px;
+      margin:60px auto;
+    }
+
+    .admin-label{
+      display:inline-block;
+      background:var(--gold);
+      padding:5px 11px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:13px;
+    }
+
+    .admin-box h2{margin-bottom:9px}
+    .admin-box>p{color:#777;margin-bottom:23px}
+
+    .admin-box input,
+    .admin-box textarea,
+    .admin-box select{
+      width:100%;
+      padding:13px 14px;
+      margin-bottom:12px;
+      border:1px solid #ddd;
+      border-radius:8px;
+    }
+
+    .admin-box textarea{min-height:105px;resize:vertical}
+
+    .admin-message{
+      margin-top:14px;
+      min-height:22px;
+      text-align:center;
+      font-weight:800;
+    }
+
+    .admin-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+      margin-bottom:24px;
+    }
+
+    .admin-grid{
+      display:grid;
+      grid-template-columns:390px 1fr;
+      gap:25px;
+    }
+
+    .admin-form-panel,
+    .admin-list-panel{
+      border:1px solid #eee;
+      border-radius:13px;
+      padding:22px;
+    }
+
+    .admin-form-panel h3,
+    .admin-list-panel h3{margin-bottom:18px}
+
+    .admin-item{
+      display:grid;
+      grid-template-columns:90px 1fr auto;
+      gap:15px;
+      align-items:center;
+      padding:14px;
+      border:1px solid #e5e5e5;
+      border-radius:11px;
+      margin-bottom:12px;
+    }
+
+    .admin-item img{
+      width:90px;
+      height:75px;
+      object-fit:cover;
+      border-radius:8px;
+      background:#eee;
+    }
+
+    .admin-item h4{margin-bottom:3px}
+    .admin-item p{color:#777;font-size:13px}
+    .admin-item .admin-price{color:#986826;font-weight:900;margin-top:4px}
+
+    .admin-actions{
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      min-width:95px;
+    }
+
+    .admin-actions button{
+      border:none;
+      border-radius:7px;
+      padding:9px 10px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .edit-btn{background:#e7b966;color:#111}
+    .delete-btn{background:var(--danger);color:white}
+
+    .admin-status{
+      padding:11px 13px;
+      border-radius:8px;
+      margin-bottom:15px;
+      display:none;
+    }
+
+    .admin-status.show{display:block}
+    .admin-status.success{background:#dcfce7;color:#166534}
+    .admin-status.error{background:#fee2e2;color:#991b1b}
+
+    [hidden]{display:none!important}
+
+    @media(max-width:1000px){
+      nav{display:none}
+      .services,.catalog{grid-template-columns:repeat(2,1fr)}
+      .why-grid{grid-template-columns:repeat(2,1fr)}
+      .about,.contact{grid-template-columns:1fr}
+      .admin-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:650px){
+      header{padding:10px 4%}
+      .brand-name{font-size:15px;white-space:normal}
+      .brand{min-width:0}
+      .brand-logo{width:48px;height:48px}
+      .hero{min-height:78vh;padding:65px 6%}
+      .hero h1{font-size:37px}
+      .hero p{font-size:16px}
+      section{padding:64px 6%}
+      .stats{grid-template-columns:repeat(2,1fr);width:90%}
+      .services,.catalog,.why-grid,.checks{grid-template-columns:1fr}
+      .section-title h2,.about h2,.contact-info h2{font-size:31px}
+      footer{flex-direction:column}
+      .admin-section{padding:75px 10px}
+      .admin-box{padding:21px}
+      .admin-header{align-items:stretch;flex-direction:column}
+      .admin-item{grid-template-columns:70px 1fr}
+      .admin-item img{width:70px;height:65px}
+      .admin-actions{grid-column:1/-1;flex-direction:row}
+      .admin-actions button{flex:1}
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a href="#bosh" class="brand">
+    <div class="brand-logo">
+      <img src="logo.jpg" alt="Buvayda Ibrat Mebel logo">
+    </div>
+    <div class="brand-name">BUVAYDA IBRAT MEBEL</div>
+  </a>
+
+  <nav>
+    <a href="#bosh">Bosh sahifa</a>
+    <a href="#biz">Biz haqimizda</a>
+    <a href="#xizmatlar">Xizmatlar</a>
+    <a href="#katalog">Katalog</a>
+    <a href="#aloqa">Aloqa</a>
+    <a href="#buyurtma" class="top-order">Buyurtma berish</a>
+  </nav>
+</header>
+
+<main id="publicSite">
+
+  <section class="hero" id="bosh">
+    <div class="hero-content">
+      <div class="eyebrow">BUVAYDA IBRAT MEBEL</div>
+      <h1>Sifatli mebel.<br>Professional servis.</h1>
+      <p>
+        Zamonaviy mebellar tayyorlash va mebel ustalari uchun professional
+        servis xizmatlari. Sifat, aniqlik va tezkorlik — bizning asosiy tamoyilimiz.
+      </p>
+      <div class="buttons">
+        <a href="#katalog" class="btn btn-gold">Mebellarni ko‘rish</a>
+        <a href="https://t.me/ibratmebel8909" target="_blank" rel="noopener" class="btn btn-white">
+          Telegram orqali yozish
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><strong>200+</strong><span>Kunlik laminat kesish</span></div>
+    <div class="stat"><strong>1500 m</strong><span>Kromka imkoniyati</span></div>
+    <div class="stat"><strong>08:00</strong><span>Ish boshlanishi</span></div>
+    <div class="stat"><strong>20:00</strong><span>Ish yakuni</span></div>
+  </div>
+
+  <section id="biz">
+    <div class="about">
+      <div class="about-image" aria-label="Buvayda Ibrat Mebel"></div>
+      <div>
+        <h2>BUVAYDA IBRAT MEBEL haqida</h2>
+        <p>
+          BUVAYDA IBRAT MEBEL — Buvayda tumanida mebel ishlab chiqarish
+          va mebel servis xizmatlarini ko‘rsatuvchi korxona.
+        </p>
+        <p>
+          Biz mebel ustalari va mijozlarga zamonaviy uskunalar yordamida
+          aniq, sifatli va tezkor xizmat ko‘rsatamiz.
+        </p>
+        <div class="checks">
+          <div class="check">✓ Sifatli xizmat</div>
+          <div class="check">✓ Zamonaviy uskunalar</div>
+          <div class="check">✓ Aniq o‘lcham</div>
+          <div class="check">✓ Tezkor xizmat</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services-section" id="xizmatlar">
+    <div class="section-title">
+      <span>BUVAYDA IBRAT MEBEL SERVIS</span>
+      <h2>Xizmatlarimiz</h2>
+      <p>Mebel ustalari uchun kerakli asosiy ishlab chiqarish xizmatlarini bir joyda taklif qilamiz.</p>
+    </div>
+
+    <div class="services">
+      <article class="service"><small>01</small><h3>Laminat kesish</h3><p>Laminatlarni professional uskunalarda aniq o‘lchamlarda kesib beramiz.</p></article>
+      <article class="service"><small>02</small><h3>Kromka yopishtirish</h3><p>Mebel detallariga sifatli va mustahkam kromka yopishtirish xizmati.</p></article>
+      <article class="service"><small>03</small><h3>Bazis asosida teshish</h3><p>Bazis dasturi asosida mebel detallarini aniq teshish xizmatini amalga oshiramiz.</p></article>
+      <article class="service"><small>04</small><h3>Mebel dizayni</h3><p>Mijoz talabiga mos zamonaviy va qulay mebel loyihalarini tayyorlaymiz.</p></article>
+      <article class="service"><small>05</small><h3>Mebel tayyorlash</h3><p>Uy va boshqa joylar uchun buyurtma asosida mebellar tayyorlaymiz.</p></article>
+      <article class="service"><small>06</small><h3>Hisob-kitob</h3><p>Mebel loyihasi uchun kerakli materiallarni hisoblashda yordam beramiz.</p></article>
+    </div>
+  </section>
+
+  <section id="katalog">
+    <div class="section-title">
+      <span>MAHSULOTLAR</span>
+      <h2>Mebellar katalogi</h2>
+      <p>Admin paneldan qo‘shilgan mahsulotlar bu yerda avtomatik ko‘rinadi.</p>
+    </div>
+
+    <div class="catalog-toolbar">
+      <input id="catalogSearch" type="search" placeholder="Mahsulot qidirish...">
+      <select id="catalogCategory">
+        <option value="">Barcha kategoriyalar</option>
+      </select>
+    </div>
+
+    <div id="catalogGrid" class="catalog">
+      <div class="empty-state">Mahsulotlar yuklanmoqda...</div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="section-title">
+      <span>NEGA BIZ?</span>
+      <h2>Nega BUVAYDA IBRAT MEBEL?</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><h3>Sifat</h3><p>Har bir buyurtmada sifatga alohida e’tibor beramiz.</p></div>
+      <div class="why-card"><h3>Aniqlik</h3><p>Zamonaviy uskunalar yordamida aniq o‘lchamlarda ishlaymiz.</p></div>
+      <div class="why-card"><h3>Tezkorlik</h3><p>Buyurtmalarni imkon qadar tez bajarishga harakat qilamiz.</p></div>
+      <div class="why-card"><h3>Qulay xizmat</h3><p>Mebel ustalari uchun bir nechta xizmatni bir joyda taklif qilamiz.</p></div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="aloqa">
+    <div class="contact">
+      <div class="contact-info">
+        <h2>Biz bilan bog‘laning</h2>
+        <p>Savollaringiz yoki buyurtmangiz bo‘lsa, biz bilan bog‘lanishingiz mumkin.</p>
+
+        <div class="contact-item">
+          <small>Telefon</small>
+          <a href="tel:+998958027755">+998 95 802 77 55</a>
+        </div>
+        <div class="contact-item">
+          <small>Manzil</small>
+          <strong>Buvayda tumani, Yangiqo‘rg‘on</strong>
+        </div>
+        <div class="contact-item">
+          <small>Ish vaqti</small>
+          <strong>Har kuni 08:00 — 20:00</strong>
+        </div>
+
+        <div class="socials">
+          <a href="https://t.me/ibratmebel8909" target="_blank" rel="noopener" class="btn btn-telegram">Telegram</a>
+          <a href="https://instagram.com/ibrat_mebel_8909" target="_blank" rel="noopener" class="btn btn-dark">Instagram</a>
+          <a href="tel:+998958027755" class="btn btn-dark">Qo‘ng‘iroq qilish</a>
+        </div>
+      </div>
+
+      <div class="order-form" id="buyurtma">
+        <h3>Buyurtma qoldiring</h3>
+        <form id="orderForm">
+          <input id="customerName" type="text" placeholder="Ismingiz" required>
+          <input id="customerPhone" type="tel" placeholder="Telefon raqamingiz" required>
+          <select id="customerService">
+            <option>Spalniy komplekt</option>
+            <option>Oshxona mebeli</option>
+            <option>Shkaf</option>
+            <option>Laminat kesish</option>
+            <option>Kromka yopishtirish</option>
+            <option>Bazis asosida teshish</option>
+            <option>Mebel dizayni</option>
+            <option>Boshqa</option>
+          </select>
+          <textarea id="customerMessage" placeholder="Buyurtma yoki savolingizni yozing"></textarea>
+          <button type="submit" class="btn btn-gold" style="width:100%">Telegram orqali yuborish</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><strong>BUVAYDA IBRAT MEBEL</strong></div>
+    <div>© 2026 Buvayda Ibrat Mebel. Barcha huquqlar himoyalangan.</div>
+  </footer>
+
+</main>
+
+<a href="https://t.me/ibratmebel8909" target="_blank" rel="noopener" class="btn btn-telegram telegram-float">Telegram</a>
+
+<!-- ADMIN PANEL: sayt manziliga #admin qo‘shib ochiladi -->
+<section id="admin" class="admin-section">
+  <div class="admin-shell">
+
+    <div id="adminLogin" class="admin-box admin-login">
+      <div class="admin-label">ADMIN PANEL</div>
+      <h2>BUVAYDA IBRAT MEBEL</h2>
+      <p>Sayt boshqaruv tizimiga kirish</p>
+
+      <input type="email" id="adminEmail" placeholder="Email manzilingiz">
+      <input type="password" id="adminPassword" placeholder="Parolingiz">
+      <button type="button" id="adminLoginButton" class="btn btn-gold" style="width:100%">ADMIN PANELGA KIRISH</button>
+      <div id="adminMessage" class="admin-message"></div>
+      <a href="#bosh" class="btn btn-white" style="width:100%;margin-top:10px">← Saytga qaytish</a>
+    </div>
+
+    <div id="adminDashboard" class="admin-box" hidden>
+      <div class="admin-header">
+        <div>
+          <div class="admin-label">ADMIN PANEL</div>
+          <h2>Mahsulot boshqaruvi</h2>
+          <p id="loggedInEmail" style="color:#777"></p>
+        </div>
+        <div class="buttons">
+          <a href="#katalog" class="btn btn-dark">Katalogni ko‘rish</a>
+          <button type="button" id="adminLogoutButton" class="btn btn-danger">Chiqish</button>
+        </div>
+      </div>
+
+      <div id="adminStatus" class="admin-status"></div>
+
+      <div class="admin-grid">
+        <div class="admin-form-panel">
+          <h3 id="formTitle">Yangi mahsulot</h3>
+
+          <input type="hidden" id="editingProductId">
+
+          <label>Mahsulot nomi</label>
+          <input type="text" id="productName" placeholder="Masalan: Spalniy Komfort">
+
+          <label>Narxi</label>
+          <input type="text" id="productPrice" placeholder="Masalan: 9 000 000 so‘m">
+
+          <label>Kategoriya</label>
+          <select id="productCategory">
+            <option value="Spalniy">Spalniy</option>
+            <option value="Oshxona">Oshxona</option>
+            <option value="Shkaf">Shkaf</option>
+            <option value="Ugalok">Ugalok</option>
+            <option value="Stol-stul">Stol-stul</option>
+            <option value="Boshqa">Boshqa</option>
+          </select>
+
+          <label>Rasm manzili (URL)</label>
+          <input type="url" id="productImage" placeholder="https://...">
+
+          <label>Tavsif</label>
+          <textarea id="productDescription" placeholder="Mahsulot haqida qisqa ma’lumot"></textarea>
+
+          <button type="button" id="saveProductButton" class="btn btn-gold" style="width:100%">Mahsulotni saqlash</button>
+          <button type="button" id="cancelEditButton" class="btn btn-white" style="width:100%;margin-top:9px" hidden>Tahrirlashni bekor qilish</button>
+        </div>
+
+        <div class="admin-list-panel">
+          <h3>Saytdagi mahsulotlar</h3>
+          <div id="adminProducts">Yuklanmoqda...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Telegram buyurtma formasi
+  document.getElementById("orderForm").addEventListener("submit", async function(event){
+    event.preventDefault();
+
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+    const service = document.getElementById("customerService").value;
+    const message = document.getElementById("customerMessage").value.trim();
+
+    const text =
+      "Assalomu alaykum, BUVAYDA IBRAT MEBEL!" +
+      "\n\nIsm: " + name +
+      "\nTelefon: " + phone +
+      "\nXizmat: " + service +
+      "\nIzoh: " + message;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("Buyurtma matni nusxalandi. Telegram ochiladi — xabar oynasiga Paste qiling.");
+    }catch(error){
+      console.warn("Clipboard ishlamadi:", error);
+    }
+
+    window.open("https://t.me/ibratmebel8909", "_blank");
+  });
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNQ_14GHXIa1s_8_480-e2NAEr7boZlKw",
+    authDomain: "buvayda-ibrat-mebel.firebaseapp.com",
+    projectId: "buvayda-ibrat-mebel",
+    storageBucket: "buvayda-ibrat-mebel.firebasestorage.app",
+    messagingSenderId: "630152385372",
+    appId: "1:630152385372:web:9ba8311493052009532799",
+    measurementId: "G-S6SCXCSE88"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const productsCollection = collection(db, "products");
+  let productsCache = [];
+
+  const adminLogin = document.getElementById("adminLogin");
+  const adminDashboard = document.getElementById("adminDashboard");
+  const adminEmail = document.getElementById("adminEmail");
+  const adminPassword = document.getElementById("adminPassword");
+  const adminLoginButton = document.getElementById("adminLoginButton");
+  const adminLogoutButton = document.getElementById("adminLogoutButton");
+  const adminMessage = document.getElementById("adminMessage");
+  const loggedInEmail = document.getElementById("loggedInEmail");
+
+  const editingProductId = document.getElementById("editingProductId");
+  const productName = document.getElementById("productName");
+  const productPrice = document.getElementById("productPrice");
+  const productCategory = document.getElementById("productCategory");
+  const productImage = document.getElementById("productImage");
+  const productDescription = document.getElementById("productDescription");
+  const saveProductButton = document.getElementById("saveProductButton");
+  const cancelEditButton = document.getElementById("cancelEditButton");
+  const formTitle = document.getElementById("formTitle");
+  const adminProducts = document.getElementById("adminProducts");
+  const adminStatus = document.getElementById("adminStatus");
+
+  const catalogGrid = document.getElementById("catalogGrid");
+  const catalogSearch = document.getElementById("catalogSearch");
+  const catalogCategory = document.getElementById("catalogCategory");
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function showStatus(message,type="success"){
+    adminStatus.textContent = message;
+    adminStatus.className = "admin-status show " + type;
+    setTimeout(()=>{
+      adminStatus.className = "admin-status";
+      adminStatus.textContent = "";
+    },3500);
+  }
+
+  function clearProductForm(){
+    editingProductId.value = "";
+    productName.value = "";
+    productPrice.value = "";
+    productCategory.value = "Spalniy";
+    productImage.value = "";
+    productDescription.value = "";
+    formTitle.textContent = "Yangi mahsulot";
+    saveProductButton.textContent = "Mahsulotni saqlash";
+    cancelEditButton.hidden = true;
+  }
+
+  adminLoginButton.addEventListener("click",async function(){
+    const email = adminEmail.value.trim();
+    const password = adminPassword.value;
+
+    if(!email || !password){
+      adminMessage.style.color = "red";
+      adminMessage.textContent = "Email va parolni kiriting.";
+      return;
+    }
+
+    adminLoginButton.disabled = true;
+    adminMessage.style.color = "#555";
+    adminMessage.textContent = "Tekshirilmoqda...";
+
+    try{
+      await signInWithEmailAndPassword(auth,email,password);
+      adminMessage.style.color = "green";
+      adminMessage.textContent = "Muvaffaqiyatli kirdingiz.";
+    }catch(error){
+      console.error(error);
+      adminMessage.style.color = "red";
+      adminMessage.textContent = "Email yoki parol noto‘g‘ri.";
+    }finally{
+      adminLoginButton.disabled = false;
+    }
+  });
+
+  adminPassword.addEventListener("keydown",function(event){
+    if(event.key === "Enter") adminLoginButton.click();
+  });
+
+  adminLogoutButton.addEventListener("click",async function(){
+    await signOut(auth);
+    clearProductForm();
+  });
+
+  onAuthStateChanged(auth,function(user){
+    if(user){
+      adminLogin.hidden = true;
+      adminDashboard.hidden = false;
+      loggedInEmail.textContent = "Kirish: " + user.email;
+    }else{
+      adminLogin.hidden = false;
+      adminDashboard.hidden = true;
+      loggedInEmail.textContent = "";
+      adminPassword.value = "";
+    }
+  });
+
+  saveProductButton.addEventListener("click",async function(){
+    const name = productName.value.trim();
+    const price = productPrice.value.trim();
+    const category = productCategory.value;
+    const image = productImage.value.trim();
+    const description = productDescription.value.trim();
+    const productId = editingProductId.value;
+
+    if(!auth.currentUser){
+      showStatus("Avval admin sifatida kiring.","error");
+      return;
+    }
+
+    if(!name || !price){
+      showStatus("Mahsulot nomi va narxini kiriting.","error");
+      return;
+    }
+
+    saveProductButton.disabled = true;
+    saveProductButton.textContent = productId ? "Yangilanmoqda..." : "Saqlanmoqda...";
+
+    const data = {
+      name,
+      price,
+      category,
+      image,
+      description,
+      updatedAt: serverTimestamp()
+    };
+
+    try{
+      if(productId){
+        await updateDoc(doc(db,"products",productId),data);
+        showStatus("Mahsulot yangilandi.");
+      }else{
+        await addDoc(productsCollection,{
+          ...data,
+          createdAt:serverTimestamp()
+        });
+        showStatus("Mahsulot qo‘shildi.");
+      }
+      clearProductForm();
+    }catch(error){
+      console.error(error);
+      showStatus("Saqlashda xatolik. Firestore Rules sozlamasini tekshiring.","error");
+    }finally{
+      saveProductButton.disabled = false;
+      if(!editingProductId.value) saveProductButton.textContent = "Mahsulotni saqlash";
+    }
+  });
+
+  cancelEditButton.addEventListener("click",clearProductForm);
+
+  adminProducts.addEventListener("click",async function(event){
+    const editButton = event.target.closest("[data-edit-id]");
+    const deleteButton = event.target.closest("[data-delete-id]");
+
+    if(editButton){
+      const item = productsCache.find(product=>product.id === editButton.dataset.editId);
+      if(!item) return;
+
+      editingProductId.value = item.id;
+      productName.value = item.name || "";
+      productPrice.value = item.price || "";
+      productCategory.value = item.category || "Boshqa";
+      productImage.value = item.image || "";
+      productDescription.value = item.description || "";
+      formTitle.textContent = "Mahsulotni tahrirlash";
+      saveProductButton.textContent = "O‘zgarishlarni saqlash";
+      cancelEditButton.hidden = false;
+      productName.focus();
+      window.scrollTo({top:document.getElementById("admin").offsetTop,behavior:"smooth"});
+    }
+
+    if(deleteButton){
+      if(!auth.currentUser){
+        showStatus("Avval admin sifatida kiring.","error");
+        return;
+      }
+
+      const confirmed = confirm("Mahsulotni o‘chirmoqchimisiz?");
+      if(!confirmed) return;
+
+      try{
+        await deleteDoc(doc(db,"products",deleteButton.dataset.deleteId));
+        showStatus("Mahsulot o‘chirildi.");
+        if(editingProductId.value === deleteButton.dataset.deleteId) clearProductForm();
+      }catch(error){
+        console.error(error);
+        showStatus("Mahsulotni o‘chirishda xatolik.","error");
+      }
+    }
+  });
+
+  function renderAdminProducts(){
+    if(productsCache.length === 0){
+      adminProducts.innerHTML = "<p style='color:#777'>Hozircha mahsulot qo‘shilmagan.</p>";
+      return;
+    }
+
+    adminProducts.innerHTML = productsCache.map(product=>{
+      const image = product.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=70";
+      return `
+        <div class="admin-item">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" onerror="this.src='https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=500&q=70'">
+          <div>
+            <h4>${escapeHtml(product.name)}</h4>
+            <p>${escapeHtml(product.category || "Boshqa")}</p>
+            <div class="admin-price">${escapeHtml(product.price)}</div>
+          </div>
+          <div class="admin-actions">
+            <button type="button" class="edit-btn" data-edit-id="${product.id}">Tahrirlash</button>
+            <button type="button" class="delete-btn" data-delete-id="${product.id}">O‘chirish</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderCatalog(){
+    const query = catalogSearch.value.trim().toLowerCase();
+    const category = catalogCategory.value;
+
+    const filtered = productsCache.filter(product=>{
+      const matchesQuery =
+        !query ||
+        String(product.name || "").toLowerCase().includes(query) ||
+        String(product.description || "").toLowerCase().includes(query);
+
+      const matchesCategory = !category || product.category === category;
+      return matchesQuery && matchesCategory;
+    });
+
+    if(filtered.length === 0){
+      catalogGrid.innerHTML = `
+        <div class="empty-state">
+          Hozircha mos mahsulot topilmadi. Admin paneldan yangi mahsulot qo‘shishingiz mumkin.
+        </div>`;
+      return;
+    }
+
+    catalogGrid.innerHTML = filtered.map(product=>{
+      const image = product.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80";
+      const telegramText = encodeURIComponent(
+        "Assalomu alaykum. " + (product.name || "Mahsulot") + " haqida ma’lumot olmoqchiman."
+      );
+
+      return `
+        <article class="product">
+          <img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}"
+               onerror="this.src='https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80'">
+          <div class="product-info">
+            <span class="category-badge">${escapeHtml(product.category || "Boshqa")}</span>
+            <h3>${escapeHtml(product.name)}</h3>
+            <p>${escapeHtml(product.description || "Mahsulot haqida ma’lumot olish uchun Telegram orqali yozing.")}</p>
+            <div class="price">${escapeHtml(product.price)}</div>
+            <a class="btn btn-gold" target="_blank" rel="noopener"
+               href="https://t.me/ibratmebel8909?text=${telegramText}">
+              Buyurtma berish
+            </a>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function updateCategoryFilter(){
+    const selected = catalogCategory.value;
+    const categories = [...new Set(productsCache.map(p=>p.category).filter(Boolean))].sort();
+
+    catalogCategory.innerHTML =
+      '<option value="">Barcha kategoriyalar</option>' +
+      categories.map(category=>`<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
+
+    if(categories.includes(selected)) catalogCategory.value = selected;
+  }
+
+  catalogSearch.addEventListener("input",renderCatalog);
+  catalogCategory.addEventListener("change",renderCatalog);
+
+  onSnapshot(
+    productsCollection,
+    function(snapshot){
+      productsCache = snapshot.docs.map(documentSnapshot=>({
+        id:documentSnapshot.id,
+        ...documentSnapshot.data()
+      }));
+
+      productsCache.sort((a,b)=>{
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+
+      renderAdminProducts();
+      updateCategoryFilter();
+      renderCatalog();
+    },
+    function(error){
+      console.error(error);
+      catalogGrid.innerHTML = `
+        <div class="empty-state">
+          Mahsulotlarni yuklashda xatolik. Firestore Rules sozlamasini tekshiring.
+        </div>`;
+      adminProducts.innerHTML = "<p>Mahsulotlarni yuklashda xatolik.</p>";
+    }
+  );
+</script>
+
+</body>
+</html>
