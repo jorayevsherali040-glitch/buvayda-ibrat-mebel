@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Buvayda Ibrat Mebel — mebel ishlab chiqarish va professional mebel servis xizmatlari.">
   <title>BUVAYDA IBRAT MEBEL</title>
-<link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <header class="site-header">
@@ -98,6 +98,14 @@
         <p>Admin panel orqali qo‘shilgan mahsulotlar shu yerda avtomatik ko‘rinadi.</p>
       </div>
 
+      <div class="catalog-summary">
+        <span id="catalogCount">0 ta mahsulot</span>
+        <div class="catalog-actions">
+          <button class="mini-action" id="favoritesButton" type="button">❤️ Sevimlilar <b id="favoritesCount">0</b></button>
+          <button class="mini-action" id="cartButton" type="button">🛒 Savatcha <b id="cartCount">0</b></button>
+        </div>
+      </div>
+
       <div class="catalog-toolbar">
         <input id="catalogSearch" type="search" placeholder="Mahsulot qidirish...">
         <select id="catalogCategory">
@@ -167,8 +175,18 @@
     <a href="./admin.html">Admin panel</a>
   </footer>
 
+  <dialog class="product-modal" id="productModal">
+    <button class="modal-close" id="modalClose" type="button">×</button>
+    <div id="productModalContent"></div>
+  </dialog>
+
+  <dialog class="product-modal" id="listModal">
+    <button class="modal-close" id="listModalClose" type="button">×</button>
+    <div id="listModalContent"></div>
+  </dialog>
+
   <a class="floating-telegram" href="https://t.me/ibratmebel8909" target="_blank" rel="noopener">Telegram</a>
 
-<script type="module" src="app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

@@ -37,6 +37,13 @@
 
       <div class="admin-status" id="adminStatus"></div>
 
+      <div class="admin-stats">
+        <article><span>Jami mahsulot</span><strong id="statTotal">0</strong></article>
+        <article><span>Top mahsulot</span><strong id="statFeatured">0</strong></article>
+        <article><span>Sotilgan</span><strong id="statSold">0</strong></article>
+        <article><span>Ombordagi jami</span><strong id="statStock">0</strong></article>
+      </div>
+
       <div class="admin-grid">
         <section class="admin-panel">
           <h2 id="formTitle">Yangi mahsulot</h2>
@@ -45,8 +52,16 @@
           <label for="productName">Mahsulot nomi</label>
           <input id="productName" type="text" placeholder="Masalan: Deco spalniy">
 
-          <label for="productPrice">Narxi</label>
-          <input id="productPrice" type="text" placeholder="Masalan: 9 000 000 so‘m">
+          <div class="form-two">
+            <div>
+              <label for="productPrice">Narxi</label>
+              <input id="productPrice" type="text" placeholder="9 000 000 so‘m">
+            </div>
+            <div>
+              <label for="productOldPrice">Eski narxi</label>
+              <input id="productOldPrice" type="text" placeholder="10 000 000 so‘m">
+            </div>
+          </div>
 
           <label for="productCategory">Kategoriya</label>
           <select id="productCategory">
@@ -59,8 +74,29 @@
             <option>Boshqa</option>
           </select>
 
-          <label for="productImage">Rasm URL manzili</label>
+          <label for="productImageFile">Kompyuterdan rasm tanlash</label>
+          <input id="productImageFile" type="file" accept="image/*">
+          <div class="upload-progress" id="uploadProgress" hidden>
+            <div id="uploadProgressBar"></div>
+          </div>
+          <img class="image-preview" id="imagePreview" alt="Rasm ko‘rinishi" hidden>
+
+          <label for="productImage">Yoki rasm URL manzili</label>
           <input id="productImage" type="url" placeholder="https://...">
+
+          <label for="productVideo">Video URL (ixtiyoriy)</label>
+          <input id="productVideo" type="url" placeholder="YouTube yoki boshqa video havolasi">
+
+          <div class="form-two">
+            <div>
+              <label for="productStock">Ombordagi soni</label>
+              <input id="productStock" type="number" min="0" value="1">
+            </div>
+            <div class="checkbox-stack">
+              <label><input id="productFeatured" type="checkbox"> Top mahsulot</label>
+              <label><input id="productSoldOut" type="checkbox"> Sotildi</label>
+            </div>
+          </div>
 
           <label for="productDescription">Tavsif</label>
           <textarea id="productDescription" placeholder="Mahsulot haqida qisqa ma’lumot"></textarea>

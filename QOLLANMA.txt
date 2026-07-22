@@ -1,0 +1,29 @@
+IBRAT MEBEL V2 — 1-BOSQICH
+
+YANGILIKLAR:
+- Kompyuterdan rasm yuklash
+- Rasm yuklash foizi va preview
+- Eski narx / chegirma
+- Ombordagi son
+- TOP mahsulot
+- SOTILDI belgisi
+- Video havolasi
+- Admin statistika
+- Sevimlilar
+- Savatcha
+- Mahsulot batafsil oynasi
+
+GITHUB:
+ZIP ichidagi fayllarni eski fayllar ustidan yuklang:
+index.html, admin.html, styles.css, app.js, admin.js, firebase-config.js
+
+FIRESTORE:
+firestore.rules ichidagi kodni Firebase Console → Firestore Database → Rules ga qo‘ying.
+
+STORAGE:
+1. Firebase Console → Storage → Get started.
+2. Storage → Rules bo‘limiga storage.rules kodini qo‘ying.
+3. Publish bosing.
+
+ADMIN:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/admin.html
