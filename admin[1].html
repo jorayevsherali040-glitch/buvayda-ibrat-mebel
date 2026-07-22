@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ibrat Mebel — Admin panel</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="admin-page">
+  <main class="admin-container">
+    <section class="admin-login-card" id="loginCard">
+      <img src="./logo.png" alt="Ibrat Mebel">
+      <p class="section-kicker">ADMIN PANEL</p>
+      <h1>Boshqaruv tizimi</h1>
+      <p>Firebase’da yaratilgan admin email va parolini kiriting.</p>
+      <form id="loginForm">
+        <input id="adminEmail" type="email" placeholder="Email" required>
+        <input id="adminPassword" type="password" placeholder="Parol" required>
+        <button class="button button-gold full-width" type="submit">Kirish</button>
+      </form>
+      <p class="form-message" id="loginMessage"></p>
+      <a class="button button-light full-width" href="./index.html">← Saytga qaytish</a>
+    </section>
+
+    <section class="admin-dashboard" id="dashboard" hidden>
+      <div class="admin-topbar">
+        <div>
+          <p class="section-kicker">BUVAYDA IBRAT MEBEL</p>
+          <h1>Mahsulot boshqaruvi</h1>
+          <p id="loggedInEmail"></p>
+        </div>
+        <div class="button-row">
+          <a class="button button-light" href="./index.html#katalog">Katalogni ko‘rish</a>
+          <button class="button button-danger" id="logoutButton" type="button">Chiqish</button>
+        </div>
+      </div>
+
+      <div class="admin-status" id="adminStatus"></div>
+
+      <div class="admin-grid">
+        <section class="admin-panel">
+          <h2 id="formTitle">Yangi mahsulot</h2>
+          <input id="editingProductId" type="hidden">
+
+          <label for="productName">Mahsulot nomi</label>
+          <input id="productName" type="text" placeholder="Masalan: Deco spalniy">
+
+          <label for="productPrice">Narxi</label>
+          <input id="productPrice" type="text" placeholder="Masalan: 9 000 000 so‘m">
+
+          <label for="productCategory">Kategoriya</label>
+          <select id="productCategory">
+            <option>Spalniy</option>
+            <option>Oshxona</option>
+            <option>Shkaf</option>
+            <option>Ugalok</option>
+            <option>Stol-stul</option>
+            <option>Oyoq kiyim javoni</option>
+            <option>Boshqa</option>
+          </select>
+
+          <label for="productImage">Rasm URL manzili</label>
+          <input id="productImage" type="url" placeholder="https://...">
+
+          <label for="productDescription">Tavsif</label>
+          <textarea id="productDescription" placeholder="Mahsulot haqida qisqa ma’lumot"></textarea>
+
+          <button class="button button-gold full-width" id="saveProductButton" type="button">Mahsulotni saqlash</button>
+          <button class="button button-light full-width" id="cancelEditButton" type="button" hidden>Tahrirlashni bekor qilish</button>
+        </section>
+
+        <section class="admin-panel">
+          <div class="admin-list-heading">
+            <h2>Saytdagi mahsulotlar</h2>
+            <input id="adminSearch" type="search" placeholder="Qidirish...">
+          </div>
+          <div id="adminProducts">Yuklanmoqda...</div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/admin.js"></script>
+</body>
+</html>
