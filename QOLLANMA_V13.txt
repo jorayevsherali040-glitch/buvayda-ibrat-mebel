@@ -1,8 +1,8 @@
-BUVAYDA IBRAT MEBEL V13 — LOCAL ERP + PIN
+BUVAYDA IBRAT MEBEL V14 — LOCAL ERP + PIN
 
 STANDART PIN: 1212
 
-V13 MUHIM FARQI:
+V14 MUHIM FARQI:
 - Firebase Authentication ishlatilmaydi.
 - Firebase permission xatolari bo‘lmaydi.
 - Gmail kerak emas.
@@ -22,7 +22,7 @@ YUKLASH:
 1. ZIPni Extract qiling.
 2. GitHub → Add file → Upload files.
 3. Barcha fayllarni eski fayllar ustiga yuklang.
-4. Commit: BUVAYDA IBRAT MEBEL V13 LOCAL ERP
+4. Commit: BUVAYDA IBRAT MEBEL V14 LOCAL ERP
 5. Deploy tugagach Ctrl + F5 bosing.
 
 ESLATMA:

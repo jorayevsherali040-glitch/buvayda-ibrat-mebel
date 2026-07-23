@@ -1,0 +1,38 @@
+BUVAYDA IBRAT MEBEL V14 — KORXONA ERP + MAHSULOT KALKULYATORI
+
+STANDART PIN:
+1212
+
+YANGI KORXONA BOSHQARUV TIZIMI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/korxona.html
+
+SUPER ADMIN:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/super-admin.html
+
+V14 IMKONIYATLARI:
+- Korxona boshqaruv tizimi bitta PIN sessiyasi bilan ochiladi.
+- Dashboard: kirim, chiqim, foyda, buyurtmalar va ombor.
+- Professional mahsulot va xizmat kalkulyatori.
+- Laminatni list bo‘yicha hisoblash.
+- Kromkani metr bo‘yicha hisoblash.
+- Kesish, Bazis teshish, CNC va dizayn xizmatlarini hisoblash.
+- Bitta hisobga cheksiz mahsulot va xizmat qo‘shish.
+- Chegirma: summa yoki foiz.
+- Yetkazib berish, oldindan to‘lov va qarz hisoblash.
+- Buyurtma sifatida saqlash.
+- Sotuvni yakunlash va ombor qoldig‘ini avtomatik kamaytirish.
+- To‘langan summani kirimga avtomatik qo‘shish.
+- Telegramga tayyor hisob yuborish.
+- Chop etish yoki brauzer orqali PDF saqlash.
+- Buyurtmalar, ombor, sotuv, moliya, CRM, ishlab chiqarish va ishchilar bo‘limlari.
+- Barcha ma’lumotlar LocalStorage’da yagona bazada saqlanadi.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni eski fayllar ustiga yuklang.
+4. Commit: BUVAYDA IBRAT MEBEL V14 ERP CALCULATOR
+5. Deploy tugagach Ctrl + F5 bosing.
+
+MUHIM:
+Ma’lumotlar shu brauzerda saqlanadi. Backup sahifasidan muntazam zaxira nusxa oling.

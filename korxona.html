@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BUVAYDA IBRAT MEBEL V14 — Korxona boshqaruvi</title>
+  <link rel="stylesheet" href="./korxona.css">
+</head>
+<body>
+  <aside class="erp-sidebar" id="erpSidebar">
+    <a class="erp-brand" href="./super-admin.html">
+      <img src="./logo.png" alt="">
+      <span><strong>IBRAT MEBEL</strong><small>V14 Korxona ERP</small></span>
+    </a>
+
+    <nav>
+      <p>ASOSIY</p>
+      <button class="active" data-page="dashboard">▦ Dashboard</button>
+      <button data-page="calculator">▣ Mahsulot kalkulyatori</button>
+
+      <p>SAVDO VA OMBOR</p>
+      <button data-page="orders">▤ Buyurtmalar</button>
+      <button data-page="inventory">▥ Ombor</button>
+      <button data-page="sales">₽ Sotuvlar</button>
+
+      <p>BOSHQARUV</p>
+      <button data-page="finance">◫ Kirim-chiqim</button>
+      <button data-page="customers">◎ Mijozlar CRM</button>
+      <button data-page="production">⚒ Ishlab chiqarish</button>
+      <button data-page="workers">♟ Ishchilar</button>
+
+      <p>QO‘SHIMCHA</p>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+      <a href="./index.html">⌂ Asosiy sayt</a>
+      <a href="./backup.html">⇩ Zaxira nusxa</a>
+    </nav>
+  </aside>
+
+  <main class="erp-main">
+    <header class="erp-topbar">
+      <div>
+        <button id="menuToggle" class="menu-toggle">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL</p><h1 id="pageTitle">Dashboard</h1></div>
+      </div>
+      <div class="top-actions">
+        <span id="todayText"></span>
+        <button id="themeToggle">🌙</button>
+        <button id="logoutButton">Chiqish</button>
+      </div>
+    </header>
+
+    <section class="erp-page active" id="pageDashboard">
+      <div class="stats-grid">
+        <article><span>Bugungi kirim</span><strong id="dashIncome">0 so‘m</strong></article>
+        <article><span>Bugungi chiqim</span><strong id="dashExpense">0 so‘m</strong></article>
+        <article><span>Sof natija</span><strong id="dashProfit">0 so‘m</strong></article>
+        <article><span>Faol buyurtmalar</span><strong id="dashOrders">0</strong></article>
+        <article><span>Laminat qoldig‘i</span><strong id="dashSheets">0 list</strong></article>
+        <article><span>Kromka qoldig‘i</span><strong id="dashMeters">0 m</strong></article>
+      </div>
+
+      <div class="erp-grid two">
+        <article class="erp-panel">
+          <div class="panel-head"><h2>Tezkor amallar</h2></div>
+          <div class="quick-actions">
+            <button data-goto="calculator">Yangi hisob-kitob</button>
+            <button data-goto="orders">Buyurtma kiritish</button>
+            <button data-goto="finance">Kirim yoki chiqim</button>
+            <button data-goto="customers">Mijoz qo‘shish</button>
+          </div>
+        </article>
+        <article class="erp-panel">
+          <div class="panel-head"><h2>Ombor ogohlantirishlari</h2></div>
+          <div id="dashboardAlerts"></div>
+        </article>
+      </div>
+
+      <div class="erp-grid two">
+        <article class="erp-panel">
+          <div class="panel-head"><h2>So‘nggi buyurtmalar</h2></div>
+          <div id="recentOrders"></div>
+        </article>
+        <article class="erp-panel">
+          <div class="panel-head"><h2>So‘nggi moliyaviy harakatlar</h2></div>
+          <div id="recentFinance"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageCalculator">
+      <div class="page-intro">
+        <div><p>PROFESSIONAL HISOB-KITOB</p><h2>Mahsulot va xizmat kalkulyatori</h2><span>Laminat, kromka, kesish, teshish va boshqa xizmatlarni bitta hisobda jamlang.</span></div>
+        <div class="intro-actions"><button id="newCalculation">Yangi hisob</button><button id="printCalculation">Chop etish / PDF</button></div>
+      </div>
+
+      <div class="calculator-layout">
+        <div class="erp-panel">
+          <div class="client-grid">
+            <label>Mijoz nomi<input id="calcCustomer" placeholder="Masalan: Akmal usta"></label>
+            <label>Telefon<input id="calcPhone" placeholder="+998..."></label>
+            <label>Buyurtma raqami<input id="calcNumber" readonly></label>
+            <label>Sana<input id="calcDate" type="date"></label>
+          </div>
+
+          <div class="add-line-bar">
+            <select id="lineType">
+              <option value="laminate">Laminat</option>
+              <option value="edge">Kromka</option>
+              <option value="cutting">Kesish xizmati</option>
+              <option value="drilling">Bazis teshish</option>
+              <option value="cnc">CNC xizmati</option>
+              <option value="design">Dizayn</option>
+              <option value="custom">Boshqa mahsulot/xizmat</option>
+            </select>
+            <select id="lineProduct"></select>
+            <input id="lineName" placeholder="Nomi">
+            <input id="lineQty" type="number" min="0" step="0.01" value="1" placeholder="Miqdor">
+            <input id="linePrice" type="number" min="0" value="0" placeholder="Narx">
+            <button id="addLine">＋ Qo‘shish</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="calc-table">
+              <thead><tr><th>#</th><th>Mahsulot/xizmat</th><th>Birlik</th><th>Miqdor</th><th>Narx</th><th>Jami</th><th></th></tr></thead>
+              <tbody id="calculationLines"></tbody>
+            </table>
+          </div>
+
+          <div class="calc-bottom">
+            <div class="calc-options">
+              <label>Chegirma<input id="calcDiscount" type="number" min="0" value="0"><select id="discountType"><option value="amount">so‘m</option><option value="percent">%</option></select></label>
+              <label>Yetkazib berish<input id="calcDelivery" type="number" min="0" value="0"></label>
+              <label>Oldindan to‘lov<input id="calcPaid" type="number" min="0" value="0"></label>
+              <label>Izoh<textarea id="calcNote" placeholder="Qo‘shimcha ma’lumot..."></textarea></label>
+            </div>
+            <div class="calc-summary">
+              <div><span>Mahsulotlar jami</span><b id="calcSubtotal">0 so‘m</b></div>
+              <div><span>Chegirma</span><b id="calcDiscountValue">0 so‘m</b></div>
+              <div><span>Yetkazib berish</span><b id="calcDeliveryValue">0 so‘m</b></div>
+              <div class="grand"><span>Umumiy summa</span><strong id="calcGrandTotal">0 so‘m</strong></div>
+              <div><span>To‘langan</span><b id="calcPaidValue">0 so‘m</b></div>
+              <div class="debt"><span>Qolgan qarz</span><strong id="calcDebt">0 so‘m</strong></div>
+            </div>
+          </div>
+
+          <div class="calc-actions">
+            <button id="saveAsOrder">Buyurtma sifatida saqlash</button>
+            <button id="saveAsSale">Sotuvni yakunlash</button>
+            <button id="sendTelegram">Telegramga yuborish</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageOrders">
+      <div class="page-intro"><div><p>BUYURTMALAR</p><h2>Buyurtmalarni boshqarish</h2></div><button id="orderFromCalculator">Kalkulyatorda yaratish</button></div>
+      <div class="erp-panel">
+        <div class="toolbar"><input id="orderSearch" placeholder="Mijoz yoki buyurtma raqami..."><select id="orderStatusFilter"><option value="">Barcha holat</option><option>Yangi</option><option>Kesilmoqda</option><option>Kromka urilmoqda</option><option>Teshilmoqda</option><option>Tayyor</option><option>Yetkazildi</option></select></div>
+        <div id="ordersTable"></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageInventory">
+      <div class="page-intro"><div><p>OMBOR</p><h2>Laminat va kromka qoldig‘i</h2></div><a href="./super-admin.html">Mahsulot qo‘shish</a></div>
+      <div class="stats-grid compact"><article><span>Laminat turi</span><strong id="invLamTypes">0</strong></article><article><span>Jami list</span><strong id="invSheets">0</strong></article><article><span>Kromka turi</span><strong id="invEdgeTypes">0</strong></article><article><span>Jami metr</span><strong id="invMeters">0</strong></article></div>
+      <div class="erp-grid two"><article class="erp-panel"><h2>Laminatlar</h2><div id="inventoryLaminates"></div></article><article class="erp-panel"><h2>Kromkalar</h2><div id="inventoryEdges"></div></article></div>
+    </section>
+
+    <section class="erp-page" id="pageSales">
+      <div class="page-intro"><div><p>SOTUVLAR</p><h2>Sotuvlar tarixi</h2></div></div>
+      <div class="erp-panel"><div id="salesTable"></div></div>
+    </section>
+
+    <section class="erp-page" id="pageFinance">
+      <div class="page-intro"><div><p>MOLIYA</p><h2>Kirim va chiqim</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="financeForm">
+          <h2>Yangi harakat</h2>
+          <label>Turi<select id="financeType"><option value="income">Kirim</option><option value="expense">Chiqim</option></select></label>
+          <label>Summa<input id="financeAmount" type="number" min="0" required></label>
+          <label>Kategoriya<select id="financeCategory"><option>Sotuv</option><option>Xomashyo</option><option>Ish haqi</option><option>Transport</option><option>Kommunal</option><option>Boshqa</option></select></label>
+          <label>To‘lov turi<select id="financePayment"><option>Naqd</option><option>Bank</option><option>Click</option><option>Payme</option><option>Uzum</option></select></label>
+          <label>Izoh<textarea id="financeNote"></textarea></label>
+          <button type="submit">Saqlash</button>
+        </form>
+        <div class="erp-panel"><div class="toolbar"><input id="financeSearch" placeholder="Izoh yoki kategoriya..."></div><div id="financeTable"></div></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageCustomers">
+      <div class="page-intro"><div><p>CRM</p><h2>Mijozlar bazasi</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="customerForm">
+          <h2>Yangi mijoz</h2>
+          <label>Ismi<input id="customerName" required></label>
+          <label>Telefon<input id="customerPhone"></label>
+          <label>Telegram<input id="customerTelegram"></label>
+          <label>Chegirma (%)<input id="customerDiscount" type="number" min="0" max="100" value="0"></label>
+          <label>Izoh<textarea id="customerNote"></textarea></label>
+          <button type="submit">Mijozni saqlash</button>
+        </form>
+        <div class="erp-panel"><div class="toolbar"><input id="customerSearch" placeholder="Ism yoki telefon..."></div><div id="customersTable"></div></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageProduction">
+      <div class="page-intro"><div><p>ISHLAB CHIQARISH</p><h2>Buyurtma holatlari</h2></div></div>
+      <div class="kanban" id="productionBoard"></div>
+    </section>
+
+    <section class="erp-page" id="pageWorkers">
+      <div class="page-intro"><div><p>ISHCHILAR</p><h2>Ishchilar va kunlik ishlar</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="workerForm">
+          <h2>Yangi ishchi</h2>
+          <label>Ismi<input id="workerName" required></label>
+          <label>Lavozimi<select id="workerRole"><option>Kesuvchi</option><option>Kromkachi</option><option>Bazis operatori</option><option>Omborchi</option><option>Menejer</option><option>Boshqa</option></select></label>
+          <label>Telefon<input id="workerPhone"></label>
+          <label>Kunlik stavka<input id="workerRate" type="number" min="0"></label>
+          <button type="submit">Ishchini saqlash</button>
+        </form>
+        <div class="erp-panel"><div id="workersTable"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="erp-toast" id="toast"></div>
+  <script type="module" src="./korxona.js"></script>
+</body>
+</html>

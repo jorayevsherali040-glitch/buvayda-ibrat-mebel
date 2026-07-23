@@ -6,6 +6,7 @@ const DEFAULT_DATA={
   orders:[],
   customers:[],
   finance:[],
+  sales:[],
   services:[],
   workers:[],
   inventory:[],
