@@ -109,7 +109,7 @@ function v20StockMatch(x,f){
 function v20FinderImage(x){return x.imageUrl||x.image||"./product-placeholder.svg"}
 function v20PopulateFilters(){
   if(!v20FinderBrand)return;
-  const list=v20FinderType==="laminates"?state.laminates:state.edges;
+  const list=v20FinderType==="laminates"?db.laminates:db.edges;
   const brands=[...new Set(list.map(x=>x.brand).filter(Boolean))].sort();
   v20FinderBrand.innerHTML='<option value="">Barcha brendlar</option>'+brands.map(x=>`<option>${esc(x)}</option>`).join("");
   const thickness=[...new Set(list.map(x=>String(x.thickness||"")).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
@@ -117,7 +117,7 @@ function v20PopulateFilters(){
 }
 function v20RenderFinder(){
   if(!v20FinderGrid)return;
-  const list=v20FinderType==="laminates"?state.laminates:state.edges;
+  const list=v20FinderType==="laminates"?db.laminates:db.edges;
   const q=(v20FinderSearch.value||"").trim().toLowerCase(),brand=v20FinderBrand.value,th=v20FinderThickness.value,stock=v20FinderStock.value;
   const filtered=list.filter(x=>{
     const hay=`${x.code||""} ${x.name||""} ${x.color||""} ${x.brand||""} ${x.location||""} ${(x.tags||[]).join(" ")} ${x.matchingLaminate||""} ${(x.matchingEdges||[]).join(" ")}`.toLowerCase();
@@ -155,9 +155,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&v21Overlay&&!v21Ove
 
 function v21GlobalItems(){
   const material=[
-    ...(state.laminates||[]).map(x=>({...x,v21Type:"Laminat",v21Price:x.salePrice||0})),
-    ...(state.edges||[]).map(x=>({...x,v21Type:"Kromka",v21Price:x.salePrice||0})),
-    ...(state.products||[]).map(x=>({...x,v21Type:"Mebel",v21Price:x.price||0}))
+    ...(db.laminates||[]).map(x=>({...x,v21Type:"Laminat",v21Price:x.salePrice||0})),
+    ...(db.edges||[]).map(x=>({...x,v21Type:"Kromka",v21Price:x.salePrice||0})),
+    ...(db.products||[]).map(x=>({...x,v21Type:"Mebel",v21Price:x.price||0}))
   ];
   const services=[
     {id:"service-cut",name:"Laminat kesish",code:"KESISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.laminate||"./v22-assets/laminate-sheets.svg"),tags:["kesish","list","laminat"]},
@@ -202,16 +202,36 @@ function v21RenderParts(){
   document.getElementById("v21EdgeMeters").textContent=`${(edgeMm/1000).toFixed(1)} m`;
 }
 document.getElementById("v21AddPart")?.addEventListener("click",()=>{
-  const width=Number(document.getElementById("v21PartWidth").value);
-  const height=Number(document.getElementById("v21PartHeight").value);
-  const qty=Number(document.getElementById("v21PartQty").value||1);
-  const edgeSides=Number(document.getElementById("v21EdgeSides").value||0);
-  if(width<=0||height<=0||qty<=0)return;
+  const widthInput=document.getElementById("v21PartWidth");
+  const heightInput=document.getElementById("v21PartHeight");
+  const qtyInput=document.getElementById("v21PartQty");
+  const width=Number(widthInput?.value||0);
+  const height=Number(heightInput?.value||0);
+  const qty=Number(qtyInput?.value||1);
+  const edgeSides=Number(document.getElementById("v21EdgeSides")?.value||0);
+
+  if(width<=0){
+    widthInput?.focus();
+    toast("Detal enini kiriting.");
+    return;
+  }
+  if(height<=0){
+    heightInput?.focus();
+    toast("Detal bo‘yini kiriting.");
+    return;
+  }
+  if(qty<=0){
+    qtyInput?.focus();
+    toast("Detal sonini kiriting.");
+    return;
+  }
+
   v21Parts.push({width,height,qty,edgeSides});
-  document.getElementById("v21PartWidth").value="";
-  document.getElementById("v21PartHeight").value="";
-  document.getElementById("v21PartQty").value=1;
+  widthInput.value="";
+  heightInput.value="";
+  qtyInput.value=1;
   v21RenderParts();
+  toast("Detal qo‘shildi.");
 });
 v21PartsList?.addEventListener("click",e=>{
   const b=e.target.closest("[data-v21-remove]");

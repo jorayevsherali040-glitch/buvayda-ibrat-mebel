@@ -1,0 +1,16 @@
+BUVAYDA IBRAT MEBEL V22.1 — DETAL QO‘SHISH TUZATILDI
+
+TUZATILGAN XATO:
+- Veb-saytdagi tezkor hisob-kitobda “Detal qo‘shish” tugmasi ishlamas edi.
+- Sabab: JavaScript ichida mavjud bo‘lmagan “state” o‘zgaruvchisi ishlatilgan.
+- Bu xato skriptni to‘xtatib, detal tugmasining ishlashiga yo‘l qo‘ymagan.
+- Endi barcha ma’lumotlar to‘g‘ri “db” bazasidan olinadi.
+- Detal eni, bo‘yi yoki soni kiritilmasa tushunarli xabar chiqadi.
+- Detal muvaffaqiyatli qo‘shilganda “Detal qo‘shildi” xabari chiqadi.
+
+YUKLASH:
+1. ZIP faylni oching.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Ayniqsa index.html va v13.js fayllari almashtirilganini tekshiring.
+4. Commit: V22.1 DETAIL ADD FIX
+5. Deploy tugagach Ctrl + Shift + R bosing.
