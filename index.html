@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Buvayda Ibrat Mebel — laminat va kromka market, professional kesish, kromka yopishtirish, Bazis teshish va mebel servis markazi.">
   <meta name="theme-color" content="#075f38">
-  <title>BUVAYDA IBRAT MEBEL V19</title>
+  <title>BUVAYDA IBRAT MEBEL V21 — Premium servis markazi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./v11.css?v=20">
+  <link rel="stylesheet" href="./v11.css?v=21">
 </head>
 <body>
   <div class="v15-topbar">
@@ -42,6 +42,7 @@
       </nav>
 
       <div class="v11-actions v15-actions">
+        <button id="v21GlobalSearchButton" type="button" title="Global qidiruv">⌕</button>
         <button id="themeToggle" type="button">☾</button>
         <button id="favoriteButton" type="button">♡ <b id="favoriteCount">0</b></button>
         <button class="v11-cart-button" id="cartButton" type="button">Savatcha <b id="cartCount">0</b></button>
@@ -54,8 +55,8 @@
       <div class="v15-container v15-hero-grid">
         <div class="v15-hero-copy">
           <div class="v15-badge">SIFAT • ISHONCH • MAHORAT</div>
-          <h1>Sifatli mebel —<br><em>Siz uchun!</em></h1>
-          <p>Zamonaviy uskunalar va tajribali ustalar yordamida sifatli mebellar, laminat, kromka va professional servis xizmatlarini taklif qilamiz.</p>
+          <h1>Mebel ustalari uchun<br><em>premium servis markazi</em></h1>
+          <p>Laminat va kromka savdosi, aniq kesish, professional kromka yopishtirish, Bazis teshish va dizayn — barchasi bitta zamonaviy platformada.</p>
           <div class="v15-hero-buttons">
             <a class="v15-primary" href="#servis">Xizmatlarimiz bilan tanishing →</a>
             <a class="v15-secondary" href="#kalkulyator">▶ Hisob-kitob</a>
@@ -107,6 +108,55 @@
       </div>
     </section>
 
+
+
+    <section class="v21-trust">
+      <div class="v15-container v21-trust-grid">
+        <article><strong>200+</strong><span>Kunlik laminat kesish</span></article>
+        <article><strong>1500 m</strong><span>Kunlik kromka quvvati</span></article>
+        <article><strong>08:00–20:00</strong><span>Har kuni xizmat</span></article>
+        <article><strong>100%</strong><span>Aniqlik va nazorat</span></article>
+      </div>
+    </section>
+
+    <section class="v21-smart-calc" id="tezkor-hisob">
+      <div class="v15-container">
+        <div class="v21-section-head">
+          <div><p>TEZKOR HISOB-KITOB</p><h2>Detallarni kiriting — list va kromkani hisoblang</h2><span>Bu tezkor hisob taxminiy natija beradi. Yakuniy ishlab chiqarish hisobi ustalar tomonidan tekshiriladi.</span></div>
+          <a href="./korxona.html#calculator">Professional kalkulyator →</a>
+        </div>
+        <div class="v21-calc-layout">
+          <div class="v21-calc-form">
+            <div class="v21-sheet-row">
+              <label>List eni (mm)<input id="v21SheetWidth" type="number" value="2800" min="1"></label>
+              <label>List bo‘yi (mm)<input id="v21SheetHeight" type="number" value="2070" min="1"></label>
+              <label>Chiqindi zaxirasi<select id="v21Waste"><option value="8">8%</option><option value="10" selected>10%</option><option value="15">15%</option><option value="20">20%</option></select></label>
+            </div>
+            <div class="v21-detail-builder">
+              <input id="v21PartWidth" type="number" placeholder="Detal eni" min="1">
+              <input id="v21PartHeight" type="number" placeholder="Detal bo‘yi" min="1">
+              <input id="v21PartQty" type="number" value="1" min="1" placeholder="Dona">
+              <select id="v21EdgeSides">
+                <option value="0">Kromkasiz</option>
+                <option value="1">1 tomon</option>
+                <option value="2">2 tomon</option>
+                <option value="4">4 tomon</option>
+              </select>
+              <button id="v21AddPart" type="button">＋ Detal qo‘shish</button>
+            </div>
+            <div id="v21PartsList" class="v21-parts-list"></div>
+          </div>
+          <aside class="v21-calc-result">
+            <p>Hisob natijasi</p>
+            <div><span>Jami detal</span><strong id="v21TotalParts">0 dona</strong></div>
+            <div><span>Kerakli maydon</span><strong id="v21TotalArea">0 m²</strong></div>
+            <div><span>Taxminiy list</span><strong id="v21SheetCount">0 list</strong></div>
+            <div><span>Taxminiy kromka</span><strong id="v21EdgeMeters">0 m</strong></div>
+            <button id="v21ClearParts" type="button">Hisobni tozalash</button>
+          </aside>
+        </div>
+      </div>
+    </section>
 
     <section class="v20-finder" id="mahsulot-topish">
       <div class="v15-container">
@@ -258,6 +308,29 @@
   <div class="v11-toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script type="module" src="./v13.js?v=20"></script>
+  <script type="module" src="./v13.js?v=21"></script>
+
+  <div class="v21-search-overlay" id="v21SearchOverlay" hidden>
+    <div class="v21-search-dialog">
+      <div class="v21-search-top">
+        <div>
+          <p>GLOBAL QIDIRUV</p>
+          <h2>Laminat, kromka, mebel va xizmatlarni qidiring</h2>
+        </div>
+        <button id="v21SearchClose" type="button">×</button>
+      </div>
+      <input id="v21GlobalSearch" autofocus placeholder="Masalan: H1145, 04.19, kashmir, kesish...">
+      <div class="v21-search-results" id="v21SearchResults"></div>
+    </div>
+  </div>
+
+
+  <nav class="v21-mobile-nav">
+    <a href="#bosh">⌂<span>Bosh sahifa</span></a>
+    <a href="#mahsulot-topish">⌕<span>Mahsulot</span></a>
+    <a href="#tezkor-hisob">▦<span>Hisob</span></a>
+    <a href="#aloqa">☎<span>Aloqa</span></a>
+  </nav>
+
 </body>
 </html>

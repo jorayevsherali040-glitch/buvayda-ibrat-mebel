@@ -1,0 +1,33 @@
+BUVAYDA IBRAT MEBEL V21 — PREMIUM EDITION
+
+PIN:
+1212
+
+V21 YANGILIKLARI:
+- Bosh sahifa premium darajada qayta bezatildi.
+- Bosh katta rasm va asosiy xizmat rasmlari tiniqlashtirildi.
+- 6 ta asosiy rasm qayta ishlanib optimallashtirildi.
+- Hero qismi kuchli premium matn va zamonaviy effektlar bilan yangilandi.
+- Global qidiruv qo‘shildi.
+- Global qidiruv laminat, kromka, mebel va xizmatlarni bir joydan topadi.
+- Mijozlar uchun mavjud V20 mahsulot qidiruvi saqlandi va ko‘rinishi yaxshilandi.
+- Tezkor detal kalkulyatori qo‘shildi.
+- Detal eni, bo‘yi, soni va kromka tomonlari bo‘yicha:
+  - jami detal;
+  - maydon;
+  - taxminiy list soni;
+  - taxminiy kromka metri hisoblanadi.
+- Premium statistika paneli qo‘shildi.
+- Mobil telefon uchun pastki tezkor navigatsiya qo‘shildi.
+- Rasmlarga yumshoq zoom va tiniqlik effekti qo‘shildi.
+- V20 buyurtma ERP, V19 dashboard, mahsulot boshqaruvi, QR, Excel va moliya funksiyalari saqlandi.
+
+MUHIM:
+V21 tezkor list hisoblagichi maydon asosidagi taxminiy hisobdir.
+Haqiqiy optimal kesish sxemasi uchun keyingi optimizer modulidan foydalaniladi.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V21 PREMIUM
+4. Deploy tugagach Ctrl + Shift + R bosing.

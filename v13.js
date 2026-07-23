@@ -136,3 +136,89 @@ document.querySelectorAll("[data-finder-type]").forEach(b=>b.addEventListener("c
 [v20FinderSearch,v20FinderBrand,v20FinderThickness,v20FinderStock].filter(Boolean).forEach(el=>el.addEventListener(el.tagName==="INPUT"?"input":"change",v20RenderFinder));
 document.getElementById("v20FinderClear")?.addEventListener("click",()=>{v20FinderSearch.value="";v20FinderBrand.value="";v20FinderThickness.value="";v20FinderStock.value="";v20RenderFinder()});
 setTimeout(()=>{v20PopulateFilters();v20RenderFinder()},100);
+
+
+// ============================================================
+// V21 PREMIUM: global search and quick cutting estimator
+// ============================================================
+const v21Overlay=document.getElementById("v21SearchOverlay");
+const v21SearchInput=document.getElementById("v21GlobalSearch");
+const v21SearchResults=document.getElementById("v21SearchResults");
+document.getElementById("v21GlobalSearchButton")?.addEventListener("click",()=>{
+  v21Overlay.hidden=false;
+  setTimeout(()=>v21SearchInput.focus(),50);
+  v21RenderGlobalSearch("");
+});
+document.getElementById("v21SearchClose")?.addEventListener("click",()=>v21Overlay.hidden=true);
+v21Overlay?.addEventListener("click",e=>{if(e.target===v21Overlay)v21Overlay.hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&v21Overlay&&!v21Overlay.hidden)v21Overlay.hidden=true});
+
+function v21GlobalItems(){
+  const material=[
+    ...(state.laminates||[]).map(x=>({...x,v21Type:"Laminat",v21Price:x.salePrice||0})),
+    ...(state.edges||[]).map(x=>({...x,v21Type:"Kromka",v21Price:x.salePrice||0})),
+    ...(state.products||[]).map(x=>({...x,v21Type:"Mebel",v21Price:x.price||0}))
+  ];
+  const services=[
+    {id:"service-cut",name:"Laminat kesish",code:"KESISH",v21Type:"Xizmat",v21Price:0,imageUrl:"./service-laminate.jpg",tags:["kesish","list","laminat"]},
+    {id:"service-edge",name:"Kromka yopishtirish",code:"KROMKA",v21Type:"Xizmat",v21Price:0,imageUrl:"./service-edge.jpg",tags:["kromka","yopishtirish"]},
+    {id:"service-drill",name:"Bazis teshish",code:"TESHISH",v21Type:"Xizmat",v21Price:0,imageUrl:"./service-drill.jpg",tags:["bazis","teshish","cnc"]},
+    {id:"service-design",name:"3D dizayn",code:"DIZAYN",v21Type:"Xizmat",v21Price:0,imageUrl:"./service-design.jpg",tags:["dizayn","loyiha"]}
+  ];
+  return [...material,...services]
+}
+function v21RenderGlobalSearch(query){
+  if(!v21SearchResults)return;
+  const q=(query||"").trim().toLowerCase();
+  const items=v21GlobalItems().filter(x=>{
+    const hay=`${x.code||""} ${x.name||""} ${x.color||""} ${x.brand||""} ${x.v21Type||""} ${(x.tags||[]).join(" ")} ${x.matchingLaminate||""} ${(x.matchingEdges||[]).join(" ")}`.toLowerCase();
+    return !q||hay.includes(q)
+  }).slice(0,30);
+  v21SearchResults.innerHTML=items.map(x=>`<article class="v21-search-item"><img src="${esc(x.imageUrl||x.image||"./product-placeholder.svg")}" alt=""><div><strong>${esc(x.code||"")} ${esc(x.name||"")}</strong><small>${esc(x.v21Type)}${x.brand?` · ${esc(x.brand)}`:""}${x.stock!==undefined?` · Qoldiq: ${x.stock}`:""}</small></div><span>${x.v21Price?money(x.v21Price):"Batafsil"}</span></article>`).join("")||"<p>Mahsulot topilmadi.</p>";
+}
+v21SearchInput?.addEventListener("input",e=>v21RenderGlobalSearch(e.target.value));
+
+let v21Parts=[];
+const v21PartsList=document.getElementById("v21PartsList");
+function v21RenderParts(){
+  if(!v21PartsList)return;
+  v21PartsList.innerHTML=v21Parts.map((p,i)=>`<div class="v21-part-row"><div><strong>${p.width}×${p.height} mm — ${p.qty} dona</strong><small>${p.edgeSides?`${p.edgeSides} tomon kromka`:"Kromkasiz"}</small></div><span>${((p.width*p.height*p.qty)/1000000).toFixed(2)} m²</span><button data-v21-remove="${i}">×</button></div>`).join("")||"<p style='color:#9fb4a7'>Hali detal kiritilmagan.</p>";
+  const totalQty=v21Parts.reduce((s,p)=>s+p.qty,0);
+  const totalArea=v21Parts.reduce((s,p)=>s+p.width*p.height*p.qty,0)/1000000;
+  const sheetW=Number(document.getElementById("v21SheetWidth")?.value||2800);
+  const sheetH=Number(document.getElementById("v21SheetHeight")?.value||2070);
+  const waste=Number(document.getElementById("v21Waste")?.value||10)/100;
+  const sheetArea=(sheetW*sheetH)/1000000;
+  const sheets=totalArea?Math.ceil(totalArea*(1+waste)/sheetArea):0;
+  let edgeMm=0;
+  for(const p of v21Parts){
+    if(p.edgeSides===1)edgeMm+=Math.max(p.width,p.height)*p.qty;
+    if(p.edgeSides===2)edgeMm+=(p.width+p.height)*p.qty;
+    if(p.edgeSides===4)edgeMm+=(2*p.width+2*p.height)*p.qty;
+  }
+  document.getElementById("v21TotalParts").textContent=`${totalQty} dona`;
+  document.getElementById("v21TotalArea").textContent=`${totalArea.toFixed(2)} m²`;
+  document.getElementById("v21SheetCount").textContent=`${sheets} list`;
+  document.getElementById("v21EdgeMeters").textContent=`${(edgeMm/1000).toFixed(1)} m`;
+}
+document.getElementById("v21AddPart")?.addEventListener("click",()=>{
+  const width=Number(document.getElementById("v21PartWidth").value);
+  const height=Number(document.getElementById("v21PartHeight").value);
+  const qty=Number(document.getElementById("v21PartQty").value||1);
+  const edgeSides=Number(document.getElementById("v21EdgeSides").value||0);
+  if(width<=0||height<=0||qty<=0)return;
+  v21Parts.push({width,height,qty,edgeSides});
+  document.getElementById("v21PartWidth").value="";
+  document.getElementById("v21PartHeight").value="";
+  document.getElementById("v21PartQty").value=1;
+  v21RenderParts();
+});
+v21PartsList?.addEventListener("click",e=>{
+  const b=e.target.closest("[data-v21-remove]");
+  if(!b)return;
+  v21Parts.splice(Number(b.dataset.v21Remove),1);
+  v21RenderParts();
+});
+["v21SheetWidth","v21SheetHeight","v21Waste"].forEach(id=>document.getElementById(id)?.addEventListener("input",v21RenderParts));
+document.getElementById("v21ClearParts")?.addEventListener("click",()=>{v21Parts=[];v21RenderParts()});
+v21RenderParts();
