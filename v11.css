@@ -103,7 +103,7 @@
 
 
 /* ============================
-   V16 REFERENCE DESIGN
+   V17 REFERENCE DESIGN
    ============================ */
 .v11-topbar,.v11-header,.v11-hero,.v11-quick-services{display:none!important}
 .v15-container{width:min(1280px,calc(100% - 40px));margin:auto}
@@ -207,7 +207,7 @@
 
 
 /* ============================
-   V16 VISUAL FIX
+   V17 VISUAL FIX
    ============================ */
 .v15-hero-photo{
   overflow:hidden;
@@ -282,7 +282,7 @@
 
 
 /* =====================================
-   V16 CLEAN DESIGN — repeated logo removed
+   V17 CLEAN DESIGN — repeated logo removed
    ===================================== */
 .v15-brand{
   min-width:300px;

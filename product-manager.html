@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BUVAYDA IBRAT MEBEL V17 — Laminat va Kromka boshqaruvi</title>
+  <link rel="stylesheet" href="./product-manager.css?v=17">
+</head>
+<body>
+  <aside class="pm-sidebar" id="pmSidebar">
+    <a class="pm-brand" href="./super-admin.html">
+      <span class="pm-mark">BM</span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V17 Mahsulot boshqaruvi</small></span>
+    </a>
+    <nav>
+      <p>MAHSULOTLAR</p>
+      <button class="active" data-page="dashboard">▦ Umumiy ko‘rinish</button>
+      <button data-page="laminate-form">＋ Laminat qo‘shish</button>
+      <button data-page="edge-form">＋ Kromka qo‘shish</button>
+      <button data-page="laminates">▤ Laminatlar</button>
+      <button data-page="edges">≡ Kromkalar</button>
+      <p>OMMAVIY AMALLAR</p>
+      <button data-page="import-export">⇄ Excel import / eksport</button>
+      <button data-page="qr">▦ QR kodlar</button>
+      <button data-page="scanner">⌁ QR skaner</button>
+      <p>TIZIM</p>
+      <a href="./korxona.html">◫ Korxona boshqaruvi</a>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+      <a href="./index.html">⌂ Asosiy sayt</a>
+    </nav>
+  </aside>
+
+  <main class="pm-main">
+    <header class="pm-topbar">
+      <div>
+        <button id="menuToggle" class="pm-menu">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL V17</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
+      </div>
+      <div class="pm-top-actions">
+        <button id="themeToggle">🌙</button>
+        <button id="logoutButton">Chiqish</button>
+      </div>
+    </header>
+
+    <section class="pm-page active" id="pageDashboard">
+      <div class="pm-stats">
+        <article><span>Laminat turi</span><strong id="statLamTypes">0</strong></article>
+        <article><span>Jami laminat</span><strong id="statLamStock">0 list</strong></article>
+        <article><span>Kromka turi</span><strong id="statEdgeTypes">0</strong></article>
+        <article><span>Jami kromka</span><strong id="statEdgeStock">0 m</strong></article>
+        <article><span>Kam qolgan</span><strong id="statLow">0</strong></article>
+      </div>
+
+      <div class="pm-grid two">
+        <article class="pm-card">
+          <div class="pm-card-head"><h2>Tezkor qo‘shish</h2></div>
+          <div class="pm-quick">
+            <button data-go="laminate-form">＋ Yangi laminat</button>
+            <button data-go="edge-form">＋ Yangi kromka</button>
+            <button data-go="import-export">Excel import</button>
+            <button data-go="scanner">QR skaner</button>
+          </div>
+        </article>
+        <article class="pm-card">
+          <div class="pm-card-head"><h2>Ombor ogohlantirishlari</h2></div>
+          <div id="lowStockList"></div>
+        </article>
+      </div>
+
+      <div class="pm-grid two">
+        <article class="pm-card"><div class="pm-card-head"><h2>So‘nggi laminatlar</h2></div><div id="recentLaminates"></div></article>
+        <article class="pm-card"><div class="pm-card-head"><h2>So‘nggi kromkalar</h2></div><div id="recentEdges"></div></article>
+      </div>
+    </section>
+
+    <section class="pm-page" id="pageLaminateForm">
+      <div class="pm-intro">
+        <div><p>15 SONIYADA QO‘SHISH</p><h2 id="laminateFormTitle">Yangi laminat</h2><span>Rasmni tanlang, kod va qoldiqni kiriting — tayyor.</span></div>
+        <button class="pm-secondary" id="resetLaminateForm">Formani tozalash</button>
+      </div>
+      <form class="pm-card pm-product-form" id="laminateForm">
+        <input type="hidden" id="laminateId">
+        <div class="pm-image-column">
+          <div class="pm-image-preview"><img id="laminatePreview" src="./product-placeholder.svg" alt=""></div>
+          <label class="pm-upload">📷 Kompyuterdan rasm tanlash<input id="laminateImageFile" type="file" accept="image/*" hidden></label>
+          <label>Yoki rasm URL<input id="laminateImageUrl" placeholder="https://..."></label>
+          <small>Rasm avtomatik siqiladi va shu brauzerda saqlanadi.</small>
+        </div>
+        <div class="pm-fields">
+          <div class="pm-row two"><label>Kod *<input id="laminateCode" required placeholder="EGGER H1145 yoki A101"></label><label>Nomi / rang *<input id="laminateName" required placeholder="Kashmir, Oq mat..."></label></div>
+          <div class="pm-row three"><label>Brend<input id="laminateBrand" placeholder="Egger"></label><label>Qalinligi<select id="laminateThickness"><option>16</option><option>18</option><option>25</option></select></label><label>O‘lchami<input id="laminateSize" value="2800×2070"></label></div>
+          <div class="pm-row three"><label>Sotuv narxi *<input id="laminateSalePrice" type="number" min="0" required></label><label>Eski narxi<input id="laminateOldPrice" type="number" min="0"></label><label>Tannarxi<input id="laminateCostPrice" type="number" min="0"></label></div>
+          <div class="pm-row three"><label>Qoldiq (list) *<input id="laminateStock" type="number" min="0" step="0.01" required></label><label>Minimal qoldiq<input id="laminateMinStock" type="number" min="0" value="5"></label><label>Ombor joyi<input id="laminateLocation" placeholder="A-15"></label></div>
+          <div class="pm-row two"><label>Mos kromka kodlari<input id="laminateMatchingEdges" placeholder="04.19, 08.19, 22.1"></label><label>Kalit so‘zlar<input id="laminateTags" placeholder="yog‘och, oq, kulrang"></label></div>
+          <label>Izoh<textarea id="laminateNote" placeholder="Qo‘shimcha ma’lumot..."></textarea></label>
+          <div class="pm-form-actions"><button type="submit">💾 Laminatni saqlash</button><button type="button" class="pm-secondary" id="saveAndNewLaminate">Saqlash va yangisini ochish</button></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="pm-page" id="pageEdgeForm">
+      <div class="pm-intro">
+        <div><p>10 SONIYADA QO‘SHISH</p><h2 id="edgeFormTitle">Yangi kromka</h2><span>04.19, 08.19 kabi kod va metr qoldig‘ini kiriting.</span></div>
+        <button class="pm-secondary" id="resetEdgeForm">Formani tozalash</button>
+      </div>
+      <form class="pm-card pm-product-form" id="edgeForm">
+        <input type="hidden" id="edgeId">
+        <div class="pm-image-column">
+          <div class="pm-image-preview"><img id="edgePreview" src="./product-placeholder.svg" alt=""></div>
+          <label class="pm-upload">📷 Kompyuterdan rasm tanlash<input id="edgeImageFile" type="file" accept="image/*" hidden></label>
+          <label>Yoki rasm URL<input id="edgeImageUrl" placeholder="https://..."></label>
+        </div>
+        <div class="pm-fields">
+          <div class="pm-row two"><label>Kod *<input id="edgeCode" required placeholder="04.19"></label><label>Nomi / rang *<input id="edgeName" required placeholder="Oq mat"></label></div>
+          <div class="pm-row three"><label>Brend<input id="edgeBrand"></label><label>Qalinligi<select id="edgeThickness"><option value="0.4">0.4 mm</option><option value="0.8">0.8 mm</option><option value="1">1 mm</option><option value="2">2 mm</option></select></label><label>Eni<select id="edgeWidth"><option>19</option><option>22</option><option>28</option><option>35</option><option>45</option></select></label></div>
+          <div class="pm-row three"><label>Sotuv narxi / metr *<input id="edgeSalePrice" type="number" min="0" required></label><label>Tannarxi / metr<input id="edgeCostPrice" type="number" min="0"></label><label>Rulon metri<input id="edgeRollMeters" type="number" min="0" value="200"></label></div>
+          <div class="pm-row three"><label>Qoldiq (metr) *<input id="edgeStock" type="number" min="0" step="0.01" required></label><label>Minimal qoldiq<input id="edgeMinStock" type="number" min="0" value="50"></label><label>Ombor joyi<input id="edgeLocation" placeholder="K-08"></label></div>
+          <div class="pm-row two"><label>Mos laminat kodlari<input id="edgeMatchingLaminate" placeholder="A101, H1145, W980"></label><label>Kalit so‘zlar<input id="edgeTags" placeholder="oq, 0.4, mat"></label></div>
+          <label>Izoh<textarea id="edgeNote"></textarea></label>
+          <div class="pm-form-actions"><button type="submit">💾 Kromkani saqlash</button><button type="button" class="pm-secondary" id="saveAndNewEdge">Saqlash va yangisini ochish</button></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="pm-page" id="pageLaminates">
+      <div class="pm-intro">
+        <div><p>OMBOR</p><h2>Laminatlar</h2></div>
+        <div class="pm-intro-actions"><button data-go="laminate-form">＋ Yangi laminat</button><button class="pm-secondary" id="exportLaminateExcel">Excel eksport</button></div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-toolbar"><input id="laminateSearch" placeholder="Kod, rang yoki brend..."><select id="laminateStockFilter"><option value="">Barcha qoldiq</option><option value="available">Mavjud</option><option value="low">Kam qolgan</option><option value="empty">Tugagan</option></select></div>
+        <div id="laminateTable"></div>
+      </div>
+    </section>
+
+    <section class="pm-page" id="pageEdges">
+      <div class="pm-intro">
+        <div><p>OMBOR</p><h2>Kromkalar</h2></div>
+        <div class="pm-intro-actions"><button data-go="edge-form">＋ Yangi kromka</button><button class="pm-secondary" id="exportEdgeExcel">Excel eksport</button></div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-toolbar"><input id="edgeSearch" placeholder="04.19, 08.19, rang..."><select id="edgeStockFilter"><option value="">Barcha qoldiq</option><option value="available">Mavjud</option><option value="low">Kam qolgan</option><option value="empty">Tugagan</option></select></div>
+        <div id="edgeTable"></div>
+      </div>
+    </section>
+
+    <section class="pm-page" id="pageImportExport">
+      <div class="pm-intro"><div><p>OMMAVIY YUKLASH</p><h2>Excel import va eksport</h2><span>Yuzlab mahsulotni bir marta yuklang.</span></div></div>
+      <div class="pm-grid two">
+        <article class="pm-card">
+          <h2>Excel import</h2>
+          <p>Avval shablonni yuklab oling, ma’lumotlarni to‘ldiring va qayta import qiling.</p>
+          <div class="pm-import-box">
+            <select id="importType"><option value="laminates">Laminatlar</option><option value="edges">Kromkalar</option></select>
+            <label class="pm-upload">📁 Excel yoki CSV fayl tanlash<input id="importFile" type="file" accept=".xlsx,.xls,.csv" hidden></label>
+            <button id="downloadTemplate">Shablonni yuklash</button>
+          </div>
+          <div id="importPreview"></div>
+          <button id="confirmImport" disabled>Importni tasdiqlash</button>
+        </article>
+        <article class="pm-card">
+          <h2>Eksport va zaxira</h2>
+          <div class="pm-export-buttons">
+            <button id="exportAllExcel">Barcha mahsulotlarni Excel</button>
+            <button id="exportLaminatesCsv">Laminatlar CSV</button>
+            <button id="exportEdgesCsv">Kromkalar CSV</button>
+            <a href="./backup.html">To‘liq JSON backup</a>
+          </div>
+          <p class="pm-note">Excel funksiyasi internet orqali SheetJS kutubxonasini yuklaydi. Internet bo‘lmasa CSV eksport ishlaydi.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pm-page" id="pageQr">
+      <div class="pm-intro"><div><p>QR KOD</p><h2>Mahsulot QR kodlari</h2><span>QR kodni bosib chiqarib ombor mahsulotiga yopishtiring.</span></div><button id="printQrPage">QR sahifani chop etish</button></div>
+      <div class="pm-card">
+        <div class="pm-toolbar"><select id="qrType"><option value="laminates">Laminatlar</option><option value="edges">Kromkalar</option></select><input id="qrSearch" placeholder="Kod yoki nom..."></div>
+        <div class="pm-qr-grid" id="qrGrid"></div>
+      </div>
+    </section>
+
+    <section class="pm-page" id="pageScanner">
+      <div class="pm-intro"><div><p>TELEFON KAMERASI</p><h2>QR kodni skanerlash</h2><span>Kamera orqali mahsulot kodini toping va qoldig‘ini ko‘ring.</span></div></div>
+      <div class="pm-grid scanner-grid">
+        <article class="pm-card">
+          <video id="scannerVideo" autoplay playsinline muted></video>
+          <div class="pm-scanner-actions"><button id="startScanner">Kamerani yoqish</button><button class="pm-secondary" id="stopScanner">To‘xtatish</button></div>
+          <p class="pm-note" id="scannerMessage">Chrome yoki Android telefon tavsiya etiladi.</p>
+        </article>
+        <article class="pm-card"><h2>Topilgan mahsulot</h2><div id="scannerResult"><p>QR kodni kameraga tuting.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="pm-modal" id="deleteModal" hidden>
+    <div class="pm-modal-card"><h2>Mahsulot o‘chirilsinmi?</h2><p id="deleteModalText"></p><div><button class="pm-danger" id="confirmDelete">Ha, o‘chirish</button><button class="pm-secondary" id="cancelDelete">Bekor qilish</button></div></div>
+  </div>
+  <div class="pm-toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script type="module" src="./product-manager.js?v=17"></script>
+</body>
+</html>

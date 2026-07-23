@@ -1,0 +1,39 @@
+BUVAYDA IBRAT MEBEL V17 — LAMINAT VA KROMKA BOSHQARUVI
+
+STANDART PIN:
+1212
+
+YANGI SAHIFA:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/product-manager.html
+
+V17 IMKONIYATLARI:
+- Laminatni tez qo‘shish.
+- Kromkani tez qo‘shish.
+- Telefon yoki kompyuterdan rasm tanlash.
+- Rasm avtomatik siqiladi.
+- Edit, Save va tasdiqlash bilan O‘chirish.
+- Excel XLSX import va eksport.
+- Internet bo‘lmasa CSV import/eksport.
+- Importda bir xil kod mavjud bo‘lsa, mahsulot yangilanadi.
+- Har bir mahsulot uchun QR kod.
+- QR kodni alohida yoki ommaviy chop etish.
+- Telefon kamerasi bilan QR skaner.
+- QR orqali qoldiq, narx va ombor joyini ko‘rish.
+- Laminatga mos kromka kodlarini yozish.
+- Kromkaga mos laminat kodlarini yozish.
+- Kam qolgan va tugagan mahsulotlar ogohlantirishi.
+- Barcha ma’lumotlar asosiy sayt, ERP va ombor bilan bir bazada ishlaydi.
+
+EXCEL USTUNLARI:
+Laminat: Kod, Nomi, Brend, Qalinlik, Olcham, Sotuv narxi, Eski narxi, Tannarxi, Qoldiq, Minimal qoldiq, Ombor joyi, Mos kromka, Rasm URL, Izoh.
+Kromka: Kod, Nomi, Brend, Qalinlik, Eni, Sotuv narxi, Tannarxi, Rulon metri, Qoldiq, Minimal qoldiq, Ombor joyi, Mos laminat, Rasm URL, Izoh.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V17 PRODUCT MANAGER
+4. Deploy tugagach Ctrl + F5 bosing.
+
+MUHIM:
+Rasmlar LocalStorage’da saqlangani uchun juda ko‘p katta rasm qo‘shmang.
+V17 rasmlarni avtomatik siqadi, lekin muntazam Backup oling.
