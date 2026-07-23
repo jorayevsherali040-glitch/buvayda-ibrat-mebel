@@ -1,0 +1,26 @@
+BUVAYDA IBRAT MEBEL V22.2 — RASMLAR OCHILISHI TUZATILDI
+
+SABAB:
+GitHub orqali fayllar yuklanganda “v22-assets” ichki papkasi yuklanmay qolgan.
+Sayt rasmlarni shu papkadan qidirgani uchun rasmlar ochilmagan.
+
+TUZATILDI:
+- Barcha V22 rasmlar loyiha asosiy papkasiga ko‘chirildi.
+- index.html va v13.js ichidagi rasm yo‘llari yangilandi.
+- Har bir rasm uchun eski mahalliy JPG fallback qo‘shildi.
+- Rasm ochilmasa, eski rasm avtomatik ko‘rinadi.
+- Kesh versiyasi V22.2 qilib yangilandi.
+
+GITHUB’GA ALBATTA YUKLANADIGAN YANGI FAYLLAR:
+v22-premium-factory.svg
+v22-laminate-sheets.svg
+v22-edge-rolls.svg
+v22-cnc-drilling.svg
+v22-furniture-design.svg
+index.html
+v13.js
+
+COMMIT:
+V22.2 IMAGE PATH FIX
+
+Deploy tugagach Ctrl + Shift + R bosing.
