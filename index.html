@@ -9,35 +9,39 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./v11.css">
+  <link rel="stylesheet" href="./v11.css?v=15.3">
 </head>
 <body>
-  <div class="v11-topbar">
-    <div class="v11-wrap">
-      <span>Mebel ustalari uchun barcha xizmatlar bir platformada</span>
-      <div><a href="tel:+998958027755">+998 95 802 77 55</a><span>08:00–20:00</span></div>
+  <div class="v15-topbar">
+    <div class="v15-container">
+      <span>⌖ Buvayda tumani, Yangiqo‘rg‘on — G‘AYI ro‘parasida</span>
+      <span>◷ Ish vaqti: 08:00–20:00</span>
+      <a href="tel:+998958027755">☎ +998 95 802 77 55</a>
     </div>
   </div>
 
-  <header class="v11-header" id="siteHeader">
-    <div class="v11-wrap v11-header-inner">
-      <a class="v11-brand" href="#bosh">
+  <header class="v15-header" id="siteHeader">
+    <div class="v15-container v15-header-inner">
+      <a class="v15-brand" href="#bosh">
         <img src="./logo.png" alt="Buvayda Ibrat Mebel">
-        <span><strong>BUVAYDA IBRAT MEBEL</strong><small>Market • Servis • ERP</small></span>
+        <span>
+          <strong>BUVAYDA IBRAT <em>MEBEL</em></strong>
+          <small>Mebel ishlab chiqarish va servis xizmati</small>
+        </span>
       </a>
 
       <button class="v11-menu" id="menuButton" type="button">☰</button>
 
       <nav id="mainNav">
-        <a href="#laminat">Laminat</a>
-        <a href="#kromka">Kromka</a>
-        <a href="#servis">Servis</a>
-        <a href="#kalkulyator">Mahsulot kalkulyatori</a>
+        <a class="active" href="#bosh">Bosh sahifa</a>
+        <a href="#servis">Xizmatlar</a>
+        <a href="#laminat">Mahsulotlar</a>
         <a href="#mebellar">Mebellar</a>
+        <a href="#kalkulyator">Hisob-kitob</a>
         <a href="#aloqa">Aloqa</a>
       </nav>
 
-      <div class="v11-actions">
+      <div class="v11-actions v15-actions">
         <button id="themeToggle" type="button">☾</button>
         <button id="favoriteButton" type="button">♡ <b id="favoriteCount">0</b></button>
         <button class="v11-cart-button" id="cartButton" type="button">Savatcha <b id="cartCount">0</b></button>
@@ -46,31 +50,63 @@
   </header>
 
   <main>
-    <section class="v11-hero v15-hero-bright" id="bosh">
-      <div class="v11-wrap v11-hero-content">
-        <p class="v11-kicker">LAMINAT • KROMKA • KESISH • TESHISH</p>
-        <h1>Mebel ustalari uchun<br><em>barcha xizmatlar bir platformada.</em></h1>
-        <p>Laminat va kromkalarni ombordagi real qoldiq bilan tanlang, servis narxini hisoblang va Telegram orqali buyurtma yuboring.</p>
-        <div class="v11-hero-buttons">
-          <a class="v11-primary" href="#laminat">Laminat market</a>
-          <a class="v11-secondary" href="#kalkulyator">Xizmat narxini hisoblash</a>
+    <section class="v15-hero" id="bosh">
+      <div class="v15-container v15-hero-grid">
+        <div class="v15-hero-copy">
+          <div class="v15-badge">SIFAT • ISHONCH • MAHORAT</div>
+          <h1>Sifatli mebel —<br><em>Siz uchun!</em></h1>
+          <p>Zamonaviy uskunalar va tajribali ustalar yordamida sifatli mebellar, laminat, kromka va professional servis xizmatlarini taklif qilamiz.</p>
+          <div class="v15-hero-buttons">
+            <a class="v15-primary" href="#servis">Xizmatlarimiz bilan tanishing →</a>
+            <a class="v15-secondary" href="#kalkulyator">▶ Hisob-kitob</a>
+          </div>
         </div>
-        <div class="v11-live-stats">
-          <article><strong id="heroLaminateCount">0</strong><span>Laminat turi</span></article>
-          <article><strong id="heroEdgeCount">0</strong><span>Kromka kodi</span></article>
-          <article><strong>200+</strong><span>Kunlik kesish</span></article>
-          <article><strong>1500 m</strong><span>Kunlik kromka</span></article>
-          <article><strong id="heroOrderCount">0</strong><span>Bugungi buyurtma</span></article>
+
+        <div class="v15-hero-photo">
+          <img src="./hero-workshop.jpg" alt="Buvayda Ibrat Mebel ishlab chiqarish sexi">
+          <div class="v15-experience-card">
+            <span>✓</span>
+            <div><strong>10+ yillik tajriba</strong><small>Minglab mijozlar ishonchi</small></div>
+          </div>
         </div>
       </div>
-</section>
 
-    <section class="v11-quick-services">
-      <div class="v11-wrap">
-        <a href="#laminat"><span>01</span><strong>Laminat savdosi</strong><small>Kod, brend, rang va qoldiq</small></a>
-        <a href="#kromka"><span>02</span><strong>Kromka market</strong><small>04.19, 08.19 va boshqalar</small></a>
-        <a href="#servis"><span>03</span><strong>Professional kesish</strong><small>Aniq o‘lcham va tezkor xizmat</small></a>
-        <a href="#servis"><span>04</span><strong>Bazis teshish</strong><small>Yig‘ishga tayyor detallar</small></a>
+      <div class="v15-container">
+        <div class="v15-service-strip">
+          <a href="#laminat"><span>▰</span><div><strong>Laminat kesish</strong><small>Aniq va sifatli kesish</small></div></a>
+          <a href="#kromka"><span>◎</span><div><strong>Kromka yopishtirish</strong><small>Zamonaviy uskunalarda</small></div></a>
+          <a href="#servis"><span>⚙</span><div><strong>Teshish xizmati</strong><small>Bazis va boshqa teshish</small></div></a>
+          <a href="#servis"><span>▣</span><div><strong>Dizayn yaratish</strong><small>3D dizayn va loyiha</small></div></a>
+          <a href="#kalkulyator"><span>▦</span><div><strong>Hisob-kitob</strong><small>Aniq hisob va maslahat</small></div></a>
+          <a href="#aloqa"><span>▱</span><div><strong>Yetkazib berish</strong><small>Tez va ishonchli</small></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="v15-showcase">
+      <div class="v15-container v15-showcase-grid">
+        <article class="v15-why-card">
+          <h2>Nega bizni tanlashadi?</h2>
+          <div class="v15-why-stats">
+            <div><strong>1000+</strong><span>Mamnun mijozlar</span></div>
+            <div><strong>10+</strong><span>Yillik tajriba</span></div>
+            <div><strong>20+</strong><span>Zamonaviy uskuna</span></div>
+            <div><strong>100%</strong><span>Sifat kafolati</span></div>
+          </div>
+        </article>
+
+        <div class="v15-featured-services">
+          <div class="v15-section-title">
+            <div><p>XIZMATLARIMIZ</p><h2>Asosiy xizmatlar</h2></div>
+            <a href="#servis">Barchasini ko‘rish →</a>
+          </div>
+          <div class="v15-service-cards">
+            <article><img src="./service-laminate.jpg" alt=""><div><h3>Laminat kesish</h3><p>Turli qalinlikdagi laminatlarni aniq o‘lchamda kesib beramiz.</p><a href="#laminat">Batafsil</a></div></article>
+            <article><img src="./service-edge.jpg" alt=""><div><h3>Kromka yopishtirish</h3><p>Turli rang va qalinlikdagi kromkalarni yopishtiramiz.</p><a href="#kromka">Batafsil</a></div></article>
+            <article><img src="./service-drill.jpg" alt=""><div><h3>Teshish xizmati</h3><p>Bazis, konfirmat va boshqa teshish xizmatlari.</p><a href="#servis">Batafsil</a></div></article>
+            <article><img src="./service-design.jpg" alt=""><div><h3>Dizayn yaratish</h3><p>3D dizayn, loyiha va vizualizatsiya xizmatlari.</p><a href="#servis">Batafsil</a></div></article>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -197,6 +233,6 @@
   <div class="v11-toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script type="module" src="./v13.js"></script>
+  <script type="module" src="./v13.js?v=15.3"></script>
 </body>
 </html>

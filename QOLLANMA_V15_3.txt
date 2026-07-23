@@ -1,0 +1,17 @@
+BUVAYDA IBRAT MEBEL V15.3
+
+YANGI KO‘RINISH:
+- Foydalanuvchi yuborgan namunaga o‘xshash oq, yashil va sariq premium dizayn.
+- Yuqori aloqa paneli.
+- Yangi katta bosh sahifa.
+- Ishlab chiqarish sexi rasmi.
+- 6 ta tezkor xizmat paneli.
+- “Nega bizni tanlashadi?” statistikasi.
+- 4 ta asosiy xizmat kartasi.
+- Oldingi V15 funksiyalari saqlangan.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V15.3 DESIGN
+4. Deploy tugagach Ctrl + F5 bosing.
