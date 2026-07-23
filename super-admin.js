@@ -1,5 +1,6 @@
 import { auth, db } from "./firebase-config.js";
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { signInAnonymously, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { ADMIN_PIN_HASH, PIN_MAX_ATTEMPTS, PIN_LOCK_MINUTES } from "./pin-config.js";
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $=id=>document.getElementById(id);
@@ -9,9 +10,75 @@ function money(v){return Number(v||0).toLocaleString("uz-UZ")+" so‘m"}
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 
-$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginMessage").textContent="Tekshirilmoqda...";try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginPassword").value);$("loginMessage").textContent=""}catch(err){console.error(err);$("loginMessage").textContent="Email yoki parol noto‘g‘ri."}};
-$("logoutButton").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,u=>{$("loginView").hidden=!!u;$("appView").hidden=!u;$("userEmail").textContent=u?.email||""});
+async function sha256(value){
+  const data=new TextEncoder().encode(value);
+  const hash=await crypto.subtle.digest("SHA-256",data);
+  return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+function getPinState(){
+  try{return JSON.parse(localStorage.getItem("v12PinState")||'{"attempts":0,"lockedUntil":0}')}
+  catch{return {attempts:0,lockedUntil:0}}
+}
+function setPinState(value){localStorage.setItem("v12PinState",JSON.stringify(value))}
+function updatePinDots(){
+  const length=$("loginPin").value.length;
+  document.querySelectorAll("#pinDots i").forEach((dot,index)=>dot.classList.toggle("active",index<Math.min(length,4)));
+}
+$("loginPin").addEventListener("input",e=>{
+  e.target.value=e.target.value.replace(/\D/g,"").slice(0,8);
+  updatePinDots();
+});
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();
+  const message=$("loginMessage");
+  const state=getPinState();
+  if(Date.now()<state.lockedUntil){
+    const minutes=Math.ceil((state.lockedUntil-Date.now())/60000);
+    message.textContent=`Ko‘p xato urinish. ${minutes} daqiqadan keyin qayta urinib ko‘ring.`;
+    return;
+  }
+  message.textContent="PIN tekshirilmoqda...";
+  const pin=$("loginPin").value.trim();
+  if(await sha256(pin)!==ADMIN_PIN_HASH){
+    const attempts=state.attempts+1;
+    if(attempts>=PIN_MAX_ATTEMPTS){
+      setPinState({attempts:0,lockedUntil:Date.now()+PIN_LOCK_MINUTES*60000});
+      message.textContent=`PIN noto‘g‘ri. Kirish ${PIN_LOCK_MINUTES} daqiqaga bloklandi.`;
+    }else{
+      setPinState({attempts,lockedUntil:0});
+      message.textContent=`PIN noto‘g‘ri. Qolgan urinish: ${PIN_MAX_ATTEMPTS-attempts}.`;
+    }
+    $("loginPin").value="";
+    updatePinDots();
+    return;
+  }
+  try{
+    setPinState({attempts:0,lockedUntil:0});
+    await setPersistence(auth,browserSessionPersistence);
+    await signInAnonymously(auth);
+    sessionStorage.setItem("v12PinVerified","1");
+    message.textContent="";
+    $("loginPin").value="";
+    updatePinDots();
+  }catch(err){
+    console.error(err);
+    message.textContent=err?.code==="auth/operation-not-allowed"
+      ?"Firebase’da Anonymous kirishni yoqing: Authentication → Sign-in method → Anonymous → Enable."
+      :"Firebase bilan ulanishda xatolik yuz berdi.";
+  }
+};
+$("logoutButton").onclick=async()=>{
+  sessionStorage.removeItem("v12PinVerified");
+  await signOut(auth);
+};
+onAuthStateChanged(auth,u=>{
+  const verified=sessionStorage.getItem("v12PinVerified")==="1";
+  const allowed=Boolean(u&&verified);
+  $("loginView").hidden=allowed;
+  $("appView").hidden=!allowed;
+  $("userEmail").textContent=allowed?"PIN orqali kirildi":"PIN sessiyasi";
+  if(u&&!verified)signOut(auth).catch(console.error);
+});
 
 const titles={overview:"Umumiy ko‘rinish","quick-add":"Tez qo‘shish",laminates:"Laminatlar",edges:"Kromkalar",furniture:"Mebellar","service-prices":"Xizmat narxlari","site-settings":"Sayt sozlamalari"};
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-page]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".sa-page").forEach(x=>x.classList.remove("active"));const key=b.dataset.page;$("page"+key.split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join("")).classList.add("active");$("pageTitle").textContent=titles[key];document.querySelector(".sa-sidebar").classList.remove("open")});

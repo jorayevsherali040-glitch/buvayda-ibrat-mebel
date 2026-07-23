@@ -1,0 +1,27 @@
+BUVAYDA IBRAT MEBEL V12 — PIN KODLI ADMIN
+
+STANDART PIN: 1212
+
+ADMIN MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/super-admin.html
+
+V12:
+- Gmail va parol olib tashlandi.
+- Admin 4–8 xonali PIN orqali ochiladi.
+- 5 marta noto‘g‘ri kiritilsa, 5 daqiqaga bloklanadi.
+- PIN to‘g‘ri bo‘lgach Firebase Anonymous Authentication ishlaydi.
+- Brauzer yopilganda PIN sessiyasi tugaydi.
+- PINni almashtirish uchun pin-generator.html bor.
+
+FIREBASE’DA SHART:
+Authentication → Sign-in method → Add new provider → Anonymous → Enable → Save.
+
+KEYIN:
+1. firestore.rules faylini Firebase Firestore Rules bo‘limiga joylang.
+2. Publish bosing.
+3. ZIPni ochib, barcha fayllarni GitHub ustiga yuklang.
+4. Commit: BUVAYDA IBRAT MEBEL V12 PIN
+5. Deploy tugagach Ctrl + F5 bosing.
+
+ESLATMA:
+GitHub Pages’dagi PIN himoyasi sodda himoya hisoblanadi. Juda maxfiy yoki bank ma’lumotlari uchun server tomonidagi autentifikatsiya kerak.
