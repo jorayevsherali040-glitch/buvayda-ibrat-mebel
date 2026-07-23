@@ -13,7 +13,16 @@ function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");cle
 function pinState(){try{return JSON.parse(localStorage.getItem("v13PinState")||'{"attempts":0,"lockedUntil":0}')}catch{return{attempts:0,lockedUntil:0}}}
 function setPinState(v){localStorage.setItem("v13PinState",JSON.stringify(v))}
 function showApp(){
-  $("loginView").hidden=true;$("appView").hidden=false;sessionStorage.setItem("v13PinVerified","1");render()
+  $("loginView").hidden=true;
+  $("appView").hidden=false;
+  sessionStorage.setItem("v13PinVerified","1");
+  const destination=sessionStorage.getItem("v14AfterLogin");
+  if(destination){
+    sessionStorage.removeItem("v14AfterLogin");
+    location.href=destination==="calculator"?"./korxona.html#calculator":"./korxona.html";
+    return;
+  }
+  render();
 }
 function showLogin(){
   $("loginView").hidden=false;$("appView").hidden=true;sessionStorage.removeItem("v13PinVerified")

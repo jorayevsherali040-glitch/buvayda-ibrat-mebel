@@ -4,6 +4,8 @@ let db=loadDB();
 let lines=[];
 
 if(sessionStorage.getItem("v13PinVerified")!=="1"){
+  const target=location.hash==="#calculator"?"calculator":"dashboard";
+  sessionStorage.setItem("v14AfterLogin",target);
   location.href="./super-admin.html";
 }
 

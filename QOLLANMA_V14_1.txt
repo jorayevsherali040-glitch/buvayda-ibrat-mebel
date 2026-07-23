@@ -1,0 +1,16 @@
+BUVAYDA IBRAT MEBEL V14.1 — LINKLAR TUZATILDI
+
+TUZATILGAN:
+- ERP V10 havolasi yangi Korxona boshqaruvi sahifasiga o‘tkazildi.
+- Hisob-kitob havolasi yangi Mahsulot kalkulyatoriga o‘tkazildi.
+- Eski v10.html, erp.html va hisob.html sahifalari avtomatik yangi tizimga yo‘naltiradi.
+- Korxona tizimi ochilganda PIN kiritilmagan bo‘lsa, Super Admin sahifasiga olib boradi.
+- PIN kiritilgach, foydalanuvchini avtomatik Korxona boshqaruvi yoki Kalkulyatorga qaytaradi.
+
+STANDART PIN: 1212
+
+YUKLASH:
+1. ZIPni Extract qiling.
+2. GitHub’dagi barcha eski fayllar ustiga yuklang.
+3. Commit: V14.1 FIX ERP LINKS
+4. Deploy tugagach Ctrl + F5 bosing.
