@@ -30,6 +30,10 @@
           <p id="loggedInEmail"></p>
         </div>
         <div class="button-row">
+          <button class="button button-light admin-tab active" data-admin-tab="products" type="button">Mahsulotlar</button>
+          <button class="button button-light admin-tab" data-admin-tab="orders" type="button">Buyurtmalar</button>
+          <button class="button button-light admin-tab" data-admin-tab="reviews" type="button">Izohlar</button>
+          <button class="button button-light admin-tab" data-admin-tab="analytics" type="button">Statistika</button>
           <a class="button button-light" href="./index.html#katalog">Katalogni ko‘rish</a>
           <button class="button button-danger" id="logoutButton" type="button">Chiqish</button>
         </div>
@@ -188,9 +192,49 @@
           <div id="adminProducts">Yuklanmoqda...</div>
         </section>
       </div>
+    </div>
     </section>
+
+    <section class="admin-view" id="adminViewOrders">
+      <div class="admin-panel-card">
+        <div class="admin-section-heading">
+          <h2>Buyurtmalar</h2>
+          <input id="orderSearch" type="search" placeholder="Buyurtma qidirish...">
+        </div>
+        <div id="ordersList"></div>
+      </div>
+    </section>
+
+    <section class="admin-view" id="adminViewReviews">
+      <div class="admin-panel-card">
+        <div class="admin-section-heading">
+          <h2>Mijoz izohlari</h2>
+          <select id="reviewStatusFilter">
+            <option value="">Barchasi</option>
+            <option value="pending">Kutilmoqda</option>
+            <option value="approved">Tasdiqlangan</option>
+          </select>
+        </div>
+        <div id="adminReviewsList"></div>
+      </div>
+    </section>
+
+    <section class="admin-view" id="adminViewAnalytics">
+      <div class="analytics-grid">
+        <article class="admin-panel-card">
+          <h2>Sotuv grafigi</h2>
+          <canvas id="salesChart" height="120"></canvas>
+        </article>
+        <article class="admin-panel-card">
+          <h2>Kategoriyalar</h2>
+          <canvas id="categoryChart" height="120"></canvas>
+        </article>
+      </div>
+    </section>
+  </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script type="module" src="./admin.js"></script>
 </body>
 </html>

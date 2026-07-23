@@ -252,3 +252,45 @@ footer a{color:var(--gold)}
 @keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}.product-card{animation:cardIn .42s ease both}
 @media(max-width:1100px){.admin-stats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.catalog-toolbar{grid-template-columns:1fr}.admin-stats{grid-template-columns:repeat(2,1fr)}.instagram-card:hover{transform:none}}
+
+/* ===== V6 GREEN COMMERCE ===== */
+:root{
+  --green-900:#064e2f;
+  --green-800:#075f38;
+  --green-700:#087943;
+  --green-600:#0b8f4e;
+  --green-100:#eaf7ef;
+  --green-50:#f5fbf7;
+  --accent:#0b7a43;
+  --accent-dark:#065f36;
+  --accent-soft:#e7f6ed;
+}
+.button-gold,.main-image-label,.category-badge,.featured-badge{background:var(--accent)!important;color:#fff!important}
+.section-kicker,.price-row strong,.admin-item-price{color:var(--accent)!important}
+.site-header{border-top:4px solid var(--accent)}
+.nav-order,.floating-telegram{background:var(--accent)!important}
+.button-gold:hover{background:var(--accent-dark)!important}
+.new-badge{background:#16a34a}
+.inline-new-badge,.color-chip{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-dark)}
+.category-section,.recommendation-section{background:var(--green-50)}
+.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.category-card{border:1px solid #e2e8e4;background:#fff;border-radius:16px;overflow:hidden;text-align:left;padding:0;cursor:pointer;transition:.25s}
+.category-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(6,95,54,.13)}
+.category-card img{width:100%;height:150px;object-fit:cover}
+.category-card div{padding:14px}.category-card strong{display:block;font-size:17px}.category-card span{color:#6b7280;font-size:13px}
+.catalog-toolbar{grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr}
+.reviews-panel{border-top:1px solid #e5e7eb;margin-top:22px;padding-top:20px}
+.reviews-header{display:flex;justify-content:space-between;align-items:center}
+.reviews-list{display:grid;gap:10px;margin:14px 0}.review-item{background:#f8faf8;border:1px solid #e4ebe6;border-radius:12px;padding:12px}.review-item div{display:flex;justify-content:space-between}.review-item span{color:var(--accent)}
+.review-form{display:grid;grid-template-columns:1fr 110px;gap:10px}.review-form textarea,.review-form button{grid-column:1/-1}
+.cart-summary{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid #ddd;margin-top:12px;font-size:18px}
+.theme-toggle{font-size:18px}
+.dark-theme body{background:#0b1310;color:#e8f0eb}.dark-theme .site-header,.dark-theme .section,.dark-theme .product-card,.dark-theme .admin-container,.dark-theme .modal-card,.dark-theme .category-card{background:#111b16;color:#e8f0eb}.dark-theme .section-dark{background:#06100a}.dark-theme input,.dark-theme select,.dark-theme textarea{background:#0f1813;color:#fff;border-color:#2a3a30}.dark-theme .category-section,.dark-theme .recommendation-section,.dark-theme .bestseller-section{background:#0d1712}.dark-theme .product-body p,.dark-theme .muted-text{color:#a9b6ad}
+.admin-view{display:none}.admin-view.active{display:block}.admin-tab.active{background:var(--accent)!important;color:#fff!important}
+.admin-panel-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px}
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.admin-section-heading{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:16px}
+.order-card,.review-admin-card{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:10px;background:#fff}
+.order-card select{margin-top:10px}
+@media(max-width:1100px){.catalog-toolbar{grid-template-columns:repeat(3,1fr)}.category-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.catalog-toolbar{grid-template-columns:1fr}.category-grid{grid-template-columns:repeat(2,1fr)}.analytics-grid{grid-template-columns:1fr}.review-form{grid-template-columns:1fr}.order-card,.review-admin-card{grid-template-columns:1fr}.admin-section-heading{align-items:stretch;flex-direction:column}}

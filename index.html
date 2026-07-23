@@ -91,6 +91,28 @@
       </div>
     </section>
 
+    <section class="section category-section" id="kategoriyalar">
+      <div class="section-heading">
+        <p class="section-kicker">KATEGORIYALAR</p>
+        <h2>Kerakli mebelni tez toping</h2>
+        <p>Kategoriyani tanlab mahsulotlarni darhol filtrlashingiz mumkin.</p>
+      </div>
+      <div class="category-grid" id="categoryGrid">
+        <div class="empty-state">Kategoriyalar yuklanmoqda...</div>
+      </div>
+    </section>
+
+    <section class="section recommendation-section" id="tavsiya">
+      <div class="section-heading">
+        <p class="section-kicker">AQLLI TAVSIYA</p>
+        <h2>Siz uchun tavsiya etiladi</h2>
+        <p>Ko‘rgan va sevimliga qo‘shgan mahsulotlaringiz asosida.</p>
+      </div>
+      <div class="featured-slider" id="recommendationSlider">
+        <div class="empty-state">Tavsiyalar yuklanmoqda...</div>
+      </div>
+    </section>
+
     <section class="section" id="katalog">
       <div class="section-heading">
         <p class="section-kicker">MAHSULOTLAR</p>
@@ -100,6 +122,7 @@
 
       <div class="catalog-summary">
         <span id="catalogCount">0 ta mahsulot</span>
+        <button class="button button-light compact-button" id="downloadPdfButton" type="button">PDF katalog</button>
         <div class="catalog-actions">
           <button class="mini-action" id="favoritesButton" type="button">❤️ Sevimlilar <b id="favoritesCount">0</b></button>
           <button class="mini-action" id="cartButton" type="button">🛒 Savatcha <b id="cartCount">0</b></button>
@@ -117,6 +140,14 @@
           <option value="price-low">Narxi: arzondan</option>
           <option value="price-high">Narxi: qimmatdan</option>
           <option value="popular">Eng ko‘p sotilgan</option>
+        </select>
+        <input id="minPrice" type="number" min="0" placeholder="Min narx">
+        <input id="maxPrice" type="number" min="0" placeholder="Max narx">
+        <select id="stockFilter">
+          <option value="">Barcha holatlar</option>
+          <option value="available">Omborda bor</option>
+          <option value="low">Kam qolgan</option>
+          <option value="sold">Sotilgan</option>
         </select>
       </div>
 
@@ -207,6 +238,25 @@
   <dialog class="product-modal" id="productModal">
     <button class="modal-close" id="modalClose" type="button">×</button>
     <div id="productModalContent"></div>
+    <section class="reviews-panel">
+      <div class="reviews-header">
+        <h3>Mijoz izohlari</h3>
+        <span id="reviewsAverage">0.0 ★</span>
+      </div>
+      <div id="reviewsList" class="reviews-list"></div>
+      <form id="reviewForm" class="review-form">
+        <input id="reviewName" type="text" placeholder="Ismingiz" required>
+        <select id="reviewRating">
+          <option value="5">5 ★</option>
+          <option value="4">4 ★</option>
+          <option value="3">3 ★</option>
+          <option value="2">2 ★</option>
+          <option value="1">1 ★</option>
+        </select>
+        <textarea id="reviewText" placeholder="Fikringizni yozing" required></textarea>
+        <button class="button button-gold" type="submit">Izoh qoldirish</button>
+      </form>
+    </section>
     <div class="zoom-hint">Rasmni kattalashtirish uchun ustiga bosing</div>
     <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="Oldingi rasm">‹</button>
     <button class="lightbox-next" id="lightboxNext" type="button" aria-label="Keyingi rasm">›</button>
@@ -215,6 +265,7 @@
   <dialog class="product-modal" id="listModal">
     <button class="modal-close" id="listModalClose" type="button">×</button>
     <div id="listModalContent"></div>
+    <div class="cart-summary" id="cartSummary" hidden></div>
     <button class="button button-gold full-width cart-checkout" id="cartCheckoutButton" type="button" hidden>
       Savatchani Telegram orqali yuborish
     </button>
@@ -222,6 +273,7 @@
 
   <a class="floating-telegram" href="https://t.me/ibratmebel8909" target="_blank" rel="noopener">Telegram</a>
 
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script type="module" src="./app.js"></script>
 <div class="toast" id="siteToast" role="status" aria-live="polite"></div>
 

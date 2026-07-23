@@ -1,13 +1,17 @@
 import { auth, db } from "./firebase-config.js";
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import {
+  collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot,
+  serverTimestamp, query, orderBy
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-const OWNER="jorayevsherali040-glitch", REPO="buvayda-ibrat-mebel", BRANCH="main", FOLDER="images";
+const OWNER="jorayevsherali040-glitch",REPO="buvayda-ibrat-mebel",BRANCH="main",FOLDER="images";
 const API=`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`;
 const $=id=>document.getElementById(id);
 const productsCollection=collection(db,"products");
 
-let products=[], githubImages=[], selectedImages=[];
+let products=[],orders=[],reviews=[],githubImages=[],selectedImages=[];
+let salesChart=null,categoryChart=null;
 
 function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function status(msg,type="success"){const b=$("adminStatus");b.textContent=msg;b.className=`admin-status show ${type}`;setTimeout(()=>b.className="admin-status",4500)}
@@ -16,63 +20,47 @@ function getImages(p={}){if(Array.isArray(p.images)&&p.images.length)return p.im
 function csv(value=""){return String(value).split(",").map(x=>x.trim()).filter(Boolean)}
 
 async function loadImages(show=false){
-  $("refreshImagesButton").disabled=true;
-  $("refreshImagesButton").textContent="Yuklanmoqda...";
+  $("refreshImagesButton").disabled=true;$("refreshImagesButton").textContent="Yuklanmoqda...";
   try{
-    const response=await fetch(API,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
-    if(!response.ok)throw new Error(response.status);
-    githubImages=(await response.json()).filter(x=>x.type==="file").map(x=>x.name).filter(n=>/\.(jpe?g|png|webp|gif|avif)$/i.test(n)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-    $("productImageSelect").innerHTML='<option value="">Rasm tanlang...</option>'+githubImages.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+    const r=await fetch(API,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok)throw new Error(r.status);
+    githubImages=(await r.json()).filter(x=>x.type==="file").map(x=>x.name)
+      .filter(n=>/\.(jpe?g|png|webp|gif|avif)$/i.test(n))
+      .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+    $("productImageSelect").innerHTML='<option value="">Rasm tanlang...</option>'+
+      githubImages.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
     if(show)status(`${githubImages.length} ta rasm topildi.`);
-  }catch(error){
-    console.error(error);
-    status("Rasmlar ro‘yxati yuklanmadi. Nomini qo‘lda yozing.","error");
-  }finally{
-    $("refreshImagesButton").disabled=false;
-    $("refreshImagesButton").textContent="Rasmlarni yangilash";
-  }
+  }catch(e){console.error(e);status("Rasmlar yuklanmadi. Nomini qo‘lda yozing.","error")}
+  finally{$("refreshImagesButton").disabled=false;$("refreshImagesButton").textContent="Rasmlarni yangilash"}
 }
-
 function renderSelected(){
-  $("selectedImages").innerHTML=selectedImages.length
-    ?selectedImages.map((name,index)=>`
-      <article class="selected-image-card">
-        <img src="${esc(img(name))}" alt="">
-        <div>
-          <strong>${index+1}. ${esc(name)}</strong>
-          ${index===0?'<span class="main-image-label">Asosiy rasm</span>':""}
-        </div>
-        <div class="selected-image-actions">
-          ${index>0?`<button data-up="${index}" type="button">↑</button>`:""}
-          ${index<selectedImages.length-1?`<button data-down="${index}" type="button">↓</button>`:""}
-          <button class="remove-image" data-remove="${index}" type="button">×</button>
-        </div>
-      </article>`).join("")
-    :'<p class="muted-text">Hozircha rasm tanlanmagan.</p>';
+  $("selectedImages").innerHTML=selectedImages.length?selectedImages.map((n,i)=>`
+    <article class="selected-image-card">
+      <img src="${esc(img(n))}" alt="">
+      <div><strong>${i+1}. ${esc(n)}</strong>${i===0?'<span class="main-image-label">Asosiy rasm</span>':""}</div>
+      <div class="selected-image-actions">
+        ${i>0?`<button data-up="${i}" type="button">↑</button>`:""}
+        ${i<selectedImages.length-1?`<button data-down="${i}" type="button">↓</button>`:""}
+        <button class="remove-image" data-remove="${i}" type="button">×</button>
+      </div>
+    </article>`).join(""):'<p class="muted-text">Hozircha rasm tanlanmagan.</p>';
 }
-
 function addImage(name){
-  const clean=String(name||"").trim().replace(/^images\//,"");
-  if(!clean)return status("Rasm tanlang yoki nomini yozing.","error");
-  if(!/\.(jpe?g|png|webp|gif|avif)$/i.test(clean))return status("Rasm formati noto‘g‘ri.","error");
-  if(selectedImages.includes(clean))return status("Bu rasm qo‘shilgan.","error");
-  if(selectedImages.length>=5)return status("Ko‘pi bilan 5 ta rasm qo‘shiladi.","error");
-  selectedImages.push(clean);
-  renderSelected();
-  $("productImageSelect").value="";
-  $("productImageName").value="";
+  const n=String(name||"").trim().replace(/^images\//,"");
+  if(!n)return status("Rasm tanlang yoki nomini yozing.","error");
+  if(!/\.(jpe?g|png|webp|gif|avif)$/i.test(n))return status("Rasm formati noto‘g‘ri.","error");
+  if(selectedImages.includes(n))return status("Bu rasm qo‘shilgan.","error");
+  if(selectedImages.length>=10)return status("Ko‘pi bilan 10 ta rasm.","error");
+  selectedImages.push(n);renderSelected();$("productImageSelect").value="";$("productImageName").value="";
 }
-
 $("addImageButton").onclick=()=>addImage($("productImageSelect").value);
 $("addManualImageButton").onclick=()=>addImage($("productImageName").value);
 $("refreshImagesButton").onclick=()=>loadImages(true);
-$("selectedImages").onclick=event=>{
-  const remove=event.target.closest("[data-remove]");
-  const up=event.target.closest("[data-up]");
-  const down=event.target.closest("[data-down]");
-  if(remove)selectedImages.splice(Number(remove.dataset.remove),1);
-  if(up){const i=Number(up.dataset.up);[selectedImages[i-1],selectedImages[i]]=[selectedImages[i],selectedImages[i-1]]}
-  if(down){const i=Number(down.dataset.down);[selectedImages[i+1],selectedImages[i]]=[selectedImages[i],selectedImages[i+1]]}
+$("selectedImages").onclick=e=>{
+  const r=e.target.closest("[data-remove]"),u=e.target.closest("[data-up]"),d=e.target.closest("[data-down]");
+  if(r)selectedImages.splice(Number(r.dataset.remove),1);
+  if(u){const i=Number(u.dataset.up);[selectedImages[i-1],selectedImages[i]]=[selectedImages[i],selectedImages[i-1]]}
+  if(d){const i=Number(d.dataset.down);[selectedImages[i+1],selectedImages[i]]=[selectedImages[i],selectedImages[i+1]]}
   renderSelected();
 };
 
@@ -80,175 +68,144 @@ function updateStats(){
   $("statTotal").textContent=products.length;
   $("statFeatured").textContent=products.filter(p=>p.featured).length;
   $("statSold").textContent=products.filter(p=>p.soldOut||Number(p.stock)===0).length;
-  $("statStock").textContent=products.reduce((sum,p)=>sum+Number(p.stock||0),0);
+  $("statStock").textContent=products.reduce((s,p)=>s+Number(p.stock||0),0);
   $("statCategories").textContent=new Set(products.map(p=>p.category).filter(Boolean)).size;
-  $("statSales").textContent=products.reduce((sum,p)=>sum+Number(p.salesCount||0),0);
+  $("statSales").textContent=products.reduce((s,p)=>s+Number(p.salesCount||0),0);
 }
-
 function clearForm(){
   ["editingProductId","productName","productPrice","productOldPrice","productVideo","productDescription","productSku","productColors","productSizes","productMaterial"].forEach(id=>$(id).value="");
-  $("productCategory").value="Spalniy";
-  $("productStock").value="1";
-  $("productSales").value="0";
-  $("productFeatured").checked=false;
-  $("productNew").checked=false;
-  $("productSoldOut").checked=false;
-  $("productSort").value="0";
-  $("productStatus").value="active";
-  $("formTitle").textContent="Yangi mahsulot";
-  $("saveProductButton").textContent="Mahsulotni saqlash";
-  $("cancelEditButton").hidden=true;
-  selectedImages=[];
-  renderSelected();
+  $("productCategory").value="Spalniy";$("productStock").value="1";$("productSales").value="0";
+  $("productFeatured").checked=false;$("productNew").checked=false;$("productSoldOut").checked=false;
+  $("productSort").value="0";$("productStatus").value="active";
+  $("formTitle").textContent="Yangi mahsulot";$("saveProductButton").textContent="Mahsulotni saqlash";$("cancelEditButton").hidden=true;
+  selectedImages=[];renderSelected();
 }
 
-$("loginForm").onsubmit=async event=>{
-  event.preventDefault();
-  $("loginMessage").textContent="Tekshirilmoqda...";
-  try{
-    await signInWithEmailAndPassword(auth,$("adminEmail").value.trim(),$("adminPassword").value);
-    $("loginMessage").textContent="Muvaffaqiyatli kirdingiz.";
-  }catch(error){
-    console.error(error);
-    $("loginMessage").textContent="Email yoki parol noto‘g‘ri.";
-  }
-};
-$("logoutButton").onclick=()=>signOut(auth);
-$("cancelEditButton").onclick=clearForm;
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginMessage").textContent="Tekshirilmoqda...";try{await signInWithEmailAndPassword(auth,$("adminEmail").value.trim(),$("adminPassword").value);$("loginMessage").textContent="Muvaffaqiyatli kirdingiz."}catch(err){console.error(err);$("loginMessage").textContent="Email yoki parol noto‘g‘ri."}};
+$("logoutButton").onclick=()=>signOut(auth);$("cancelEditButton").onclick=clearForm;
 
-onAuthStateChanged(auth,user=>{
-  $("loginCard").hidden=Boolean(user);
-  $("dashboard").hidden=!user;
-  $("loggedInEmail").textContent=user?`Kirish: ${user.email}`:"";
-  if(user)loadImages();
+onAuthStateChanged(auth,u=>{
+  $("loginCard").hidden=!!u;$("dashboard").hidden=!u;$("loggedInEmail").textContent=u?`Kirish: ${u.email}`:"";
+  if(u)loadImages();
 });
 
 $("saveProductButton").onclick=async()=>{
   if(!auth.currentUser)return status("Avval admin sifatida kiring.","error");
-  const name=$("productName").value.trim();
-  const price=$("productPrice").value.trim();
-  if(!name||!price)return status("Mahsulot nomi va narxini kiriting.","error");
+  const name=$("productName").value.trim(),price=$("productPrice").value.trim();
+  if(!name||!price)return status("Nom va narxni kiriting.","error");
   if(!selectedImages.length)return status("Kamida bitta rasm qo‘shing.","error");
-
-  $("saveProductButton").disabled=true;
-  $("saveProductButton").textContent="Saqlanmoqda...";
-
+  $("saveProductButton").disabled=true;$("saveProductButton").textContent="Saqlanmoqda...";
   try{
     const data={
-      name,
-      price,
-      oldPrice:$("productOldPrice").value.trim(),
-      category:$("productCategory").value,
-      images:[...selectedImages],
-      imageName:selectedImages[0],
-      image:img(selectedImages[0]),
-      video:$("productVideo").value.trim(),
-      stock:Math.max(0,Number($("productStock").value||0)),
-      salesCount:Math.max(0,Number($("productSales").value||0)),
-      sku:$("productSku").value.trim(),
-      colors:csv($("productColors").value),
-      sizes:csv($("productSizes").value),
-      material:$("productMaterial").value.trim(),
-      featured:$("productFeatured").checked,
-      isNew:$("productNew").checked,
-      soldOut:$("productSoldOut").checked,
-      sortOrder:Number($("productSort").value||0),
-      status:$("productStatus").value,
-      description:$("productDescription").value.trim(),
-      updatedAt:serverTimestamp()
+      name,price,oldPrice:$("productOldPrice").value.trim(),category:$("productCategory").value,
+      images:[...selectedImages].slice(0,10),imageName:selectedImages[0],image:img(selectedImages[0]),
+      video:$("productVideo").value.trim(),stock:Math.max(0,Number($("productStock").value||0)),
+      salesCount:Math.max(0,Number($("productSales").value||0)),sku:$("productSku").value.trim(),
+      colors:csv($("productColors").value),sizes:csv($("productSizes").value),material:$("productMaterial").value.trim(),
+      featured:$("productFeatured").checked,isNew:$("productNew").checked,soldOut:$("productSoldOut").checked,
+      sortOrder:Number($("productSort").value||0),status:$("productStatus").value,
+      description:$("productDescription").value.trim(),updatedAt:serverTimestamp()
     };
     const id=$("editingProductId").value;
-    if(id){
-      await updateDoc(doc(db,"products",id),data);
-      status("Mahsulot yangilandi.");
-    }else{
-      await addDoc(productsCollection,{...data,createdAt:serverTimestamp()});
-      status("Mahsulot qo‘shildi.");
-    }
+    if(id){await updateDoc(doc(db,"products",id),data);status("Mahsulot yangilandi.")}
+    else{await addDoc(productsCollection,{...data,createdAt:serverTimestamp()});status("Mahsulot qo‘shildi.")}
     clearForm();
-  }catch(error){
-    console.error(error);
-    status("Mahsulotni saqlashda xatolik.","error");
-  }finally{
-    $("saveProductButton").disabled=false;
-    $("saveProductButton").textContent="Mahsulotni saqlash";
-  }
+  }catch(e){console.error(e);status("Saqlashda xatolik.","error")}
+  finally{$("saveProductButton").disabled=false;$("saveProductButton").textContent="Mahsulotni saqlash"}
 };
 
 function renderProducts(){
-  const search=$("adminSearch").value.trim().toLowerCase();
-  const list=products.filter(p=>!search||`${p.name} ${p.category} ${p.price} ${p.sku||""}`.toLowerCase().includes(search));
+  const q=$("adminSearch").value.trim().toLowerCase();
+  const list=products.filter(p=>!q||`${p.name} ${p.category} ${p.price} ${p.sku||""}`.toLowerCase().includes(q));
   $("adminProducts").innerHTML=list.length?list.map(p=>{
-    const images=getImages(p);
-    return `<article class="admin-item">
-      <img src="${esc(img(images[0]||""))}" alt="">
-      <div>
-        <h3>${esc(p.name)}</h3>
-        <p>${esc(p.category||"Boshqa")} · Ombor: ${Number(p.stock??1)} · Sotilgan: ${Number(p.salesCount||0)} · ${images.length} ta rasm</p>
-        <div class="admin-item-price">${esc(p.price)}</div>
-        <div class="admin-badges">
-          ${p.featured?"<span>TOP</span>":""}
-          ${p.isNew?"<span>YANGI</span>":""}
-          ${p.soldOut?"<span>SOTILDI</span>":""}
-          ${p.status==="hidden"?"<span>YASHIRIN</span>":""}
-        </div>
-      </div>
-      <div class="admin-actions">
-        <button class="edit-button" data-edit="${p.id}">Tahrirlash</button>
-        <button class="delete-button" data-delete="${p.id}">O‘chirish</button>
-      </div>
-    </article>`;
-  }).join(""):"<p>Hozircha mahsulot yo‘q.</p>";
+    const a=getImages(p);
+    return`<article class="admin-item">
+      <img src="${esc(img(a[0]||""))}" alt="">
+      <div><h3>${esc(p.name)}</h3><p>${esc(p.category||"Boshqa")} · Ombor: ${Number(p.stock??1)} · Sotilgan: ${Number(p.salesCount||0)} · ${a.length} ta rasm</p><div class="admin-item-price">${esc(p.price)}</div>
+      <div class="admin-badges">${p.featured?"<span>TOP</span>":""}${p.isNew?"<span>YANGI</span>":""}${p.soldOut?"<span>SOTILDI</span>":""}${p.status==="hidden"?"<span>YASHIRIN</span>":""}</div></div>
+      <div class="admin-actions"><button class="edit-button" data-edit="${p.id}">Tahrirlash</button><button class="delete-button" data-delete="${p.id}">O‘chirish</button></div>
+    </article>`}).join(""):"<p>Hozircha mahsulot yo‘q.</p>";
 }
-
 $("adminSearch").oninput=renderProducts;
-$("adminProducts").onclick=async event=>{
-  const edit=event.target.closest("[data-edit]");
-  const remove=event.target.closest("[data-delete]");
-  if(edit){
-    const p=products.find(x=>x.id===edit.dataset.edit);
-    if(!p)return;
-    $("editingProductId").value=p.id;
-    $("productName").value=p.name||"";
-    $("productPrice").value=p.price||"";
-    $("productOldPrice").value=p.oldPrice||"";
-    $("productCategory").value=p.category||"Boshqa";
-    $("productVideo").value=p.video||"";
-    $("productStock").value=Number(p.stock??1);
-    $("productSales").value=Number(p.salesCount||0);
-    $("productSku").value=p.sku||"";
-    $("productColors").value=Array.isArray(p.colors)?p.colors.join(", "):"";
-    $("productSizes").value=Array.isArray(p.sizes)?p.sizes.join(", "):"";
-    $("productMaterial").value=p.material||"";
-    $("productFeatured").checked=Boolean(p.featured);
-    $("productNew").checked=Boolean(p.isNew);
-    $("productSoldOut").checked=Boolean(p.soldOut);
-    $("productSort").value=Number(p.sortOrder||0);
-    $("productStatus").value=p.status||"active";
-    $("productDescription").value=p.description||"";
-    selectedImages=getImages(p).slice(0,5);
-    renderSelected();
-    $("formTitle").textContent="Mahsulotni tahrirlash";
-    $("saveProductButton").textContent="O‘zgarishlarni saqlash";
-    $("cancelEditButton").hidden=false;
-    scrollTo({top:0,behavior:"smooth"});
+$("adminProducts").onclick=async e=>{
+  const ed=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");
+  if(ed){
+    const p=products.find(x=>x.id===ed.dataset.edit);if(!p)return;
+    $("editingProductId").value=p.id;$("productName").value=p.name||"";$("productPrice").value=p.price||"";
+    $("productOldPrice").value=p.oldPrice||"";$("productCategory").value=p.category||"Boshqa";
+    $("productVideo").value=p.video||"";$("productStock").value=Number(p.stock??1);$("productSales").value=Number(p.salesCount||0);
+    $("productSku").value=p.sku||"";$("productColors").value=Array.isArray(p.colors)?p.colors.join(", "):"";
+    $("productSizes").value=Array.isArray(p.sizes)?p.sizes.join(", "):"";$("productMaterial").value=p.material||"";
+    $("productFeatured").checked=!!p.featured;$("productNew").checked=!!p.isNew;$("productSoldOut").checked=!!p.soldOut;
+    $("productSort").value=Number(p.sortOrder||0);$("productStatus").value=p.status||"active";$("productDescription").value=p.description||"";
+    selectedImages=getImages(p).slice(0,10);renderSelected();$("formTitle").textContent="Mahsulotni tahrirlash";$("saveProductButton").textContent="O‘zgarishlarni saqlash";$("cancelEditButton").hidden=false;scrollTo({top:0,behavior:"smooth"});
   }
-  if(remove&&confirm("Mahsulotni o‘chirmoqchimisiz?")){
-    try{
-      await deleteDoc(doc(db,"products",remove.dataset.delete));
-      status("Mahsulot o‘chirildi.");
-    }catch(error){
-      console.error(error);
-      status("O‘chirishda xatolik.","error");
-    }
-  }
+  if(del&&confirm("Mahsulotni o‘chirmoqchimisiz?")){try{await deleteDoc(doc(db,"products",del.dataset.delete));status("Mahsulot o‘chirildi.")}catch(err){console.error(err);status("O‘chirishda xatolik.","error")}}
 };
 
-onSnapshot(query(productsCollection,orderBy("createdAt","desc")),snapshot=>{
-  products=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-  renderProducts();
-  updateStats();
-},error=>{
-  console.error(error);
-  $("adminProducts").innerHTML="<p>Mahsulotlarni yuklashda xatolik.</p>";
+function renderOrders(){
+  const q=$("orderSearch").value.trim().toLowerCase();
+  const list=orders.filter(o=>!q||`${o.customerName} ${o.phone} ${o.status}`.toLowerCase().includes(q));
+  $("ordersList").innerHTML=list.length?list.map(o=>`
+    <article class="order-card">
+      <div><h3>${esc(o.customerName||"Mijoz")}</h3><p>${esc(o.phone||"")}</p><p>${(o.items||[]).map(i=>esc(i.name)).join(", ")}</p></div>
+      <div><strong>${Number(o.total||0).toLocaleString("uz-UZ")} so‘m</strong>
+      <select data-order-status="${o.id}">
+        <option value="new" ${o.status==="new"?"selected":""}>Yangi</option>
+        <option value="accepted" ${o.status==="accepted"?"selected":""}>Qabul qilindi</option>
+        <option value="sent" ${o.status==="sent"?"selected":""}>Yuborildi</option>
+        <option value="delivered" ${o.status==="delivered"?"selected":""}>Yetkazildi</option>
+        <option value="cancelled" ${o.status==="cancelled"?"selected":""}>Bekor qilindi</option>
+      </select></div>
+    </article>`).join(""):"<p>Buyurtmalar yo‘q.</p>";
+}
+$("orderSearch").oninput=renderOrders;
+$("ordersList").onchange=async e=>{
+  const s=e.target.closest("[data-order-status]");if(!s)return;
+  await updateDoc(doc(db,"orders",s.dataset.orderStatus),{status:s.value,updatedAt:serverTimestamp()});
+  status("Buyurtma holati yangilandi.");
+};
+
+function renderReviews(){
+  const filter=$("reviewStatusFilter").value;
+  const list=reviews.filter(r=>!filter||r.status===filter);
+  $("adminReviewsList").innerHTML=list.length?list.map(r=>`
+    <article class="review-admin-card">
+      <div><h3>${esc(r.productName||"Mahsulot")}</h3><p><b>${esc(r.name||"Mijoz")}</b> · ${"★".repeat(Number(r.rating||0))}</p><p>${esc(r.text||"")}</p></div>
+      <div class="admin-actions">
+        ${r.status!=="approved"?`<button class="edit-button" data-approve-review="${r.id}">Tasdiqlash</button>`:""}
+        <button class="delete-button" data-delete-review="${r.id}">O‘chirish</button>
+      </div>
+    </article>`).join(""):"<p>Izohlar yo‘q.</p>";
+}
+$("reviewStatusFilter").onchange=renderReviews;
+$("adminReviewsList").onclick=async e=>{
+  const a=e.target.closest("[data-approve-review]"),d=e.target.closest("[data-delete-review]");
+  if(a){await updateDoc(doc(db,"reviews",a.dataset.approveReview),{status:"approved",updatedAt:serverTimestamp()});status("Izoh tasdiqlandi.")}
+  if(d&&confirm("Izohni o‘chirmoqchimisiz?")){await deleteDoc(doc(db,"reviews",d.dataset.deleteReview));status("Izoh o‘chirildi.")}
+};
+
+function renderCharts(){
+  if(!window.Chart)return;
+  const labels=["Yan","Fev","Mar","Apr","May","Iyun","Iyul","Avg","Sen","Okt","Noy","Dek"];
+  const monthly=new Array(12).fill(0);
+  orders.forEach(o=>{const date=o.createdAt?.toDate?.();if(date)monthly[date.getMonth()]+=Number(o.total||0)});
+  salesChart?.destroy();
+  salesChart=new Chart($("salesChart"),{type:"line",data:{labels,datasets:[{label:"Sotuv",data:monthly,tension:.35,fill:true}]},options:{responsive:true,plugins:{legend:{display:false}}}});
+  const counts={};products.forEach(p=>counts[p.category||"Boshqa"]=(counts[p.category||"Boshqa"]||0)+1);
+  categoryChart?.destroy();
+  categoryChart=new Chart($("categoryChart"),{type:"doughnut",data:{labels:Object.keys(counts),datasets:[{data:Object.values(counts)}]},options:{responsive:true}});
+}
+
+document.querySelectorAll("[data-admin-tab]").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("[data-admin-tab]").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".admin-view").forEach(v=>v.classList.remove("active"));
+  const map={products:"adminViewProducts",orders:"adminViewOrders",reviews:"adminViewReviews",analytics:"adminViewAnalytics"};
+  $(map[btn.dataset.adminTab]).classList.add("active");
+  if(btn.dataset.adminTab==="analytics")setTimeout(renderCharts,50);
 });
+
+onSnapshot(query(productsCollection,orderBy("createdAt","desc")),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));renderProducts();updateStats();renderCharts()},e=>console.error(e));
+onSnapshot(query(collection(db,"orders"),orderBy("createdAt","desc")),s=>{orders=s.docs.map(d=>({id:d.id,...d.data()}));renderOrders();renderCharts()},e=>console.error(e));
+onSnapshot(query(collection(db,"reviews"),orderBy("createdAt","desc")),s=>{reviews=s.docs.map(d=>({id:d.id,...d.data()}));renderReviews()},e=>console.error(e));

@@ -1,0 +1,36 @@
+IBRAT MEBEL V6 — PROFESSIONAL SAVDO TIZIMI
+
+ASOSIY IMKONIYATLAR:
+- Yashil rangli yangi dizayn
+- Savatcha va Telegram orqali buyurtma
+- Buyurtmalar Firestore bazasiga saqlanadi
+- Sevimlilar
+- Kuchli qidiruv, kategoriya, narx va ombor filtrlari
+- Kategoriyalar sahifasi
+- Har mahsulot uchun 10 tagacha rasm
+- Video havolasi
+- Ombor qoldig‘i va kam qolgan ogohlantirishi
+- Mijoz izohlari va admin tasdiqlashi
+- Admin buyurtmalar paneli
+- Admin statistika va grafiklar
+- PDF katalogni avtomatik yaratish
+- Aqlli tavsiya tizimi (ko‘rilgan va sevimli kategoriyalar asosida)
+- Qorong‘i rejim
+- Eng ko‘p sotilganlar va top mahsulotlar
+
+MUHIM:
+“Aqlli tavsiya” tashqi pullik AI xizmatisiz, foydalanuvchining ko‘rgan va sevimliga qo‘shgan mahsulotlari asosida ishlaydi.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. index.html, admin.html, styles.css, app.js, admin.js,
+   firebase-config.js va firestore.rules fayllarini yuklang.
+4. Commit nomi: Ibrat Mebel V6
+5. images papkasi va logo.png ni o‘chirmang.
+6. Deploy tugagach Ctrl+F5 bosing.
+
+FIRESTORE RULES:
+GitHub’dagi firestore.rules fayli avtomatik Firebase’ga o‘tmaydi.
+Firebase Console → Firestore Database → Rules bo‘limiga
+firestore.rules ichidagi kodni qo‘yib Publish bosing.

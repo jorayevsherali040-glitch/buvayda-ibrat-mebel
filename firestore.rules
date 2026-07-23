@@ -7,6 +7,17 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == "approved" || request.auth != null;
+      allow create: if request.resource.data.status == "pending";
+      allow update, delete: if request.auth != null;
+    }
+
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
