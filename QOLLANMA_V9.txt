@@ -1,0 +1,6 @@
+BUVAYDA IBRAT MEBEL V9
+
+Yangi hisob.html: kirim, chiqim, foyda, qarzdorlik, hisobot, CSV va kalkulyator.
+GitHubga barcha fayllarni yuklang. Commit: BUVAYDA IBRAT MEBEL V9.
+Firebase Firestore Rules bo‘limiga yangi firestore.rules kodini joylab Publish bosing.
+Hisob-kitob manzili: /hisob.html
