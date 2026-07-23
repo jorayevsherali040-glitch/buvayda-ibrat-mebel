@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V19 — Professional Dashboard</title>
+  <link rel="stylesheet" href="./v19-dashboard.css?v=19">
+</head>
+<body>
+  <aside class="v19-sidebar" id="sidebar">
+    <a class="v19-brand" href="./index.html">
+      <span class="v19-logo">BM</span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V19 Professional ERP</small></span>
+    </a>
+    <nav>
+      <p>ASOSIY</p>
+      <button class="active" data-page="overview">▦ Dashboard</button>
+      <a href="./product-manager.html">▤ Mahsulot boshqaruvi</a>
+      <a href="./korxona.html#calculator">▣ Kalkulyator</a>
+      <p>ERP</p>
+      <button data-page="inventory">▥ Ombor tahlili</button>
+      <button data-page="sales">₽ Sotuv tahlili</button>
+      <button data-page="finance">◫ Moliya</button>
+      <button data-page="customers">◎ CRM</button>
+      <button data-page="production">⚒ Ishlab chiqarish</button>
+      <p>BOSHQARUV</p>
+      <button data-page="suppliers">♢ Yetkazib beruvchilar</button>
+      <button data-page="purchases">⇩ Xaridlar</button>
+      <button data-page="reports">▧ Hisobotlar</button>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+      <a href="./backup.html">⇩ Backup</a>
+    </nav>
+  </aside>
+
+  <main class="v19-main">
+    <header class="v19-topbar">
+      <div>
+        <button id="menuBtn">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL V19</p><h1 id="pageTitle">Professional Dashboard</h1></div>
+      </div>
+      <div class="top-actions">
+        <span id="todayLabel"></span>
+        <button id="themeBtn">🌙</button>
+        <button id="logoutBtn">Chiqish</button>
+      </div>
+    </header>
+
+    <section class="v19-page active" id="pageOverview">
+      <div class="hero-panel">
+        <div>
+          <p>REAL VAQT BOSHQARUV</p>
+          <h2>Korxonangizning barcha ko‘rsatkichlari bitta ekranda</h2>
+          <span>Laminat, kromka, savdo, ombor, mijoz va moliya holatini kuzating.</span>
+        </div>
+        <div class="hero-actions">
+          <a href="./product-manager.html#laminate-form">＋ Laminat</a>
+          <a href="./product-manager.html#edge-form">＋ Kromka</a>
+          <a href="./korxona.html#calculator">Yangi hisob</a>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <article><span>Bugungi savdo</span><strong id="statTodaySales">0 so‘m</strong><small id="statTodaySalesCount">0 ta sotuv</small></article>
+        <article><span>Bugungi foyda</span><strong id="statTodayProfit">0 so‘m</strong><small>Kirim − chiqim</small></article>
+        <article><span>Laminat qoldig‘i</span><strong id="statLamStock">0 list</strong><small id="statLamTypes">0 tur</small></article>
+        <article><span>Kromka qoldig‘i</span><strong id="statEdgeStock">0 m</strong><small id="statEdgeTypes">0 tur</small></article>
+        <article><span>Faol buyurtmalar</span><strong id="statActiveOrders">0</strong><small id="statDebts">0 so‘m qarz</small></article>
+        <article><span>Kam qolgan</span><strong id="statLowStock">0</strong><small>Mahsulotlar</small></article>
+      </div>
+
+      <div class="grid two">
+        <article class="panel">
+          <div class="panel-head"><h2>So‘nggi 7 kun savdosi</h2></div>
+          <canvas id="salesChart" height="150"></canvas>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h2>Ombor tarkibi</h2></div>
+          <canvas id="stockChart" height="150"></canvas>
+        </article>
+      </div>
+
+      <div class="grid three">
+        <article class="panel"><div class="panel-head"><h2>Top mahsulotlar</h2></div><div id="topProducts"></div></article>
+        <article class="panel"><div class="panel-head"><h2>Kam qolgan mahsulotlar</h2></div><div id="lowStock"></div></article>
+        <article class="panel"><div class="panel-head"><h2>Top mijozlar</h2></div><div id="topCustomers"></div></article>
+      </div>
+    </section>
+
+    <section class="v19-page" id="pageInventory">
+      <div class="page-intro"><div><p>OMBOR ERP</p><h2>Ombor tahlili</h2></div><a href="./product-manager.html">Mahsulot boshqaruvi</a></div>
+      <div class="stats-grid compact">
+        <article><span>Laminat qiymati</span><strong id="invLamValue">0 so‘m</strong></article>
+        <article><span>Kromka qiymati</span><strong id="invEdgeValue">0 so‘m</strong></article>
+        <article><span>Jami ombor qiymati</span><strong id="invTotalValue">0 so‘m</strong></article>
+        <article><span>Potensial foyda</span><strong id="invPotentialProfit">0 so‘m</strong></article>
+      </div>
+      <div class="grid two">
+        <article class="panel"><h2>Laminatlar</h2><div id="inventoryLaminates"></div></article>
+        <article class="panel"><h2>Kromkalar</h2><div id="inventoryEdges"></div></article>
+      </div>
+    </section>
+
+    <section class="v19-page" id="pageSales">
+      <div class="page-intro"><div><p>SOTUV ERP</p><h2>Sotuv tahlili</h2></div><a href="./korxona.html#sales">Sotuvlar sahifasi</a></div>
+      <div class="stats-grid compact">
+        <article><span>Jami savdo</span><strong id="salesTotal">0 so‘m</strong></article>
+        <article><span>To‘langan</span><strong id="salesPaid">0 so‘m</strong></article>
+        <article><span>Qarzdorlik</span><strong id="salesDebt">0 so‘m</strong></article>
+        <article><span>Buyurtmalar</span><strong id="salesOrders">0</strong></article>
+      </div>
+      <div class="panel"><div class="toolbar"><input id="salesSearch" placeholder="Mijoz yoki buyurtma raqami..."><select id="salesStatus"><option value="">Barcha holat</option><option>Yangi</option><option>Kesilmoqda</option><option>Kromka urilmoqda</option><option>Teshilmoqda</option><option>Tayyor</option><option>Yetkazildi</option></select></div><div id="salesTable"></div></div>
+    </section>
+
+    <section class="v19-page" id="pageFinance">
+      <div class="page-intro"><div><p>MOLIYA ERP</p><h2>Kirim-chiqim va foyda</h2></div><a href="./korxona.html#finance">Moliya kiritish</a></div>
+      <div class="stats-grid compact">
+        <article><span>Jami kirim</span><strong id="finIncome">0 so‘m</strong></article>
+        <article><span>Jami chiqim</span><strong id="finExpense">0 so‘m</strong></article>
+        <article><span>Sof foyda</span><strong id="finProfit">0 so‘m</strong></article>
+        <article><span>Bugungi natija</span><strong id="finToday">0 so‘m</strong></article>
+      </div>
+      <div class="grid two"><article class="panel"><canvas id="financeChart" height="160"></canvas></article><article class="panel"><h2>So‘nggi harakatlar</h2><div id="financeList"></div></article></div>
+    </section>
+
+    <section class="v19-page" id="pageCustomers">
+      <div class="page-intro"><div><p>CRM</p><h2>Mijozlar va qarzdorlik</h2></div><a href="./korxona.html#customers">CRM sahifasi</a></div>
+      <div class="panel"><div class="toolbar"><input id="customerSearch" placeholder="Ism yoki telefon..."></div><div id="customerTable"></div></div>
+    </section>
+
+    <section class="v19-page" id="pageProduction">
+      <div class="page-intro"><div><p>ISHLAB CHIQARISH</p><h2>Buyurtmalar holati</h2></div><a href="./korxona.html#production">Jarayonni boshqarish</a></div>
+      <div class="kanban" id="productionBoard"></div>
+    </section>
+
+    <section class="v19-page" id="pageSuppliers">
+      <div class="page-intro"><div><p>YETKAZIB BERUVCHILAR</p><h2>Yetkazib beruvchilar bazasi</h2></div></div>
+      <div class="grid form-grid">
+        <form class="panel form-panel" id="supplierForm">
+          <h2>Yangi yetkazib beruvchi</h2>
+          <label>Nomi<input id="supplierName" required></label>
+          <label>Telefon<input id="supplierPhone"></label>
+          <label>Telegram<input id="supplierTelegram"></label>
+          <label>Yo‘nalish<select id="supplierCategory"><option>Laminat</option><option>Kromka</option><option>Furnitura</option><option>Boshqa</option></select></label>
+          <label>Izoh<textarea id="supplierNote"></textarea></label>
+          <button type="submit">Saqlash</button>
+        </form>
+        <article class="panel"><div id="supplierTable"></div></article>
+      </div>
+    </section>
+
+    <section class="v19-page" id="pagePurchases">
+      <div class="page-intro"><div><p>XARIDLAR</p><h2>Omborga kirim</h2></div></div>
+      <div class="grid form-grid">
+        <form class="panel form-panel" id="purchaseForm">
+          <h2>Yangi xarid</h2>
+          <label>Mahsulot turi<select id="purchaseType"><option value="laminates">Laminat</option><option value="edges">Kromka</option></select></label>
+          <label>Mahsulot<select id="purchaseProduct"></select></label>
+          <label>Yetkazib beruvchi<select id="purchaseSupplier"></select></label>
+          <label>Miqdor<input id="purchaseQty" type="number" min="0" step="0.01" required></label>
+          <label>Xarid narxi<input id="purchaseCost" type="number" min="0" required></label>
+          <label>To‘lov turi<select id="purchasePayment"><option>Naqd</option><option>Bank</option><option>Click</option><option>Payme</option></select></label>
+          <label>Izoh<textarea id="purchaseNote"></textarea></label>
+          <button type="submit">Omborga kirim qilish</button>
+        </form>
+        <article class="panel"><h2>So‘nggi xaridlar</h2><div id="purchaseTable"></div></article>
+      </div>
+    </section>
+
+    <section class="v19-page" id="pageReports">
+      <div class="page-intro"><div><p>HISOBOTLAR</p><h2>Eksport va hisobotlar</h2></div></div>
+      <div class="grid three report-grid">
+        <article class="panel"><h3>Ombor hisoboti</h3><p>Laminat va kromka qoldiqlari.</p><button id="exportInventory">CSV yuklash</button></article>
+        <article class="panel"><h3>Sotuv hisoboti</h3><p>Buyurtmalar, to‘lov va qarz.</p><button id="exportSales">CSV yuklash</button></article>
+        <article class="panel"><h3>Moliya hisoboti</h3><p>Kirim, chiqim va izohlar.</p><button id="exportFinance">CSV yuklash</button></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./v19-dashboard.js?v=19"></script>
+</body>
+</html>

@@ -9,6 +9,9 @@ const DEFAULT_DATA={
   sales:[],
   services:[],
   workers:[],
+  suppliers:[],
+  purchases:[],
+  priceHistory:[],
   inventory:[],
   settings:{
     cutPrice:40000,

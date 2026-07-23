@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V18 — STABIL VERSIYA
+BUVAYDA IBRAT MEBEL V19 — STABIL VERSIYA
 
 TUZATILDI:
 - “Mahsulot o‘chirilsinmi?” oynasi sahifa ochilishi bilan chiqmaydi.
@@ -10,13 +10,13 @@ TUZATILDI:
 - Kromka qo‘shish ishlaydi.
 - Mebel qo‘shish uchun yangi to‘liq forma qo‘shildi.
 - Mebel Edit va O‘chirish ishlaydi.
-- Super Admin ichidagi Laminatlar, Kromkalar va Mebellar havolalari stabil V18 mahsulot boshqaruviga yo‘naltirildi.
+- Super Admin ichidagi Laminatlar, Kromkalar va Mebellar havolalari stabil V19 mahsulot boshqaruviga yo‘naltirildi.
 - URL hash orqali kerakli bo‘lim bevosita ochiladi.
 
 STANDART PIN:
 1212
 
-V18 MAHSULOT BOSHQARUVI:
+V19 MAHSULOT BOSHQARUVI:
 https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/product-manager.html
 
 TEZKOR MANZILLAR:
@@ -27,5 +27,5 @@ Mebel qo‘shish: product-manager.html#furniture-form
 YUKLASH:
 1. ZIP faylni Extract qiling.
 2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V18 STABLE
+3. Commit: BUVAYDA IBRAT MEBEL V19 STABLE
 4. Deploy tugagach Ctrl + F5 bosing.

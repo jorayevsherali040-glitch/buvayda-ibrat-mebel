@@ -4,7 +4,7 @@
 @media(max-width:820px){.pm-sidebar{transform:translateX(-105%);transition:.25s}.pm-sidebar.open{transform:none}.pm-main{margin-left:0;padding:8px}.pm-menu{display:block}.pm-grid.two,.scanner-grid,.pm-product-form{grid-template-columns:1fr}.pm-image-column{max-width:420px}.pm-row.three{grid-template-columns:1fr 1fr}.pm-qr-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.pm-stats{grid-template-columns:1fr 1fr}.pm-row.two,.pm-row.three,.pm-qr-grid{grid-template-columns:1fr}.pm-intro{align-items:flex-start;flex-direction:column}.pm-intro-actions,.pm-form-actions{flex-direction:column;width:100%}.pm-toolbar{flex-direction:column}.pm-toolbar select{width:100%}}
 
-/* V18 STABLE FIXES */
+/* V19 STABLE FIXES */
 [hidden]{display:none!important}
 .pm-modal[hidden]{display:none!important}
 .pm-modal:not([hidden]){display:grid}

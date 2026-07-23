@@ -215,7 +215,7 @@ function exportXlsx(type){
   const headers=type==="laminates"?laminateHeaders:edgeHeaders,ws=XLSX.utils.aoa_to_sheet([headers,...toRows(type)]),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,type==="laminates"?"Laminatlar":"Kromkalar");XLSX.writeFile(wb,`${type}-${new Date().toISOString().slice(0,10)}.xlsx`)
 }
 $("exportLaminateExcel").onclick=()=>exportXlsx("laminates");$("exportEdgeExcel").onclick=()=>exportXlsx("edges");$("exportLaminatesCsv").onclick=()=>exportCsv("laminates");$("exportEdgesCsv").onclick=()=>exportCsv("edges");
-$("exportAllExcel").onclick=()=>{if(!window.XLSX){toast("Internet yo‘q. CSV tugmalaridan foydalaning.");return}const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([laminateHeaders,...toRows("laminates")]),"Laminatlar");XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([edgeHeaders,...toRows("edges")]),"Kromkalar");XLSX.writeFile(wb,"Buvayda-Ibrat-Mebel-V18.xlsx")};
+$("exportAllExcel").onclick=()=>{if(!window.XLSX){toast("Internet yo‘q. CSV tugmalaridan foydalaning.");return}const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([laminateHeaders,...toRows("laminates")]),"Laminatlar");XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([edgeHeaders,...toRows("edges")]),"Kromkalar");XLSX.writeFile(wb,"Buvayda-Ibrat-Mebel-V19.xlsx")};
 $("downloadTemplate").onclick=()=>{const type=$("importType").value,headers=type==="laminates"?laminateHeaders:edgeHeaders,sample=type==="laminates"?["A101","Kashmir","Egger",16,"2800×2070",850000,900000,750000,25,5,"A-15","04.19, 08.19","","Namuna"]:["04.19","Oq mat","Rehau",.4,19,2500,1800,200,1200,50,"K-08","A101, W980","","Namuna"];if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([headers,sample]),"Shablon");XLSX.writeFile(wb,`${type}-shablon.xlsx`)}else downloadBlob([headers,sample].map(r=>r.map(csvEscape).join(",")).join("\n"),`${type}-shablon.csv`)};
 $("importFile").onchange=async e=>{
   const file=e.target.files[0];if(!file)return;const ext=file.name.split(".").pop().toLowerCase();
@@ -238,7 +238,7 @@ function renderImportPreview(){
 }
 $("confirmImport").onclick=()=>{const type=$("importType").value;for(const item of pendingImport){const existing=db[type].find(x=>x.code.toLowerCase()===item.code.toLowerCase());if(existing)Object.assign(existing,item,{id:existing.id});else db[type].push(item)}save();toast(`${pendingImport.length} ta mahsulot import qilindi`);pendingImport=[];$("importPreview").innerHTML="";$("confirmImport").disabled=true};
 
-function qrPayload(type,x){return JSON.stringify({app:"BIM-V18.1",type,id:x.id,code:x.code})}
+function qrPayload(type,x){return JSON.stringify({app:"BIM-V19",type,id:x.id,code:x.code})}
 function renderQr(){
   const type=$("qrType").value,q=$("qrSearch").value.toLowerCase(),list=db[type].filter(x=>!q||`${x.code} ${x.name}`.toLowerCase().includes(q));
   $("qrGrid").innerHTML=list.map(x=>`<article class="pm-qr-card"><strong>${esc(x.code)}</strong><small>${esc(x.name)}</small><div class="pm-qr-code" id="qr-${x.id}"></div><small>${type==="laminates"?x.stock+" list":x.stock+" m"}</small><button data-print-qr="${type}:${x.id}">Chop etish</button></article>`).join("");

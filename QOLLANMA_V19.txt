@@ -1,0 +1,31 @@
+BUVAYDA IBRAT MEBEL V19 — PROFESSIONAL ERP
+
+STANDART PIN:
+1212
+
+YANGI DASHBOARD:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v19-dashboard.html
+
+V19 IMKONIYATLARI:
+- Professional real vaqt dashboard.
+- So‘nggi 7 kun savdo grafigi.
+- Ombor tarkibi grafigi.
+- Oylik moliya grafigi.
+- Top mahsulotlar.
+- Top mijozlar.
+- Kam qolgan mahsulotlar.
+- Ombor qiymati va potensial foyda.
+- Sotuv, to‘lov va qarzdorlik tahlili.
+- CRM mijozlar tahlili.
+- Ishlab chiqarish holatlari.
+- Yetkazib beruvchilar bazasi.
+- Xaridlar va omborga avtomatik kirim.
+- Xarid summasini avtomatik chiqimga yozish.
+- Ombor, sotuv va moliya CSV hisobotlari.
+- Avvalgi V18.1 laminat, kromka, mebel, QR, Excel va kalkulyator funksiyalari saqlangan.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V19 PROFESSIONAL ERP
+4. Deploy tugagach Ctrl + Shift + R bosing.
