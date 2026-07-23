@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ibrat ERP — V7</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./erp.css">
+</head>
+<body class="erp-page">
+  <main class="erp-shell">
+    <section class="erp-login" id="erpLogin">
+      <img src="./logo.png" alt="Ibrat Mebel">
+      <p class="section-kicker">IBRAT MEBEL V7</p>
+      <h1>ERP boshqaruv tizimi</h1>
+      <p>CRM, ombor, ishlab chiqarish va moliya boshqaruvi.</p>
+      <form id="erpLoginForm">
+        <input id="erpEmail" type="email" placeholder="Admin email" required>
+        <input id="erpPassword" type="password" placeholder="Parol" required>
+        <button class="button button-gold full-width" type="submit">Kirish</button>
+      </form>
+      <p id="erpLoginMessage"></p>
+      <a class="button button-light full-width" href="./index.html">Saytga qaytish</a>
+    </section>
+
+    <section class="erp-app" id="erpApp" hidden>
+      <header class="erp-header">
+        <div>
+          <p class="section-kicker">BUVAYDA IBRAT MEBEL</p>
+          <h1>ERP boshqaruv paneli</h1>
+          <p id="erpUser"></p>
+        </div>
+        <div class="button-row">
+          <a class="button button-light" href="./admin.html">Mahsulot admini</a>
+          <a class="button button-dark" href="./index.html">Sayt</a>
+          <button class="button danger-button" id="erpLogout" type="button">Chiqish</button>
+        </div>
+      </header>
+
+      <section class="erp-kpis">
+        <article><span>Mijozlar</span><strong id="kpiCustomers">0</strong></article>
+        <article><span>Ombor mahsulotlari</span><strong id="kpiInventory">0</strong></article>
+        <article><span>Faol ishlab chiqarish</span><strong id="kpiProduction">0</strong></article>
+        <article><span>Bugungi kirim</span><strong id="kpiIncome">0</strong></article>
+        <article><span>Bugungi chiqim</span><strong id="kpiExpense">0</strong></article>
+        <article><span>Bugungi foyda</span><strong id="kpiProfit">0</strong></article>
+      </section>
+
+      <nav class="erp-tabs">
+        <button class="active" data-erp-tab="dashboard">Bosh sahifa</button>
+        <button data-erp-tab="customers">CRM</button>
+        <button data-erp-tab="inventory">Ombor</button>
+        <button data-erp-tab="production">Ishlab chiqarish</button>
+        <button data-erp-tab="finance">Moliya</button>
+      </nav>
+
+      <section class="erp-view active" id="erpViewDashboard">
+        <div class="erp-grid two">
+          <article class="erp-card">
+            <h2>So‘nggi ishlab chiqarish ishlari</h2>
+            <div id="recentProduction"></div>
+          </article>
+          <article class="erp-card">
+            <h2>Kam qolgan materiallar</h2>
+            <div id="lowStockList"></div>
+          </article>
+        </div>
+        <div class="erp-grid two">
+          <article class="erp-card">
+            <h2>7 kunlik moliya</h2>
+            <canvas id="financeChart" height="140"></canvas>
+          </article>
+          <article class="erp-card">
+            <h2>Ish jarayoni</h2>
+            <canvas id="productionChart" height="140"></canvas>
+          </article>
+        </div>
+      </section>
+
+      <section class="erp-view" id="erpViewCustomers">
+        <div class="erp-grid form-list">
+          <form class="erp-card erp-form" id="customerForm">
+            <h2>Yangi mijoz</h2>
+            <input id="customerId" type="hidden">
+            <label>Ism</label>
+            <input id="crmName" required>
+            <label>Telefon</label>
+            <input id="crmPhone" required>
+            <label>Manzil</label>
+            <input id="crmAddress">
+            <label>Qarzdorlik</label>
+            <input id="crmDebt" type="number" min="0" value="0">
+            <label>Izoh</label>
+            <textarea id="crmNote"></textarea>
+            <button class="button button-gold" type="submit">Saqlash</button>
+            <button class="button button-light" id="cancelCustomerEdit" type="button" hidden>Bekor qilish</button>
+          </form>
+          <article class="erp-card">
+            <div class="erp-list-head">
+              <h2>Mijozlar</h2>
+              <input id="customerSearch" type="search" placeholder="Qidirish...">
+            </div>
+            <div id="customersList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="erp-view" id="erpViewInventory">
+        <div class="erp-grid form-list">
+          <form class="erp-card erp-form" id="inventoryForm">
+            <h2>Ombor mahsuloti</h2>
+            <input id="inventoryId" type="hidden">
+            <label>Nomi</label>
+            <input id="invName" required placeholder="Laminat, kromka...">
+            <label>Kategoriya</label>
+            <select id="invCategory">
+              <option>Laminat</option>
+              <option>Kromka</option>
+              <option>Furnitura</option>
+              <option>MDF</option>
+              <option>Boshqa</option>
+            </select>
+            <label>Miqdori</label>
+            <input id="invQuantity" type="number" min="0" step="0.01" required>
+            <label>Birligi</label>
+            <select id="invUnit"><option>dona</option><option>list</option><option>metr</option><option>kg</option><option>komplekt</option></select>
+            <label>Minimal qoldiq</label>
+            <input id="invMin" type="number" min="0" step="0.01" value="5">
+            <label>Tannarxi</label>
+            <input id="invCost" type="number" min="0" value="0">
+            <button class="button button-gold" type="submit">Saqlash</button>
+            <button class="button button-light" id="cancelInventoryEdit" type="button" hidden>Bekor qilish</button>
+          </form>
+          <article class="erp-card">
+            <div class="erp-list-head">
+              <h2>Ombor</h2>
+              <input id="inventorySearch" type="search" placeholder="Qidirish...">
+            </div>
+            <div id="inventoryList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="erp-view" id="erpViewProduction">
+        <div class="erp-grid form-list">
+          <form class="erp-card erp-form" id="productionForm">
+            <h2>Ishlab chiqarish vazifasi</h2>
+            <input id="productionId" type="hidden">
+            <label>Buyurtma nomi</label>
+            <input id="prodTitle" required>
+            <label>Mijoz</label>
+            <select id="prodCustomer"><option value="">Mijoz tanlang</option></select>
+            <label>Mas’ul usta</label>
+            <input id="prodWorker">
+            <label>Bosqich</label>
+            <select id="prodStatus">
+              <option value="new">Yangi</option>
+              <option value="design">Dizayn</option>
+              <option value="cutting">Kesish</option>
+              <option value="edge">Kromka</option>
+              <option value="assembly">Yig‘ish</option>
+              <option value="ready">Tayyor</option>
+              <option value="delivered">Yetkazildi</option>
+            </select>
+            <label>Topshirish sanasi</label>
+            <input id="prodDeadline" type="date">
+            <label>Izoh</label>
+            <textarea id="prodNote"></textarea>
+            <button class="button button-gold" type="submit">Saqlash</button>
+            <button class="button button-light" id="cancelProductionEdit" type="button" hidden>Bekor qilish</button>
+          </form>
+          <article class="erp-card">
+            <div class="erp-list-head">
+              <h2>Ish jarayoni</h2>
+              <select id="productionFilter">
+                <option value="">Barcha bosqichlar</option>
+                <option value="new">Yangi</option>
+                <option value="design">Dizayn</option>
+                <option value="cutting">Kesish</option>
+                <option value="edge">Kromka</option>
+                <option value="assembly">Yig‘ish</option>
+                <option value="ready">Tayyor</option>
+                <option value="delivered">Yetkazildi</option>
+              </select>
+            </div>
+            <div id="productionList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="erp-view" id="erpViewFinance">
+        <div class="erp-grid form-list">
+          <form class="erp-card erp-form" id="financeForm">
+            <h2>Kirim / chiqim</h2>
+            <label>Turi</label>
+            <select id="finType"><option value="income">Kirim</option><option value="expense">Chiqim</option></select>
+            <label>Summa</label>
+            <input id="finAmount" type="number" min="0" required>
+            <label>Kategoriya</label>
+            <input id="finCategory" placeholder="Savdo, material, ish haqi...">
+            <label>Izoh</label>
+            <textarea id="finNote"></textarea>
+            <button class="button button-gold" type="submit">Saqlash</button>
+          </form>
+          <article class="erp-card">
+            <div class="erp-list-head">
+              <h2>Operatsiyalar</h2>
+              <input id="financeSearch" type="search" placeholder="Qidirish...">
+            </div>
+            <div id="financeList"></div>
+          </article>
+        </div>
+      </section>
+
+      <div class="erp-toast" id="erpToast"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./erp.js"></script>
+</body>
+</html>

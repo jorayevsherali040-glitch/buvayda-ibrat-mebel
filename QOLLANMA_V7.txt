@@ -1,0 +1,29 @@
+IBRAT MEBEL V7 — ERP BOSHQARUV TIZIMI
+
+V7 YANGILIKLARI:
+- V6 internet-do‘kon funksiyalari saqlanadi
+- Yangi erp.html boshqaruv paneli
+- CRM: mijozlar, telefon, manzil, qarzdorlik
+- Ombor: laminat, kromka, furnitura va boshqa materiallar
+- Minimal qoldiq va “kam qoldi” ogohlantirishi
+- Ishlab chiqarish bosqichlari:
+  Yangi → Dizayn → Kesish → Kromka → Yig‘ish → Tayyor → Yetkazildi
+- Moliya: kirim, chiqim va kunlik foyda
+- 7 kunlik moliya grafigi
+- Ishlab chiqarish holati grafigi
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni repository ustiga yuklang.
+4. images papkasi va logo.png ni o‘chirmang.
+5. Commit: Ibrat Mebel V7
+6. Deploy tugagach Ctrl+F5 bosing.
+
+ERP MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/erp.html
+
+MUHIM FIRESTORE QADAMI:
+Firebase Console → Firestore Database → Rules.
+Yangi firestore.rules kodini joylang va Publish bosing.
+Aks holda CRM, ombor, ishlab chiqarish va moliya yozuvlari saqlanmaydi.
