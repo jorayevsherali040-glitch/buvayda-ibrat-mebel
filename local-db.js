@@ -17,7 +17,7 @@ const DEFAULT_DATA={
     cncPrice:0,
     phone:"+998 95 802 77 55",
     telegram:"ibratmebel8909",
-    slogan:"Mebel ustalari uchun barcha xizmatlar bir platformada."
+    slogan:"Buvayda Ibrat Mebel — mebel ustalari uchun barcha xizmatlar bir platformada."
   }
 };
 

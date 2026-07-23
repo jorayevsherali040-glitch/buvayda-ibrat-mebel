@@ -1,0 +1,19 @@
+BUVAYDA IBRAT MEBEL V15
+
+YANGILIKLAR:
+- Sotuvlar bo‘limiga Edit va Save qo‘shildi.
+- Sotuv raqami, mijoz, sana, umumiy summa, to‘langan summa va holatni tahrirlash mumkin.
+- Qarz avtomatik qayta hisoblanadi.
+- Ombordagi laminat va kromkalarga Edit va Save qo‘shildi.
+- Qoldiq, sotuv narxi va ombor joyini o‘zgartirish mumkin.
+- Kirim-chiqim yozuvini o‘chirishdan oldin tasdiqlash oynasi chiqadi.
+- O‘chirish tasdiqlanmasa, yozuv saqlanib qoladi.
+
+STANDART PIN:
+1212
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit nomi: BUVAYDA IBRAT MEBEL V15 EDIT SAVE
+4. Deploy tugagach Ctrl + F5 bosing.

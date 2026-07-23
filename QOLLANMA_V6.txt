@@ -1,4 +1,4 @@
-IBRAT MEBEL V6 — PROFESSIONAL SAVDO TIZIMI
+BUVAYDA IBRAT MEBEL V6 — PROFESSIONAL SAVDO TIZIMI
 
 ASOSIY IMKONIYATLAR:
 - Yashil rangli yangi dizayn
@@ -26,7 +26,7 @@ GITHUB’GA YUKLASH:
 2. GitHub → Add file → Upload files.
 3. index.html, admin.html, styles.css, app.js, admin.js,
    firebase-config.js va firestore.rules fayllarini yuklang.
-4. Commit nomi: Ibrat Mebel V6
+4. Commit nomi: Buvayda Ibrat Mebel V6
 5. images papkasi va logo.png ni o‘chirmang.
 6. Deploy tugagach Ctrl+F5 bosing.
 

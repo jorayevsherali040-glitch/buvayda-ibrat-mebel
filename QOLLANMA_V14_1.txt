@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V14.1 — LINKLAR TUZATILDI
+BUVAYDA IBRAT MEBEL V15 — LINKLAR TUZATILDI
 
 TUZATILGAN:
 - ERP V10 havolasi yangi Korxona boshqaruvi sahifasiga o‘tkazildi.
@@ -12,5 +12,5 @@ STANDART PIN: 1212
 YUKLASH:
 1. ZIPni Extract qiling.
 2. GitHub’dagi barcha eski fayllar ustiga yuklang.
-3. Commit: V14.1 FIX ERP LINKS
+3. Commit: V15 FIX ERP LINKS
 4. Deploy tugagach Ctrl + F5 bosing.

@@ -1,8 +1,8 @@
-IBRAT MEBEL V8 — C VARIANT PREMIUM SAYT
+BUVAYDA IBRAT MEBEL V8 — C VARIANT PREMIUM SAYT
 
 V8 asosiy yangiliklari:
 - Bosh sahifa to‘liq yangilandi
-- Ibrat Mebel uchun maxsus premium dizayn
+- Buvayda Ibrat Mebel uchun maxsus premium dizayn
 - Yashil, oq va tabiiy ranglar
 - Premium hero va dinamik mahsulot rasmi
 - Kategoriyalar
@@ -23,7 +23,7 @@ YUKLASH:
 2. GitHub → Add file → Upload files.
 3. Barcha fayllarni eski fayllar ustiga yuklang.
 4. images papkasi va logo.png ni o‘chirmang.
-5. Commit: IBRAT MEBEL V8
+5. Commit: BUVAYDA IBRAT MEBEL V8
 6. Deploy tugagach Ctrl + F5 bosing.
 
 MANZILLAR:

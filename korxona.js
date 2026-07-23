@@ -112,19 +112,134 @@ $("ordersTable").onchange=e=>{if(e.target.dataset.orderStatus){db.orders.find(x=
 $("ordersTable").onclick=e=>{const b=e.target.closest("[data-order-delete]");if(b&&confirm("Buyurtma o‘chirilsinmi?")){db.orders=db.orders.filter(x=>x.id!==b.dataset.orderDelete);save()}};
 
 function renderInventory(){
-  $("invLamTypes").textContent=db.laminates.length;$("invSheets").textContent=db.laminates.reduce((s,x)=>s+number(x.stock),0);$("invEdgeTypes").textContent=db.edges.length;$("invMeters").textContent=db.edges.reduce((s,x)=>s+number(x.stock),0);
-  $("inventoryLaminates").innerHTML=db.laminates.map(x=>`<div class="list-row"><div><strong>${esc(x.code||"")} ${esc(x.name)}</strong><p>${esc(x.brand||"")} · ${esc(x.location||"")}</p></div><span class="badge ${number(x.stock)<=number(x.minStock||0)?"low":""}">${x.stock||0} list</span></div>`).join("")||"<p>Laminat yo‘q.</p>";
-  $("inventoryEdges").innerHTML=db.edges.map(x=>`<div class="list-row"><div><strong>${esc(x.code||"")} ${esc(x.name)}</strong><p>${x.thickness||""}×${x.width||""} mm · ${esc(x.location||"")}</p></div><span class="badge ${number(x.stock)<=number(x.minStock||0)?"low":""}">${x.stock||0} m</span></div>`).join("")||"<p>Kromka yo‘q.</p>";
+  $("invLamTypes").textContent=db.laminates.length;
+  $("invSheets").textContent=db.laminates.reduce((s,x)=>s+number(x.stock),0);
+  $("invEdgeTypes").textContent=db.edges.length;
+  $("invMeters").textContent=db.edges.reduce((s,x)=>s+number(x.stock),0);
+
+  $("inventoryLaminates").innerHTML=db.laminates.map(x=>`
+    <div class="inventory-edit-row">
+      <div class="inventory-main">
+        <strong>${esc(x.code||"")} ${esc(x.name||"")}</strong>
+        <small>${esc(x.brand||"")} · ${esc(x.location||"")}</small>
+      </div>
+      <label>Qoldiq<input type="number" min="0" step="0.01" value="${number(x.stock)}" data-inv-l-stock="${x.id}"></label>
+      <label>Narx<input type="number" min="0" step="1" value="${number(x.salePrice)}" data-inv-l-price="${x.id}"></label>
+      <label>Joy<input value="${esc(x.location||"")}" data-inv-l-location="${x.id}"></label>
+      <button class="save-btn" data-save-laminate="${x.id}">Save</button>
+    </div>`).join("")||"<p>Laminat yo‘q.</p>";
+
+  $("inventoryEdges").innerHTML=db.edges.map(x=>`
+    <div class="inventory-edit-row">
+      <div class="inventory-main">
+        <strong>${esc(x.code||"")} ${esc(x.name||"")}</strong>
+        <small>${x.thickness||""}×${x.width||""} mm · ${esc(x.location||"")}</small>
+      </div>
+      <label>Qoldiq<input type="number" min="0" step="0.01" value="${number(x.stock)}" data-inv-e-stock="${x.id}"></label>
+      <label>Narx<input type="number" min="0" step="1" value="${number(x.salePrice)}" data-inv-e-price="${x.id}"></label>
+      <label>Joy<input value="${esc(x.location||"")}" data-inv-e-location="${x.id}"></label>
+      <button class="save-btn" data-save-edge="${x.id}">Save</button>
+    </div>`).join("")||"<p>Kromka yo‘q.</p>";
 }
+
+$("inventoryLaminates").onclick=e=>{
+  const b=e.target.closest("[data-save-laminate]");
+  if(!b)return;
+  const id=b.dataset.saveLaminate;
+  const x=db.laminates.find(v=>v.id===id);
+  if(!x)return;
+  x.stock=number(document.querySelector(`[data-inv-l-stock="${id}"]`).value);
+  x.salePrice=number(document.querySelector(`[data-inv-l-price="${id}"]`).value);
+  x.location=document.querySelector(`[data-inv-l-location="${id}"]`).value.trim();
+  save();
+  toast("Laminat saqlandi");
+};
+$("inventoryEdges").onclick=e=>{
+  const b=e.target.closest("[data-save-edge]");
+  if(!b)return;
+  const id=b.dataset.saveEdge;
+  const x=db.edges.find(v=>v.id===id);
+  if(!x)return;
+  x.stock=number(document.querySelector(`[data-inv-e-stock="${id}"]`).value);
+  x.salePrice=number(document.querySelector(`[data-inv-e-price="${id}"]`).value);
+  x.location=document.querySelector(`[data-inv-e-location="${id}"]`).value.trim();
+  save();
+  toast("Kromka saqlandi");
+};
+
 function renderSales(){
-  db.sales=db.sales||[];$("salesTable").innerHTML=`<table class="data-table"><thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Summa</th><th>To‘langan</th><th>Qarz</th></tr></thead><tbody>${db.sales.map(x=>`<tr><td>${esc(x.number)}</td><td>${esc(x.customer||"-")}</td><td>${x.date}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.debt)}</td></tr>`).join("")}</tbody></table>`
+  db.sales=db.sales||[];
+  $("salesTable").innerHTML=`<table class="data-table">
+    <thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Summa</th><th>To‘langan</th><th>Qarz</th><th>Holat</th><th></th></tr></thead>
+    <tbody>${db.sales.map(x=>`
+      <tr>
+        <td><input data-sale-number="${x.id}" value="${esc(x.number||"")}"></td>
+        <td><input data-sale-customer="${x.id}" value="${esc(x.customer||"")}"></td>
+        <td><input data-sale-date="${x.id}" type="date" value="${x.date||today()}"></td>
+        <td><input data-sale-total="${x.id}" type="number" min="0" value="${number(x.total)}"></td>
+        <td><input data-sale-paid="${x.id}" type="number" min="0" value="${number(x.paid)}"></td>
+        <td><b data-sale-debt-view="${x.id}">${money(number(x.total)-number(x.paid))}</b></td>
+        <td>
+          <select data-sale-status="${x.id}">
+            ${["Yangi","Jarayonda","Tayyor","Yetkazildi","Bekor qilindi"].map(s=>`<option ${x.status===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+        </td>
+        <td><button class="save-btn" data-save-sale="${x.id}">Save</button></td>
+      </tr>`).join("")}
+    </tbody>
+  </table>`;
 }
+
+$("salesTable").oninput=e=>{
+  const id=e.target.dataset.saleTotal||e.target.dataset.salePaid;
+  if(!id)return;
+  const total=number(document.querySelector(`[data-sale-total="${id}"]`).value);
+  const paid=number(document.querySelector(`[data-sale-paid="${id}"]`).value);
+  const view=document.querySelector(`[data-sale-debt-view="${id}"]`);
+  if(view)view.textContent=money(Math.max(0,total-paid));
+};
+$("salesTable").onclick=e=>{
+  const b=e.target.closest("[data-save-sale]");
+  if(!b)return;
+  const id=b.dataset.saveSale;
+  const x=db.sales.find(v=>v.id===id);
+  if(!x)return;
+  x.number=document.querySelector(`[data-sale-number="${id}"]`).value.trim();
+  x.customer=document.querySelector(`[data-sale-customer="${id}"]`).value.trim();
+  x.date=document.querySelector(`[data-sale-date="${id}"]`).value;
+  x.total=number(document.querySelector(`[data-sale-total="${id}"]`).value);
+  x.paid=number(document.querySelector(`[data-sale-paid="${id}"]`).value);
+  x.debt=Math.max(0,x.total-x.paid);
+  x.status=document.querySelector(`[data-sale-status="${id}"]`).value;
+  const order=db.orders.find(o=>o.number===x.number);
+  if(order){
+    order.customer=x.customer;
+    order.date=x.date;
+    order.total=x.total;
+    order.paid=x.paid;
+    order.debt=x.debt;
+    order.status=x.status;
+  }
+  save();
+  toast("Sotuv saqlandi");
+};
+
 $("financeForm").onsubmit=e=>{e.preventDefault();db.finance.unshift({id:uid("fin"),type:$("financeType").value,amount:number($("financeAmount").value),category:$("financeCategory").value,payment:$("financePayment").value,note:$("financeNote").value.trim(),date:today(),createdAt:nowISO()});e.target.reset();save();toast("Moliyaviy harakat saqlandi")};
 function renderFinance(){
   const q=$("financeSearch").value.toLowerCase(),list=db.finance.filter(x=>!q||`${x.category} ${x.note} ${x.payment}`.toLowerCase().includes(q));
   $("financeTable").innerHTML=`<table class="data-table"><thead><tr><th>Sana</th><th>Turi</th><th>Kategoriya</th><th>To‘lov</th><th>Izoh</th><th>Summa</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td>${x.date}</td><td><span class="badge ${x.type==="expense"?"red":""}">${x.type==="income"?"Kirim":"Chiqim"}</span></td><td>${esc(x.category)}</td><td>${esc(x.payment||"")}</td><td>${esc(x.note||"")}</td><td>${x.type==="income"?"+":"-"}${money(x.amount)}</td><td><button data-fin-delete="${x.id}">×</button></td></tr>`).join("")}</tbody></table>`
 }
-$("financeSearch").oninput=renderFinance;$("financeTable").onclick=e=>{const b=e.target.closest("[data-fin-delete]");if(b){db.finance=db.finance.filter(x=>x.id!==b.dataset.finDelete);save()}};
+$("financeSearch").oninput=renderFinance;
+$("financeTable").onclick=e=>{
+  const b=e.target.closest("[data-fin-delete]");
+  if(!b)return;
+  const item=db.finance.find(x=>x.id===b.dataset.finDelete);
+  const label=item?`${item.category} — ${money(item.amount)}`:"ushbu yozuv";
+  if(!confirm(`${label} o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.`))return;
+  db.finance=db.finance.filter(x=>x.id!==b.dataset.finDelete);
+  save();
+  toast("Kirim-chiqim yozuvi o‘chirildi");
+};
 
 $("customerForm").onsubmit=e=>{e.preventDefault();db.customers.unshift({id:uid("cus"),name:$("customerName").value.trim(),phone:$("customerPhone").value.trim(),telegram:$("customerTelegram").value.trim(),discount:number($("customerDiscount").value),note:$("customerNote").value.trim(),createdAt:nowISO()});e.target.reset();save();toast("Mijoz saqlandi")};
 function renderCustomers(){

@@ -1,4 +1,4 @@
-IBRAT MEBEL V7 — ERP BOSHQARUV TIZIMI
+BUVAYDA IBRAT MEBEL V7 — ERP BOSHQARUV TIZIMI
 
 V7 YANGILIKLARI:
 - V6 internet-do‘kon funksiyalari saqlanadi
@@ -17,7 +17,7 @@ YUKLASH:
 2. GitHub → Add file → Upload files.
 3. Barcha fayllarni repository ustiga yuklang.
 4. images papkasi va logo.png ni o‘chirmang.
-5. Commit: Ibrat Mebel V7
+5. Commit: Buvayda Ibrat Mebel V7
 6. Deploy tugagach Ctrl+F5 bosing.
 
 ERP MANZILI:

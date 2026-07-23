@@ -1,0 +1,16 @@
+BUVAYDA IBRAT MEBEL V15 — YORQIN DIZAYN
+
+YANGILIKLAR:
+- Sayt nomi BUVAYDA IBRAT MEBEL qilib yangilandi.
+- Asosiy sahifaga yorqin yashil, sariq va oq rangli yangi premium hero rasmi qo‘shildi.
+- Rasm telefon, planshet va kompyuterga moslashadi.
+- Oldingi V15 sotuvlar, ombor Edit/Save va kirim-chiqim tasdiqlash funksiyalari saqlanib qoldi.
+
+STANDART PIN:
+1212
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Ichidagi barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit nomi: BUVAYDA IBRAT MEBEL V15 BRIGHT DESIGN
+4. Deploy tugagach Ctrl + F5 bosing.

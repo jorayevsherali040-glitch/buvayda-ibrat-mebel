@@ -19,3 +19,26 @@
 @media(max-width:1080px){.v11-header nav{display:none;position:absolute;left:20px;right:20px;top:80px;background:var(--card);padding:18px;border-radius:14px;flex-direction:column;box-shadow:0 18px 50px rgba(0,0,0,.2)}.v11-header nav.open{display:flex}.v11-menu{display:block}.v11-market-grid,.v11-furniture-grid{grid-template-columns:repeat(3,1fr)}.v11-live-stats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.v11-wrap{width:calc(100% - 24px)}.v11-topbar .v11-wrap>span{display:none}.v11-brand strong{font-size:12px}.v11-actions button:not(.v11-cart-button){display:none}.v11-hero{min-height:670px}.v11-hero h1{font-size:43px}.v11-hero-buttons{flex-direction:column}.v11-live-stats{grid-template-columns:repeat(2,1fr)}.v11-quick-services .v11-wrap{grid-template-columns:1fr 1fr}.v11-section{padding:67px 0}.v11-section-head{align-items:flex-start;flex-direction:column}.v11-section-head h2,.v11-contact-grid h2{font-size:34px}.v11-market-toolbar{grid-template-columns:1fr}.v11-market-grid,.v11-furniture-grid{grid-template-columns:repeat(2,1fr);gap:10px}.v11-service-grid{grid-template-columns:1fr}.v11-calculator-layout,.v11-contact-grid{grid-template-columns:1fr}.v11-form-grid{grid-template-columns:1fr 1fr}.v11-footer-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:440px){.v11-market-grid,.v11-furniture-grid,.v11-quick-services .v11-wrap,.v11-form-grid,.v11-footer-grid{grid-template-columns:1fr}.v11-market-image{height:220px}.v11-hero h1{font-size:38px}}
+
+
+/* V15 Buvayda Ibrat Mebel bright hero */
+.v15-hero-visual{
+  width:min(100%,1500px);
+  margin:18px auto 26px;
+  padding:0 20px;
+}
+.v15-hero-visual img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:760px;
+  object-fit:cover;
+  object-position:center;
+  border-radius:26px;
+  box-shadow:0 24px 70px rgba(7,87,53,.20);
+  border:1px solid rgba(8,121,67,.12);
+}
+@media(max-width:800px){
+  .v15-hero-visual{padding:0 10px;margin-top:10px}
+  .v15-hero-visual img{border-radius:16px;max-height:none}
+}
