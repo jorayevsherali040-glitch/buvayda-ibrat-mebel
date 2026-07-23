@@ -1,0 +1,30 @@
+IBRAT MEBEL V5
+
+YANGILIKLAR:
+- Mahsulot rasmini kattalashtirish (zoom)
+- Eng ko‘p sotilganlar avtomatik slayderi
+- Chegirma foizini avtomatik hisoblash
+- Rang variantlari
+- O‘lcham variantlari
+- Material va mahsulot kodi
+- Sotilgan mahsulotlar soni
+- Narx bo‘yicha va mashhurlik bo‘yicha saralash
+- Omborda oz qolgan mahsulotni ko‘rsatish
+- Instagram uslubidagi kartalar va animatsiyalar
+- 1–5 ta rasmli galereya
+- TOP, YANGI va SOTILDI belgilari
+- Savatcha, sevimlilar va Telegram buyurtma
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. index.html, admin.html, styles.css, app.js, admin.js,
+   firebase-config.js va firestore.rules fayllarini yuklang.
+4. Commit nomi: Ibrat Mebel V5
+5. images papkasi va logo.png ni o‘chirmang.
+6. Deploy tugagach Ctrl+F5 bosing.
+
+ADMINDA:
+- Ranglarni vergul bilan yozing: Oq, kulrang, yong‘oq
+- O‘lchamlarni vergul bilan yozing: 160x200, 180x200
+- Sotilgan soni katta bo‘lgan mahsulot “Eng ko‘p sotilganlar”ga chiqadi.

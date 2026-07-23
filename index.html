@@ -111,9 +111,27 @@
         <select id="catalogCategory">
           <option value="">Barcha kategoriyalar</option>
         </select>
+        <select id="catalogSort">
+          <option value="recommended">Tavsiya etilgan</option>
+          <option value="newest">Eng yangi</option>
+          <option value="price-low">Narxi: arzondan</option>
+          <option value="price-high">Narxi: qimmatdan</option>
+          <option value="popular">Eng ko‘p sotilgan</option>
+        </select>
       </div>
 
       <div class="catalog-grid" id="catalogGrid">
+        <div class="empty-state">Mahsulotlar yuklanmoqda...</div>
+      </div>
+    </section>
+
+    <section class="section bestseller-section" id="bestseller">
+      <div class="section-heading">
+        <p class="section-kicker">MASHHUR MAHSULOTLAR</p>
+        <h2>Eng ko‘p sotilganlar</h2>
+        <p>Mijozlar ko‘p tanlaydigan mahsulotlar.</p>
+      </div>
+      <div class="featured-slider auto-slider" id="bestsellerSlider">
         <div class="empty-state">Mahsulotlar yuklanmoqda...</div>
       </div>
     </section>
@@ -189,6 +207,7 @@
   <dialog class="product-modal" id="productModal">
     <button class="modal-close" id="modalClose" type="button">×</button>
     <div id="productModalContent"></div>
+    <div class="zoom-hint">Rasmni kattalashtirish uchun ustiga bosing</div>
     <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="Oldingi rasm">‹</button>
     <button class="lightbox-next" id="lightboxNext" type="button" aria-label="Keyingi rasm">›</button>
   </dialog>
@@ -204,5 +223,11 @@
   <a class="floating-telegram" href="https://t.me/ibratmebel8909" target="_blank" rel="noopener">Telegram</a>
 
   <script type="module" src="./app.js"></script>
+<div class="toast" id="siteToast" role="status" aria-live="polite"></div>
+
+  <dialog class="image-zoom-dialog" id="imageZoomDialog">
+    <button class="modal-close" id="imageZoomClose" type="button">×</button>
+    <img id="imageZoomView" alt="Kattalashtirilgan mahsulot rasmi">
+  </dialog>
 </body>
 </html>

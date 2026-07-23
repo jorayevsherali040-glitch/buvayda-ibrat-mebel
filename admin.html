@@ -43,6 +43,7 @@
         <article><span>Sotilgan</span><strong id="statSold">0</strong></article>
         <article><span>Ombordagi jami</span><strong id="statStock">0</strong></article>
         <article><span>Kategoriyalar</span><strong id="statCategories">0</strong></article>
+        <article><span>Jami sotilgan</span><strong id="statSales">0</strong></article>
       </div>
 
       <div class="admin-grid">
@@ -123,7 +124,35 @@
               <label for="productStock">Ombordagi soni</label>
               <input id="productStock" type="number" min="0" value="1">
             </div>
-            <div class="checkbox-stack">
+            <div>
+              <label for="productSales">Sotilgan soni</label>
+              <input id="productSales" type="number" min="0" value="0">
+            </div>
+          </div>
+
+          <div class="form-two">
+            <div>
+              <label for="productSku">Mahsulot kodi</label>
+              <input id="productSku" type="text" placeholder="Masalan: IM-001">
+            </div>
+            <div>
+              <label for="productColors">Ranglar</label>
+              <input id="productColors" type="text" placeholder="Oq, kulrang, yong‘oq">
+            </div>
+          </div>
+
+          <div class="form-two">
+            <div>
+              <label for="productSizes">O‘lcham variantlari</label>
+              <input id="productSizes" type="text" placeholder="160x200, 180x200">
+            </div>
+            <div>
+              <label for="productMaterial">Material</label>
+              <input id="productMaterial" type="text" placeholder="Krashinniy MDF, laminat">
+            </div>
+          </div>
+
+          <div class="checkbox-stack">
               <label><input id="productFeatured" type="checkbox"> Top mahsulot</label>
               <label><input id="productNew" type="checkbox"> Yangi mahsulot</label>
               <label><input id="productSoldOut" type="checkbox"> Sotildi</label>
