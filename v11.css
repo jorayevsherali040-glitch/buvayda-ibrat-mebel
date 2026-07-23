@@ -42,3 +42,61 @@
   .v15-hero-visual{padding:0 10px;margin-top:10px}
   .v15-hero-visual img{border-radius:16px;max-height:none}
 }
+
+
+/* V15.2 bright fix */
+.v15-hero-bright{
+  background:
+    radial-gradient(circle at 14% 16%, rgba(117,214,159,.30) 0, rgba(117,214,159,0) 26%),
+    radial-gradient(circle at 88% 20%, rgba(255,215,102,.26) 0, rgba(255,215,102,0) 22%),
+    linear-gradient(135deg,#f9fcfa 0%,#eff8f3 48%,#e7f4ec 100%);
+  color:var(--ink);
+  min-height:680px;
+}
+.v15-hero-bright .v11-hero-video,
+.v15-hero-bright .v11-hero-overlay{display:none!important}
+.v15-hero-bright .v11-hero-content{
+  padding:96px 0 84px;
+}
+.v15-hero-bright .v11-kicker{color:#0b8c51}
+.v15-hero-bright h1{color:#0f2419;max-width:860px}
+.v15-hero-bright h1 em{color:#1ab267}
+.v15-hero-bright .v11-hero-content>p:not(.v11-kicker){color:#476458;max-width:760px}
+.v15-hero-bright .v11-live-stats{
+  max-width:1120px;
+  gap:14px;
+  border-top:0;
+}
+.v15-hero-bright .v11-live-stats article{
+  padding:18px 16px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(8,121,67,.10);
+  border-radius:16px;
+  box-shadow:0 12px 30px rgba(7,87,53,.08);
+  backdrop-filter:blur(8px);
+}
+.v15-hero-bright .v11-live-stats strong{color:#075f38}
+.v15-hero-bright .v11-live-stats span{color:#5b7164}
+.v15-hero-bright .v11-secondary{border:1px solid rgba(8,121,67,.14)}
+.v15-hero-bright::after{
+  content:"";
+  position:absolute;
+  right:-120px;
+  top:70px;
+  width:min(48vw,760px);
+  height:min(36vw,520px);
+  background:url('./buvayda-ibrat-mebel-hero.png') center/cover no-repeat;
+  border-radius:36px;
+  box-shadow:0 30px 80px rgba(7,87,53,.16);
+  opacity:.96;
+  border:1px solid rgba(8,121,67,.10);
+}
+.v15-hero-bright .v11-wrap.v11-hero-content{position:relative;z-index:2}
+@media(max-width:1180px){
+  .v15-hero-bright::after{position:relative;display:block;right:auto;top:auto;width:100%;height:360px;margin:20px auto 0}
+}
+@media(max-width:760px){
+  .v15-hero-bright{min-height:auto}
+  .v15-hero-bright .v11-hero-content{padding:70px 0 50px}
+  .v15-hero-bright::after{height:240px;border-radius:20px}
+}

@@ -1,0 +1,13 @@
+BUVAYDA IBRAT MEBEL V15.2 FIX
+
+NIMA TUZATILDI:
+- Bosh sahifadagi ustma-ust chiqib qolgan rasm olib tashlandi.
+- Hero qismi yorqin premium ranglarga o'tkazildi.
+- Yangi rasm hero ichida chiroyli o'ng tomondagi preview sifatida joylashtirildi.
+- Sayt nomi BUVAYDA IBRAT MEBEL bo'lib qoldi.
+
+YUKLASH:
+1) ZIPni oching
+2) Ichidagi barcha fayllarni GitHub'dagi eski fayllar ustiga yuklang
+3) Commit: V15.2 bright hero fix
+4) Deploydan keyin Ctrl+F5 qiling
