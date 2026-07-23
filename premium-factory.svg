@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf7f1"/><stop offset="1" stop-color="#dcefe4"/></linearGradient>
+ <linearGradient id="side" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#b69061"/><stop offset="1" stop-color="#7c5b38"/></linearGradient>
+ <filter id="sh"><feDropShadow dx="0" dy="20" stdDeviation="18" flood-opacity=".22"/></filter>
+</defs>
+<rect width="1400" height="900" fill="url(#bg)"/>
+<g filter="url(#sh)" transform="translate(160 145)">
+ <g transform="translate(0 390)">
+  <polygon points="0,110 910,110 1080,20 170,20" fill="#ede9df"/>
+  <polygon points="0,110 910,110 910,168 0,168" fill="url(#side)"/>
+  <polygon points="910,110 1080,20 1080,78 910,168" fill="#6c4e31"/>
+ </g>
+ <g transform="translate(22 292)">
+  <polygon points="0,110 910,110 1080,20 170,20" fill="#cfc8bc"/>
+  <polygon points="0,110 910,110 910,168 0,168" fill="url(#side)"/>
+  <polygon points="910,110 1080,20 1080,78 910,168" fill="#6c4e31"/>
+ </g>
+ <g transform="translate(44 194)">
+  <polygon points="0,110 910,110 1080,20 170,20" fill="#9aa1a2"/>
+  <polygon points="0,110 910,110 910,168 0,168" fill="url(#side)"/>
+  <polygon points="910,110 1080,20 1080,78 910,168" fill="#6c4e31"/>
+ </g>
+ <g transform="translate(66 96)">
+  <polygon points="0,110 910,110 1080,20 170,20" fill="#d9c8ad"/>
+  <polygon points="0,110 910,110 910,168 0,168" fill="url(#side)"/>
+  <polygon points="910,110 1080,20 1080,78 910,168" fill="#6c4e31"/>
+ </g>
+ <g transform="translate(88 0)">
+  <polygon points="0,110 910,110 1080,20 170,20" fill="#f7f6f2"/>
+  <polygon points="0,110 910,110 910,168 0,168" fill="url(#side)"/>
+  <polygon points="910,110 1080,20 1080,78 910,168" fill="#6c4e31"/>
+ </g>
+</g>
+<text x="92" y="105" font-family="Arial" font-size="38" font-weight="700" fill="#087943">LAMINAT LISTLARI • 2800×2070</text>
+<circle cx="1240" cy="135" r="78" fill="#087943"/><text x="1240" y="148" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#fff">16–18 mm</text>
+</svg>

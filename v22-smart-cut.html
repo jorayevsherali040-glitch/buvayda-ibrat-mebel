@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V22 — Smart Cut ERP</title>
+  <link rel="stylesheet" href="./v22-smart-cut.css?v=22">
+</head>
+<body>
+  <aside class="sc-sidebar" id="scSidebar">
+    <a class="sc-brand" href="./index.html"><span>BM</span><div><strong>BUVAYDA IBRAT MEBEL</strong><small>V22 Smart Cut ERP</small></div></a>
+    <nav>
+      <p>SMART CUT</p>
+      <button class="active" data-page="optimizer">▦ Kesish optimizatori</button>
+      <button data-page="edge-calc">◎ Kromka kalkulyatori</button>
+      <button data-page="material">⌕ Material Finder</button>
+      <button data-page="warehouse">▦ Ombor Heat Map</button>
+      <button data-page="scanner">⌁ QR Scanner 2.0</button>
+      <button data-page="recommendations">✦ AI tavsiyalar</button>
+      <p>ERP+</p>
+      <button data-page="crm">◎ CRM+</button>
+      <button data-page="analytics">▥ Premium Dashboard</button>
+      <button data-page="catalog">▧ PDF katalog</button>
+      <a href="./v20-orders.html">▤ Buyurtmalar</a>
+      <a href="./product-manager.html">▤ Mahsulotlar</a>
+      <a href="./v19-dashboard.html">▦ ERP Dashboard</a>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+    </nav>
+  </aside>
+
+  <main class="sc-main">
+    <header class="sc-topbar">
+      <div><button id="menuBtn">☰</button><div><p>BUVAYDA IBRAT MEBEL V22</p><h1 id="pageTitle">AI Smart Cut</h1></div></div>
+      <div><span id="clock"></span><button id="themeBtn">🌙</button><button id="logoutBtn">Chiqish</button></div>
+    </header>
+
+    <section class="sc-page active" id="pageOptimizer">
+      <div class="sc-hero">
+        <div><p>AI SMART CUT</p><h2>Detallarni optimal listlarga joylashtiring</h2><span>Mahalliy optimizator eng katta detaldan boshlab joylashtiradi, aylantirishni hisobga oladi va vizual kesish xaritasini chizadi.</span></div>
+        <button id="optimizeBtn">⚡ Optimallashtirish</button>
+      </div>
+
+      <div class="sc-grid form-layout">
+        <article class="sc-card">
+          <h2>List va kesish sozlamalari</h2>
+          <div class="sc-row three">
+            <label>List eni (mm)<input id="sheetW" type="number" value="2800" min="100"></label>
+            <label>List bo‘yi (mm)<input id="sheetH" type="number" value="2070" min="100"></label>
+            <label>Kesish qalinligi (mm)<input id="kerf" type="number" value="4" min="0"></label>
+          </div>
+          <div class="sc-row three">
+            <label>Material<select id="materialSelect"></select></label>
+            <label>Aylantirish<select id="allowRotate"><option value="yes">Ruxsat</option><option value="no">Ruxsat yo‘q</option></select></label>
+            <label>Chetdan zaxira (mm)<input id="margin" type="number" value="10" min="0"></label>
+          </div>
+          <h3>Detal qo‘shish</h3>
+          <div class="part-builder">
+            <input id="partName" placeholder="Detal nomi">
+            <input id="partW" type="number" placeholder="Eni" min="1">
+            <input id="partH" type="number" placeholder="Bo‘yi" min="1">
+            <input id="partQty" type="number" value="1" min="1">
+            <select id="partEdgeCode"><option value="">Kromka kodi</option></select>
+            <select id="partEdgeSides"><option value="0">Kromkasiz</option><option value="1">1 tomon</option><option value="2">2 tomon</option><option value="4">4 tomon</option></select>
+            <button id="addPart" type="button">＋ Qo‘shish</button>
+          </div>
+          <div id="partsTable"></div>
+          <div class="sc-actions">
+            <button id="loadExample" type="button" class="secondary">Namuna yuklash</button>
+            <button id="clearParts" type="button" class="danger">Tozalash</button>
+          </div>
+        </article>
+
+        <aside class="sc-card summary-card">
+          <h2>Natija</h2>
+          <div><span>Kerakli list</span><strong id="resultSheets">0</strong></div>
+          <div><span>Jami detal</span><strong id="resultParts">0</strong></div>
+          <div><span>Foydalanilgan maydon</span><strong id="resultUsed">0 m²</strong></div>
+          <div><span>Chiqindi</span><strong id="resultWaste">0%</strong></div>
+          <div><span>Jami kromka</span><strong id="resultEdge">0 m</strong></div>
+          <button id="printCutMap" type="button">PDF / Chop etish</button>
+          <button id="saveCutProject" type="button" class="secondary">Loyihani saqlash</button>
+        </aside>
+      </div>
+
+      <div class="sc-card map-card">
+        <div class="card-head"><div><p>VISUAL CUTTING MAP</p><h2>Kesish xaritasi</h2></div><select id="sheetPicker"></select></div>
+        <canvas id="cutCanvas" width="1200" height="760"></canvas>
+        <div id="cutLegend" class="cut-legend"></div>
+      </div>
+    </section>
+
+    <section class="sc-page" id="pageEdgeCalc">
+      <div class="page-intro"><div><p>AI KROMKA CALCULATOR</p><h2>Kromka kodlari bo‘yicha metr hisoboti</h2></div></div>
+      <div class="sc-grid two"><article class="sc-card"><div id="edgeBreakdown"></div></article><article class="sc-card"><canvas id="edgeChart" height="220"></canvas></article></div>
+    </section>
+
+    <section class="sc-page" id="pageMaterial">
+      <div class="page-intro"><div><p>MATERIAL FINDER</p><h2>Laminat va kromkani tez toping</h2></div></div>
+      <div class="sc-card">
+        <div class="smart-filters">
+          <input id="materialSearch" placeholder="Oq Egger, beton, yong‘oq, 04.19...">
+          <select id="filterType"><option value="">Laminat va kromka</option><option value="laminates">Laminatlar</option><option value="edges">Kromkalar</option></select>
+          <select id="filterBrand"><option value="">Barcha brend</option></select>
+          <select id="filterTexture"><option value="">Barcha rang/tekstura</option><option>Oq</option><option>Yong‘oq</option><option>Beton</option><option>Yog‘och</option><option>Eman</option><option>Kashmir</option></select>
+          <input id="filterMinPrice" type="number" placeholder="Min narx">
+          <input id="filterMaxPrice" type="number" placeholder="Max narx">
+          <label class="check"><input id="filterAvailable" type="checkbox"> Omborda mavjud</label>
+        </div>
+        <div class="material-grid" id="materialGrid"></div>
+      </div>
+    </section>
+
+    <section class="sc-page" id="pageWarehouse">
+      <div class="page-intro"><div><p>OMBOR HEAT MAP</p><h2>Mahsulotlarning ombordagi joylashuvi</h2></div></div>
+      <div class="sc-grid warehouse-layout">
+        <article class="sc-card"><div class="warehouse-grid" id="warehouseGrid"></div></article>
+        <article class="sc-card"><h2>Tanlangan joy</h2><div id="warehouseInfo"><p>Katakni tanlang.</p></div></article>
+      </div>
+    </section>
+
+    <section class="sc-page" id="pageScanner">
+      <div class="page-intro"><div><p>QR SCANNER 2.0</p><h2>Telefon orqali mahsulotni toping</h2></div></div>
+      <div class="sc-grid two">
+        <article class="sc-card"><video id="scannerVideo" autoplay muted playsinline></video><div class="sc-actions"><button id="startScanner">Kamerani yoqish</button><button id="stopScanner" class="secondary">To‘xtatish</button></div><p id="scannerStatus">Android Chrome tavsiya etiladi.</p></article>
+        <article class="sc-card"><h2>Topilgan mahsulot</h2><div id="scannerResult"><p>QR kodni kameraga tuting.</p></div></article>
+      </div>
+    </section>
+
+    <section class="sc-page" id="pageRecommendations">
+      <div class="page-intro"><div><p>AI TAVSIYALAR</p><h2>Ombor va savdo bo‘yicha aqlli ogohlantirishlar</h2></div></div>
+      <div class="recommend-grid" id="recommendGrid"></div>
+    </section>
+
+    <section class="sc-page" id="pageCrm">
+      <div class="page-intro"><div><p>CRM+</p><h2>Mijozning to‘liq profili</h2></div></div>
+      <div class="sc-card"><div class="smart-filters"><input id="crmSearch" placeholder="Mijoz yoki telefon..."></div><div id="crmGrid" class="crm-grid"></div></div>
+    </section>
+
+    <section class="sc-page" id="pageAnalytics">
+      <div class="page-intro"><div><p>PREMIUM DASHBOARD</p><h2>Kunlik, haftalik, oylik va yillik ko‘rsatkichlar</h2></div></div>
+      <div class="stats-grid">
+        <article><span>Bugungi savdo</span><strong id="aToday">0 so‘m</strong></article>
+        <article><span>Haftalik savdo</span><strong id="aWeek">0 so‘m</strong></article>
+        <article><span>Oylik savdo</span><strong id="aMonth">0 so‘m</strong></article>
+        <article><span>Yillik savdo</span><strong id="aYear">0 so‘m</strong></article>
+      </div>
+      <div class="sc-grid two"><article class="sc-card"><canvas id="periodChart" height="220"></canvas></article><article class="sc-card"><canvas id="topChart" height="220"></canvas></article></div>
+    </section>
+
+    <section class="sc-page" id="pageCatalog">
+      <div class="page-intro"><div><p>PDF CATALOG GENERATOR</p><h2>Premium katalogni avtomatik yarating</h2></div><button id="generateCatalog">Tayyor katalog</button></div>
+      <div class="sc-card"><div class="smart-filters"><select id="catalogType"><option value="all">Laminat va kromka</option><option value="laminates">Faqat laminat</option><option value="edges">Faqat kromka</option><option value="products">Mebellar</option></select><label class="check"><input id="catalogStockOnly" type="checkbox" checked> Faqat omborda mavjud</label></div><div id="catalogPreview" class="catalog-preview"></div></div>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./v22-smart-cut.js?v=22"></script>
+</body>
+</html>

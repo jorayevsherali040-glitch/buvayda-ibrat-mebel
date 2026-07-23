@@ -1,243 +1,31 @@
-<!doctype html>
-<html lang="uz">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buvayda Ibrat Mebel — Admin panel</title>
-  <link rel="stylesheet" href="./styles.css">
-</head>
-<body class="admin-page">
-  <main class="admin-container">
-    <section class="admin-login-card" id="loginCard">
-      <img src="./logo.png" alt="Buvayda Ibrat Mebel">
-      <p class="section-kicker">ADMIN PANEL</p>
-      <h1>Boshqaruv tizimi</h1>
-      <p>Firebase’da yaratilgan admin email va parolini kiriting.</p>
-      <form id="loginForm">
-        <input id="adminEmail" type="email" placeholder="Email" required>
-        <input id="adminPassword" type="password" placeholder="Parol" required>
-        <button class="button button-gold full-width" type="submit">Kirish</button>
-      </form>
-      <p class="form-message" id="loginMessage"></p>
-      <a class="button button-light full-width" href="./index.html">← Saytga qaytish</a>
-    </section>
-
-    <section class="admin-dashboard" id="dashboard" hidden>
-      <div class="admin-topbar">
-        <div>
-          <p class="section-kicker">BUVAYDA IBRAT MEBEL</p>
-          <h1>Mahsulot boshqaruvi</h1>
-          <p id="loggedInEmail"></p>
-        </div>
-        <div class="button-row">
-          <button class="button button-light admin-tab active" data-admin-tab="products" type="button">Mahsulotlar</button>
-          <button class="button button-light admin-tab" data-admin-tab="orders" type="button">Buyurtmalar</button>
-          <button class="button button-light admin-tab" data-admin-tab="reviews" type="button">Izohlar</button>
-          <button class="button button-light admin-tab" data-admin-tab="analytics" type="button">Statistika</button>
-          <a class="button button-light" href="./index.html#katalog">Katalogni ko‘rish</a>
-          <button class="button button-danger" id="logoutButton" type="button">Chiqish</button>
-        </div>
-      </div>
-
-      <div class="admin-status" id="adminStatus"></div>
-
-      <div class="admin-stats">
-        <article><span>Jami mahsulot</span><strong id="statTotal">0</strong></article>
-        <article><span>Top mahsulot</span><strong id="statFeatured">0</strong></article>
-        <article><span>Sotilgan</span><strong id="statSold">0</strong></article>
-        <article><span>Ombordagi jami</span><strong id="statStock">0</strong></article>
-        <article><span>Kategoriyalar</span><strong id="statCategories">0</strong></article>
-        <article><span>Jami sotilgan</span><strong id="statSales">0</strong></article>
-      </div>
-
-      <div class="admin-grid">
-        <section class="admin-panel">
-          <h2 id="formTitle">Yangi mahsulot</h2>
-          <input id="editingProductId" type="hidden">
-
-          <label for="productName">Mahsulot nomi</label>
-          <input id="productName" type="text" placeholder="Masalan: Deco spalniy">
-
-          <div class="form-two">
-            <div>
-              <label for="productPrice">Narxi</label>
-              <input id="productPrice" type="text" placeholder="9 000 000 so‘m">
-            </div>
-            <div>
-              <label for="productOldPrice">Eski narxi</label>
-              <input id="productOldPrice" type="text" placeholder="10 000 000 so‘m">
-            </div>
-          </div>
-
-          <label for="productCategory">Kategoriya</label>
-          <select id="productCategory">
-            <option>Spalniy</option>
-            <option>Oshxona</option>
-            <option>Shkaf</option>
-            <option>Ugalok</option>
-            <option>Stol-stul</option>
-            <option>Oyoq kiyim javoni</option>
-            <option>Boshqa</option>
-          </select>
-
-          <div class="github-image-box">
-            <div class="github-image-heading">
-              <div>
-                <label>Mahsulot rasmlari</label>
-                <small>GitHub’dagi <b>images</b> papkasidan 1–5 ta rasm tanlang.</small>
-              </div>
-              <button class="button button-light compact-button" id="refreshImagesButton" type="button">
-                Rasmlarni yangilash
-              </button>
-            </div>
-
-            <div class="image-picker-grid">
-              <div>
-                <label for="productImageSelect">Rasm tanlash</label>
-                <select id="productImageSelect">
-                  <option value="">Rasm tanlang...</option>
-                </select>
-              </div>
-              <button class="button button-gold add-image-button" id="addImageButton" type="button">
-                + Rasm qo‘shish
-              </button>
-            </div>
-
-            <div class="selected-images" id="selectedImages">
-              <p class="muted-text">Hozircha rasm tanlanmagan.</p>
-            </div>
-
-            <label for="productImageName">Yoki rasm nomini yozing</label>
-            <div class="manual-image-row">
-              <input id="productImageName" type="text" placeholder="Masalan: 30.jpg">
-              <button class="button button-dark" id="addManualImageButton" type="button">Qo‘shish</button>
-            </div>
-
-            <a class="button button-dark full-width"
-               href="https://github.com/jorayevsherali040-glitch/buvayda-ibrat-mebel/tree/main/images"
-               target="_blank" rel="noopener">
-              GitHub’ga yangi rasm yuklash
-            </a>
-          </div>
-
-          <label for="productVideo">Video URL (ixtiyoriy)</label>
-          <input id="productVideo" type="url" placeholder="YouTube yoki boshqa video havolasi">
-
-          <div class="form-two">
-            <div>
-              <label for="productStock">Ombordagi soni</label>
-              <input id="productStock" type="number" min="0" value="1">
-            </div>
-            <div>
-              <label for="productSales">Sotilgan soni</label>
-              <input id="productSales" type="number" min="0" value="0">
-            </div>
-          </div>
-
-          <div class="form-two">
-            <div>
-              <label for="productSku">Mahsulot kodi</label>
-              <input id="productSku" type="text" placeholder="Masalan: IM-001">
-            </div>
-            <div>
-              <label for="productColors">Ranglar</label>
-              <input id="productColors" type="text" placeholder="Oq, kulrang, yong‘oq">
-            </div>
-          </div>
-
-          <div class="form-two">
-            <div>
-              <label for="productSizes">O‘lcham variantlari</label>
-              <input id="productSizes" type="text" placeholder="160x200, 180x200">
-            </div>
-            <div>
-              <label for="productMaterial">Material</label>
-              <input id="productMaterial" type="text" placeholder="Krashinniy MDF, laminat">
-            </div>
-          </div>
-
-          <div class="checkbox-stack">
-              <label><input id="productFeatured" type="checkbox"> Top mahsulot</label>
-              <label><input id="productNew" type="checkbox"> Yangi mahsulot</label>
-              <label><input id="productSoldOut" type="checkbox"> Sotildi</label>
-            </div>
-          </div>
-
-          <div class="form-two">
-            <div>
-              <label for="productSort">Tartib raqami</label>
-              <input id="productSort" type="number" min="0" value="0">
-            </div>
-            <div>
-              <label for="productStatus">Holati</label>
-              <select id="productStatus">
-                <option value="active">Faol</option>
-                <option value="hidden">Yashirin</option>
-              </select>
-            </div>
-          </div>
-
-          <label for="productDescription">Tavsif</label>
-          <textarea id="productDescription" placeholder="Mahsulot haqida qisqa ma’lumot"></textarea>
-
-          <button class="button button-gold full-width" id="saveProductButton" type="button">Mahsulotni saqlash</button>
-          <button class="button button-light full-width" id="cancelEditButton" type="button" hidden>Tahrirlashni bekor qilish</button>
-        </section>
-
-        <section class="admin-panel">
-          <div class="admin-list-heading">
-            <h2>Saytdagi mahsulotlar</h2>
-            <input id="adminSearch" type="search" placeholder="Qidirish...">
-          </div>
-          <div id="adminProducts">Yuklanmoqda...</div>
-        </section>
-      </div>
-    </div>
-    </section>
-
-    <section class="admin-view" id="adminViewOrders">
-      <div class="admin-panel-card">
-        <div class="admin-section-heading">
-          <h2>Buyurtmalar</h2>
-          <input id="orderSearch" type="search" placeholder="Buyurtma qidirish...">
-        </div>
-        <div id="ordersList"></div>
-      </div>
-    </section>
-
-    <section class="admin-view" id="adminViewReviews">
-      <div class="admin-panel-card">
-        <div class="admin-section-heading">
-          <h2>Mijoz izohlari</h2>
-          <select id="reviewStatusFilter">
-            <option value="">Barchasi</option>
-            <option value="pending">Kutilmoqda</option>
-            <option value="approved">Tasdiqlangan</option>
-          </select>
-        </div>
-        <div id="adminReviewsList"></div>
-      </div>
-    </section>
-
-    <section class="admin-view" id="adminViewAnalytics">
-      <div class="analytics-grid">
-        <article class="admin-panel-card">
-          <h2>Sotuv grafigi</h2>
-          <canvas id="salesChart" height="120"></canvas>
-        </article>
-        <article class="admin-panel-card">
-          <h2>Kategoriyalar</h2>
-          <canvas id="categoryChart" height="120"></canvas>
-        </article>
-      </div>
-    </section>
-  </section>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script type="module" src="./admin.js"></script>
-<a href="./super-admin.html" style="position:fixed;right:18px;bottom:18px;background:#087943;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:800;z-index:999">V11 Super Admin</a>
-<a href="./super-admin.html" style="position:fixed;right:16px;bottom:16px;z-index:9999;background:#087943;color:white;padding:11px 15px;border-radius:10px;text-decoration:none;font-family:Arial;font-weight:800;box-shadow:0 8px 25px rgba(0,0,0,.2)">V12 PIN orqali kirish</a>
-<a href="./product-manager.html#furniture-form" style="position:fixed;right:18px;bottom:18px;background:#087943;color:white;padding:12px 16px;border-radius:9px;text-decoration:none;font-weight:800;z-index:9999">V19 Mebel qo‘shish</a>
-</body>
-</html>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1300" viewBox="0 0 2200 1300">
+<defs>
+ <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f5f2ea"/><stop offset="1" stop-color="#ddd9cf"/></linearGradient>
+ <linearGradient id="floor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8d2c6"/><stop offset="1" stop-color="#b8b0a4"/></linearGradient>
+ <linearGradient id="machine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fafbfa"/><stop offset="1" stop-color="#c5cfca"/></linearGradient>
+ <filter id="sh"><feDropShadow dx="0" dy="26" stdDeviation="24" flood-opacity=".25"/></filter>
+</defs>
+<rect width="2200" height="780" fill="url(#wall)"/><polygon points="0,780 2200,780 2200,1300 0,1300" fill="url(#floor)"/>
+<g opacity=".5" stroke="#c6c1b7" stroke-width="18"><line x1="0" y1="170" x2="2200" y2="170"/><line x1="0" y1="380" x2="2200" y2="380"/></g>
+<g fill="#fff" opacity=".95"><rect x="150" y="90" width="330" height="48" rx="24"/><rect x="720" y="90" width="330" height="48" rx="24"/><rect x="1290" y="90" width="330" height="48" rx="24"/><rect x="1740" y="90" width="250" height="48" rx="24"/></g>
+<g filter="url(#sh)" transform="translate(640 330)">
+ <rect x="0" y="80" width="1060" height="500" rx="34" fill="url(#machine)" stroke="#aab7b0" stroke-width="10"/>
+ <rect x="70" y="175" width="760" height="230" rx="18" fill="#bac6c0"/>
+ <rect x="120" y="220" width="660" height="140" rx="12" fill="#d9c4a4"/>
+ <rect x="230" y="0" width="520" height="170" rx="22" fill="#087943"/>
+ <rect x="445" y="140" width="88" height="250" rx="20" fill="#17261e"/>
+ <circle cx="489" cy="390" r="55" fill="#f5b900"/>
+ <rect x="840" y="20" width="170" height="135" rx="18" fill="#17261e"/><rect x="865" y="47" width="120" height="74" rx="8" fill="#7cdca5"/>
+</g>
+<g transform="translate(90 820)" filter="url(#sh)">
+ <g transform="translate(0 240)"><polygon points="0,80 530,80 660,10 130,10" fill="#f5f3ec"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
+ <g transform="translate(25 170)"><polygon points="0,80 530,80 660,10 130,10" fill="#c5b08d"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
+ <g transform="translate(50 100)"><polygon points="0,80 530,80 660,10 130,10" fill="#90989a"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
+ <g transform="translate(75 30)"><polygon points="0,80 530,80 660,10 130,10" fill="#e0d2ba"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
+</g>
+<g transform="translate(1710 760)" filter="url(#sh)">
+ <circle cx="190" cy="190" r="175" fill="#d3b68e"/><circle cx="190" cy="190" r="102" fill="#eeeae1"/><circle cx="190" cy="190" r="55" fill="#9e7f58"/>
+ <circle cx="380" cy="250" r="130" fill="#ece8df"/><circle cx="380" cy="250" r="78" fill="#d6d0c5"/><circle cx="380" cy="250" r="42" fill="#a8a095"/>
+</g>
+<rect x="85" y="70" width="700" height="105" rx="52" fill="#087943"/><text x="435" y="137" text-anchor="middle" font-family="Arial" font-size="44" font-weight="700" fill="#fff">BUVAYDA IBRAT MEBEL • PREMIUM SERVIS</text>
+</svg>

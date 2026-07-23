@@ -160,10 +160,10 @@ function v21GlobalItems(){
     ...(state.products||[]).map(x=>({...x,v21Type:"Mebel",v21Price:x.price||0}))
   ];
   const services=[
-    {id:"service-cut",name:"Laminat kesish",code:"KESISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.laminate||"./service-laminate.jpg"),tags:["kesish","list","laminat"]},
-    {id:"service-edge",name:"Kromka yopishtirish",code:"KROMKA",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.edge||"./service-edge.jpg"),tags:["kromka","yopishtirish"]},
-    {id:"service-drill",name:"Bazis teshish",code:"TESHISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.drill||"./service-drill.jpg"),tags:["bazis","teshish","cnc"]},
-    {id:"service-design",name:"3D dizayn",code:"DIZAYN",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.design||"./service-design.jpg"),tags:["dizayn","loyiha"]}
+    {id:"service-cut",name:"Laminat kesish",code:"KESISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.laminate||"./v22-assets/laminate-sheets.svg"),tags:["kesish","list","laminat"]},
+    {id:"service-edge",name:"Kromka yopishtirish",code:"KROMKA",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.edge||"./v22-assets/edge-rolls.svg"),tags:["kromka","yopishtirish"]},
+    {id:"service-drill",name:"Bazis teshish",code:"TESHISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.drill||"./v22-assets/cnc-drilling.svg"),tags:["bazis","teshish","cnc"]},
+    {id:"service-design",name:"3D dizayn",code:"DIZAYN",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.design||"./v22-assets/furniture-design.svg"),tags:["dizayn","loyiha"]}
   ];
   return [...material,...services]
 }

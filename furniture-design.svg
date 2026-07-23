@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5faf7"/><stop offset="1" stop-color="#e2f2e9"/></linearGradient><filter id="sh"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".22"/></filter></defs>
+<rect width="1400" height="900" fill="url(#bg)"/>
+<g filter="url(#sh)" transform="translate(190 160)">
+ <g transform="translate(0 130)"><circle cx="250" cy="250" r="215" fill="#c9b18d"/><circle cx="250" cy="250" r="126" fill="#f5faf7"/><circle cx="250" cy="250" r="70" fill="#ad916c"/></g>
+ <g transform="translate(390 10)"><circle cx="250" cy="250" r="215" fill="#eee9df"/><circle cx="250" cy="250" r="126" fill="#f5faf7"/><circle cx="250" cy="250" r="70" fill="#c9c0b4"/></g>
+ <g transform="translate(730 170)"><circle cx="190" cy="190" r="168" fill="#81786d"/><circle cx="190" cy="190" r="98" fill="#f5faf7"/><circle cx="190" cy="190" r="52" fill="#5e554d"/></g>
+</g>
+<text x="80" y="100" font-family="Arial" font-size="38" font-weight="700" fill="#087943">PVC KROMKA RULONLARI • 0.4 / 0.8 / 2 mm</text>
+<rect x="1010" y="690" width="270" height="92" rx="46" fill="#087943"/><text x="1145" y="750" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700" fill="#fff">04.19 • 08.19</text>
+</svg>

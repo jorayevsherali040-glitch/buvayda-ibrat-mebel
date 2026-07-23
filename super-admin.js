@@ -16,6 +16,8 @@ function showApp(){
   $("loginView").hidden=true;
   $("appView").hidden=false;
   sessionStorage.setItem("v13PinVerified","1");
+  const v22Destination=sessionStorage.getItem("v22AfterLogin");
+  if(v22Destination){sessionStorage.removeItem("v22AfterLogin");location.href="./v22-smart-cut.html";return;}
   const v20Destination=sessionStorage.getItem("v20AfterLogin");
   if(v20Destination){sessionStorage.removeItem("v20AfterLogin");location.href="./v20-orders.html";return;}
   const v19Destination=sessionStorage.getItem("v19AfterLogin");

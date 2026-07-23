@@ -1,0 +1,43 @@
+BUVAYDA IBRAT MEBEL V22 — AI SMART CUT ERP
+
+PIN:
+1212
+
+YANGI SAHIFA:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v22-smart-cut.html
+
+ASOSIY IMKONIYATLAR:
+- Smart Cut kesish optimizatori.
+- Detallarni listlarga avtomatik joylashtirish.
+- Detalni 90° aylantirib joylashtirish.
+- Kesish qalinligi va chetdan zaxirani hisobga olish.
+- Nechta list kerakligini hisoblash.
+- Chiqindi foizini hisoblash.
+- Visual Cutting Map.
+- Har bir listni alohida ko‘rish.
+- PDF / chop etish.
+- Kromka kodi va tomonlari bo‘yicha avtomatik metr hisoblash.
+- Kromka qoldig‘i yetarliligini tekshirish.
+- Material Finder: kod, brend, rang, tekstura, narx va qoldiq filtrlari.
+- Ombor Heat Map.
+- QR Scanner 2.0.
+- Mahalliy aqlli tavsiyalar va kam qoldiq ogohlantirishlari.
+- CRM+: oxirgi buyurtmalar, qarz, bonus va chegirma.
+- Kunlik, haftalik, oylik va yillik dashboard.
+- Buyurtmalar uchun drag & drop holat boshqaruvi.
+- Excel Import Pro oldingi versiyadan saqlandi.
+- Premium PDF katalog generator.
+- Premium mobil va dark mode interfeys.
+- Noto‘g‘ri yog‘och taxtalar rasmi laminat listlarining to‘g‘ri premium tasviriga almashtirildi.
+- Kromka, CNC teshish, dizayn va bosh sex uchun mahalliy premium SVG rasmlar qo‘shildi.
+
+MUHIM:
+“AI Smart Cut” mahalliy joylashtirish algoritmidir. U amaliy taxminiy optimizatsiya beradi,
+lekin juda murakkab sanoat optimizatori yoki Bazis bilan bir xil matematik optimal natijani kafolatlamaydi.
+Ishlab chiqarishdan oldin xaritani mas’ul usta tekshirishi kerak.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V22 AI SMART CUT ERP
+4. Deploy tugagach Ctrl + Shift + R bosing.
