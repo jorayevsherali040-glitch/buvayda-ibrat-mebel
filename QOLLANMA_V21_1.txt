@@ -1,0 +1,19 @@
+BUVAYDA IBRAT MEBEL V21.1 — HD RASMLAR
+
+YANGILANDI:
+- Bosh katta rasm yuqori sifatli zamonaviy CNC sexi rasmiga almashtirildi.
+- Laminat kesish kartasiga yuqori sifatli yog‘och panellar rasmi qo‘yildi.
+- Kromka xizmatiga tiniq professional uskuna rasmi qo‘yildi.
+- Teshish xizmatiga yuqori sifatli CNC uskuna rasmi qo‘yildi.
+- Dizayn xizmatiga tiniq mebel loyihalash monitori rasmi qo‘yildi.
+- Rasmlarga lazy loading va mahalliy fallback qo‘shildi.
+- Internet bo‘lmasa oldingi mahalliy rasmlar avtomatik ochiladi.
+- Global qidiruvdagi xizmat rasmlari ham HD rasmlarga almashtirildi.
+- Rasm kesilishi va object-position sozlamalari to‘g‘rilandi.
+
+YUKLASH:
+1. ZIP faylni oching.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Ayniqsa index.html, v11.css va v13.js fayllarini almashtiring.
+4. Commit: BUVAYDA IBRAT MEBEL V21.1 HD IMAGES
+5. Deploy tugagach Ctrl + Shift + R bosing.
