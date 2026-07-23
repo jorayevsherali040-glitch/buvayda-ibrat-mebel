@@ -1,0 +1,38 @@
+BUVAYDA IBRAT MEBEL V10
+
+V10 ICHIDA:
+- V9 premium sayt, admin, ERP va hisob-kitob saqlangan
+- Yangi v10.html korxona boshqaruv markazi
+- Dashboard va 30 kunlik grafik
+- Buyurtmalar va PDF hisob-faktura
+- CRM mijozlar bazasi
+- Ombor: laminat, MDF, kromka, furnitura
+- Ishlab chiqarish bosqichlari
+- Ishchilar, oylik va avans
+- Yetkazib beruvchilar va qarzdorlik
+- Material xaridi omborni avtomatik oshiradi
+- Xarid to‘lovi kassaga avtomatik chiqim yozadi
+- Buyurtma oldindan to‘lovi kassaga avtomatik kirim yozadi
+- Kassa kirim-chiqim
+- Aqlli biznes tahlili (real ma’lumotlardan qoidaviy tavsiya)
+- Telegram uchun kunlik hisobot matni
+- PDF dashboard hisobot
+- Tungi rejim
+
+MUHIM:
+Telegram orqali avtomatik bot xabari uchun server va maxfiy bot tokeni kerak.
+V10 statik GitHub Pages’da xavfsiz ishlashi uchun “Telegramda ochish” usulidan foydalanadi.
+
+YUKLASH:
+1. ZIPni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni repository ustiga yuklang.
+4. images papkasi va logo.png ni o‘chirmang.
+5. Commit: BUVAYDA IBRAT MEBEL V10
+6. Deploy tugagach Ctrl + F5 bosing.
+
+V10 MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v10.html
+
+FIRESTORE:
+firestore.rules kodini Firebase Console → Firestore → Rules bo‘limiga joylab Publish bosing.

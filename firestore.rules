@@ -56,7 +56,8 @@ service cloud.firestore {
 
 
     match /laminates/{id} {
-      allow read, write: if request.auth != null;
+      allow read: if true;
+      allow write: if request.auth != null;
     }
 
 
@@ -66,7 +67,8 @@ service cloud.firestore {
 
 
     match /edges/{id} {
-      allow read, write: if request.auth != null;
+      allow read: if true;
+      allow write: if request.auth != null;
     }
 
 

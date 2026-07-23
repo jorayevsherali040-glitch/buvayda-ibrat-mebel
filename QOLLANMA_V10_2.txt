@@ -1,0 +1,34 @@
+BUVAYDA IBRAT MEBEL V10.2 — ASOSIY SAVDO YO‘NALISHI
+
+BU VERSIYADA SAYTNING ASOSI:
+1. Laminat savdosi
+2. Kromka savdosi
+3. Laminat kesish
+4. Kromka yopishtirish
+5. Bazis asosida teshish
+
+MEBELLAR:
+- Mebellar endi 2-darajali katalog sifatida ko‘rsatiladi.
+- Asosiy bosh sahifa laminat, kromka va servis xizmatlariga yo‘naltirilgan.
+
+SAYTDA YANGI:
+- Laminatlar bosh sahifada Firestore’dan avtomatik chiqadi.
+- Kromkalar bosh sahifada kodlari bilan chiqadi: 04.19, 08.19 va boshqalar.
+- Kod, rang yoki nom bo‘yicha qidirish.
+- Omborda bor va kam qolgan filtrlari.
+- Har mahsulotda qoldiq va narx.
+- Telegram orqali to‘g‘ridan-to‘g‘ri buyurtma.
+- Telefon orqali qo‘ng‘iroq tugmasi.
+- Asosiy xizmatlar alohida katta blokda.
+- Tayyor mebellar pastroqda ikkinchi darajada.
+
+YUKLASH:
+1. ZIPni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni eski fayllar ustiga yuklang.
+4. Commit: V10.2 ASOSIY LAMINAT KROMKA
+5. Deploy tugagach Ctrl + F5 bosing.
+
+MUHIM:
+Yangi firestore.rules faylini Firebase → Firestore → Rules bo‘limiga joylab Publish bosing.
+Laminat va kromkalarni admin V10 panelidan kiriting.

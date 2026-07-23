@@ -31,7 +31,9 @@
 
       <nav class="premium-nav" id="mainNav">
         <a href="#bosh">Bosh sahifa</a>
-        <a href="#kategoriyalar">Kategoriyalar</a>
+        <a href="#asosiy-savdo">Laminat va kromka</a>
+        <a href="#servis">Xizmatlar</a>
+        <a href="#kategoriyalar">Mebellar</a>
         <a href="#katalog">Katalog</a>
         <a href="#xizmatlar">Xizmatlar</a>
         <a href="#aloqa">Aloqa</a>
@@ -49,17 +51,17 @@
     <section class="premium-hero" id="bosh">
       <div class="page-wrap hero-grid">
         <div class="hero-copy">
-          <p class="hero-eyebrow">MEBELDA SIFAT VA DID</p>
-          <h1>Uyingizga mos,<br><em>sizga xos</em> mebellar.</h1>
-          <p class="hero-lead">Zamonaviy mebel ishlab chiqarish, aniq kesish, sifatli kromka, Bazis asosida teshish va professional dizayn xizmati.</p>
+          <p class="hero-eyebrow">LAMINAT • KROMKA • PROFESSIONAL SERVIS</p>
+          <h1>Mebel ustalari uchun<br><em>barcha xizmatlar bir joyda.</em></h1>
+          <p class="hero-lead">Laminat savdosi, 04.19 va 08.19 kromkalar, professional kesish, kromka yopishtirish va Bazis asosida teshish xizmatlari.</p>
           <div class="hero-buttons">
-            <a class="primary-button" href="#katalog">Katalogni ko‘rish</a>
+            <a class="primary-button" href="#asosiy-savdo">Laminat va kromkalarni ko‘rish</a>
             <a class="secondary-button" href="https://t.me/ibratmebel8909" target="_blank" rel="noopener">Telegram orqali yozish</a>
           </div>
           <div class="hero-trust">
-            <div><strong>200+</strong><span>Kunlik kesish</span></div>
-            <div><strong>1500 m</strong><span>Kromka imkoniyati</span></div>
-            <div><strong>08–20</strong><span>Ish vaqti</span></div>
+            <div><strong>200+</strong><span>Kunlik laminat kesish</span></div>
+            <div><strong>1500 m</strong><span>Kunlik kromka urish</span></div>
+            <div><strong>04.19 / 08.19</strong><span>Kromka turlari</span></div>
           </div>
         </div>
         <div class="hero-visual">
@@ -67,8 +69,8 @@
             <img id="heroProductImage" src="./logo.png" alt="Ibrat Mebel mahsuloti">
           </div>
           <div class="floating-card">
-            <span>Yangi kolleksiya</span>
-            <strong id="heroProductName">Premium mebellar</strong>
+            <span>Asosiy yo‘nalish</span>
+            <strong id="heroProductName">Laminat va kromka savdosi</strong>
             <button id="heroProductButton" type="button">Batafsil →</button>
           </div>
           <div class="hero-seal">SIFAT<br><b>100%</b></div>
@@ -85,10 +87,87 @@
       </div>
     </section>
 
-    <section class="premium-section" id="kategoriyalar">
+
+    <section class="premium-section main-trade-section" id="asosiy-savdo">
       <div class="page-wrap">
         <div class="section-title-row">
-          <div><p class="section-label">KATEGORIYALAR</p><h2>Har bir xona uchun yechim</h2></div>
+          <div>
+            <p class="section-label">ASOSIY SAVDO YO‘NALISHI</p>
+            <h2>Laminat va kromkalar</h2>
+            <p class="section-description">Ombordagi mavjud laminatlar va kromkalarni kod, rang, qalinlik hamda o‘lchami bo‘yicha toping.</p>
+          </div>
+          <div class="trade-tabs">
+            <button class="active" data-trade-tab="laminates" type="button">Laminatlar</button>
+            <button data-trade-tab="edges" type="button">Kromkalar</button>
+          </div>
+        </div>
+
+        <div class="trade-toolbar">
+          <input id="tradeSearch" type="search" placeholder="Kod, rang yoki nom bo‘yicha qidirish...">
+          <select id="tradeAvailability">
+            <option value="">Barcha mahsulotlar</option>
+            <option value="available">Omborda bor</option>
+            <option value="low">Kam qolgan</option>
+          </select>
+        </div>
+
+        <div id="laminatePublicGrid" class="trade-grid"></div>
+        <div id="edgePublicGrid" class="trade-grid" hidden></div>
+      </div>
+    </section>
+
+    <section class="premium-section service-focus-section" id="servis">
+      <div class="page-wrap">
+        <div class="section-title-row">
+          <div>
+            <p class="section-label">ASOSIY XIZMATLAR</p>
+            <h2>Mebel ustalari uchun professional servis</h2>
+          </div>
+        </div>
+        <div class="service-focus-grid">
+          <article>
+            <span>01</span>
+            <h3>Laminat savdosi</h3>
+            <p>Turli rang, kod, qalinlik va brenddagi laminatlar. Zavod narxlariga yaqin qulay takliflar.</p>
+            <a href="#asosiy-savdo">Laminatlarni ko‘rish →</a>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Professional kesish</h3>
+            <p>Kuniga 200 tagacha laminatni aniq o‘lchamda, zamonaviy uskunalarda kesamiz.</p>
+            <a href="#aloqa">Buyurtma berish →</a>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Kromka yopishtirish</h3>
+            <p>04.19, 08.19 va boshqa kromkalar bilan sifatli, mustahkam va toza ishlov.</p>
+            <a href="#asosiy-savdo">Kromkalarni ko‘rish →</a>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Bazis asosida teshish</h3>
+            <p>Loyiha asosida aniq teshish, yig‘ishga tayyor detallar va tezkor xizmat.</p>
+            <a href="#aloqa">Hisob-kitob olish →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="secondary-furniture-banner">
+      <div class="page-wrap secondary-banner-inner">
+        <div>
+          <p class="section-label">2-DARAJALI YO‘NALISH</p>
+          <h2>Tayyor mebellar katalogi</h2>
+          <p>Asosiy xizmatlarimiz laminat, kromka va servis. Tayyor mebellar esa alohida katalogda taqdim etiladi.</p>
+        </div>
+        <a class="secondary-button" href="#katalog">Mebellarni ko‘rish</a>
+      </div>
+    </section>
+
+    <section class="premium-section furniture-secondary" id="kategoriyalar">
+      <div class="page-wrap">
+        <div class="section-title-row">
+          <div><p class="section-label">MEBELLAR — 2-DARAJALI KATALOG</p><h2>Tayyor mebellar</h2></div>
           <a href="#katalog">Barcha mahsulotlar →</a>
         </div>
         <div class="premium-category-grid" id="categoryGrid">
@@ -100,7 +179,7 @@
     <section class="premium-section light-section" id="top">
       <div class="page-wrap">
         <div class="section-title-row">
-          <div><p class="section-label">TANLANGAN MAHSULOTLAR</p><h2>Eng yaxshi takliflar</h2></div>
+          <div><p class="section-label">TAVSIYA ETILGAN MEBELLAR</p><h2>Tanlangan mebellar</h2></div>
           <div class="slider-buttons">
             <button id="featuredPrev" type="button">←</button>
             <button id="featuredNext" type="button">→</button>
@@ -115,7 +194,7 @@
     <section class="premium-section" id="katalog">
       <div class="page-wrap">
         <div class="catalog-heading">
-          <div><p class="section-label">KATALOG</p><h2>Siz izlagan mebel shu yerda</h2></div>
+          <div><p class="section-label">TAYYOR MEBELLAR</p><h2>Mebellar katalogi</h2></div>
           <div class="catalog-count" id="catalogCount">0 ta mahsulot</div>
         </div>
 
@@ -201,7 +280,9 @@
   <footer class="premium-footer">
     <div class="page-wrap footer-grid">
       <div><a class="premium-brand footer-brand" href="#bosh"><span class="brand-mark"><img src="./logo.png" alt=""></span><span><strong>BUVAYDA IBRAT MEBEL</strong><small>Buvayda</small></span></a><p>Sifatli mebel va professional mebel servis xizmatlari.</p></div>
-      <div><h4>Sahifalar</h4><a href="#katalog">Katalog</a><a href="#kategoriyalar">Kategoriyalar</a><a href="#xizmatlar">Xizmatlar</a></div>
+      <div><h4>Sahifalar</h4><a href="#katalog">Katalog</a><a href="#asosiy-savdo">Laminat va kromka</a>
+        <a href="#servis">Xizmatlar</a>
+        <a href="#kategoriyalar">Mebellar</a><a href="#xizmatlar">Xizmatlar</a></div>
       <div><h4>Ijtimoiy tarmoqlar</h4><a href="https://t.me/ibratmebel8909" target="_blank">Telegram</a><a href="https://instagram.com/ibrat_mebel_8909" target="_blank">Instagram</a></div>
       <div><h4>Boshqaruv</h4><a href="./admin.html">Admin panel</a><a href="./erp.html">ERP tizimi</a><a href="./hisob.html">Hisob-kitob</a><a href="./v10.html">V10 Boshqaruv</a></div>
     </div>

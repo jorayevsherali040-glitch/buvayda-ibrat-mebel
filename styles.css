@@ -360,3 +360,46 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--premium-bg);color:var
 .premium-dark .hero-seal{
   background:#0b7a4b !important;
 }
+
+
+/* ===== V10.2 ASOSIY SAVDO YO‘NALISHI ===== */
+.main-trade-section{background:#f8fbf9}
+.section-description{max-width:650px;color:var(--premium-muted);line-height:1.7}
+.trade-tabs{display:flex;gap:8px;background:#e9f2ed;padding:6px;border-radius:13px}
+.trade-tabs button{border:0;background:transparent;padding:11px 18px;border-radius:9px;font-weight:900;cursor:pointer}
+.trade-tabs button.active{background:var(--premium-green);color:#fff}
+.trade-toolbar{display:grid;grid-template-columns:1fr 240px;gap:10px;margin-bottom:20px}
+.trade-toolbar input,.trade-toolbar select{height:48px;border:1px solid var(--premium-border);border-radius:11px;padding:0 14px;background:#fff;color:var(--premium-ink)}
+.trade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.trade-card{background:#fff;border:1px solid var(--premium-border);border-radius:17px;padding:18px;box-shadow:0 8px 28px rgba(5,55,35,.06);position:relative}
+.trade-card:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(5,55,35,.12)}
+.trade-card-code{display:inline-block;background:#102018;color:#fff;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:900;letter-spacing:.08em;margin-bottom:12px}
+.trade-card h3{font-size:18px;margin:0 0 8px}
+.trade-card p{font-size:12px;color:var(--premium-muted);line-height:1.6;margin:5px 0}
+.trade-card-price{display:flex;justify-content:space-between;align-items:end;margin-top:16px;padding-top:14px;border-top:1px solid var(--premium-border)}
+.trade-card-price strong{font-size:18px;color:var(--premium-green-dark)}
+.trade-card-stock{font-size:11px;font-weight:900;color:var(--premium-green)}
+.trade-card-stock.low{color:#a96700}
+.trade-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.trade-card-actions button,.trade-card-actions a{border:0;border-radius:9px;padding:11px;text-align:center;text-decoration:none;font-weight:900;cursor:pointer}
+.trade-card-actions button{background:var(--premium-green);color:#fff}
+.trade-card-actions a{background:#edf4ef;color:var(--premium-green-dark)}
+.service-focus-section{background:#0c1811;color:#fff}
+.service-focus-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.service-focus-grid article{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:17px;padding:24px}
+.service-focus-grid span{font-family:"Playfair Display",serif;font-size:28px;color:#80b99a}
+.service-focus-grid h3{font-size:18px;margin:14px 0 9px}
+.service-focus-grid p{color:#b9cbc0;font-size:13px;line-height:1.7;min-height:88px}
+.service-focus-grid a{color:#8ed2ad;text-decoration:none;font-weight:900}
+.secondary-furniture-banner{background:#eaf1ed;padding:36px 0}
+.secondary-banner-inner{display:flex;justify-content:space-between;align-items:center;gap:30px}
+.secondary-banner-inner h2{font-family:"Playfair Display",serif;font-size:38px;margin:5px 0}
+.secondary-banner-inner p{color:var(--premium-muted);max-width:720px}
+.furniture-secondary{padding-top:75px}
+.furniture-secondary,.furniture-secondary + .light-section{opacity:.96}
+.premium-dark .main-trade-section{background:#0f1813}
+.premium-dark .trade-card{background:#121d16;color:#edf4ef}
+.premium-dark .trade-toolbar input,.premium-dark .trade-toolbar select{background:#0e1712;color:#fff}
+.premium-dark .secondary-furniture-banner{background:#142019}
+@media(max-width:1050px){.trade-grid,.service-focus-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.trade-grid,.service-focus-grid{grid-template-columns:1fr}.trade-toolbar{grid-template-columns:1fr}.secondary-banner-inner{align-items:flex-start;flex-direction:column}.trade-tabs{width:100%}.trade-tabs button{flex:1}.secondary-banner-inner h2{font-size:30px}}

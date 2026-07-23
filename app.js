@@ -3,6 +3,9 @@ import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, where,
 
 const $ = id => document.getElementById(id);
 let products = [];
+let publicLaminates = [];
+let publicEdges = [];
+let activeTradeTab = "laminates";
 let favorites = JSON.parse(localStorage.getItem("ibratFavorites") || "[]");
 let cart = JSON.parse(localStorage.getItem("ibratCart") || "[]");
 let viewed = JSON.parse(localStorage.getItem("ibratViewed") || "[]");
@@ -156,3 +159,80 @@ $("downloadPdfButton").onclick=()=>{const {jsPDF}=window.jspdf;const doc=new jsP
 $("buyurtma").onsubmit=e=>{e.preventDefault();const text=encodeURIComponent(`Assalomu alaykum!\nIsm: ${$("customerName").value.trim()}\nTelefon: ${$("customerPhone").value.trim()}\nXizmat: ${$("customerService").value}\nIzoh: ${$("customerMessage").value.trim()}`);window.open(`https://t.me/ibratmebel8909?text=${text}`,"_blank","noopener")};
 
 onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));cleanState();renderCategories();renderFeatured();renderCatalog();renderRecommendations()},e=>{$("catalogGrid").innerHTML='<div class="premium-empty">Mahsulotlarni yuklashda xatolik.</div>';console.error(e)});
+
+
+function publicStockClass(x){return Number(x.stock)<=Number(x.minStock||0)?"low":""}
+function renderPublicTrade(){
+  const search=$("tradeSearch")?.value.trim().toLowerCase()||"";
+  const availability=$("tradeAvailability")?.value||"";
+  const filterItems=(items)=>items.filter(x=>{
+    const out=Number(x.stock)<=0;
+    const low=!out&&Number(x.stock)<=Number(x.minStock||0);
+    return(!search||`${x.code||""} ${x.name||""} ${x.brand||""}`.toLowerCase().includes(search))
+      &&(!availability||(availability==="available"&&!out)||(availability==="low"&&low));
+  });
+
+  const laminates=filterItems(publicLaminates);
+  const edges=filterItems(publicEdges);
+
+  $("laminatePublicGrid").innerHTML=laminates.length?laminates.map(x=>`
+    <article class="trade-card">
+      <span class="trade-card-code">${esc(x.code||"KODSIZ")}</span>
+      <h3>${esc(x.name||"Laminat")}</h3>
+      <p>${esc(x.brand||"Brend ko‘rsatilmagan")} · ${esc(x.thickness||"")} mm</p>
+      <p>O‘lchami: ${esc(x.size||"Ko‘rsatilmagan")}</p>
+      <div class="trade-card-price">
+        <div><small>1 list narxi</small><strong>${numberPrice(x.salePrice).toLocaleString("uz-UZ")} so‘m</strong></div>
+        <span class="trade-card-stock ${publicStockClass(x)}">${Number(x.stock||0)} list</span>
+      </div>
+      <div class="trade-card-actions">
+        <button data-trade-order="laminate" data-trade-id="${x.id}" type="button">Buyurtma</button>
+        <a href="tel:+998958027755">Qo‘ng‘iroq</a>
+      </div>
+    </article>`).join(""):'<div class="premium-empty">Laminatlar hali kiritilmagan.</div>';
+
+  $("edgePublicGrid").innerHTML=edges.length?edges.map(x=>`
+    <article class="trade-card">
+      <span class="trade-card-code">${esc(x.code||"KODSIZ")}</span>
+      <h3>${esc(x.name||"Kromka")}</h3>
+      <p>${esc(x.brand||"Brend ko‘rsatilmagan")}</p>
+      <p>O‘lchami: ${esc(x.thickness||"")} × ${esc(x.width||"")} mm</p>
+      <div class="trade-card-price">
+        <div><small>1 metr narxi</small><strong>${numberPrice(x.salePrice).toLocaleString("uz-UZ")} so‘m</strong></div>
+        <span class="trade-card-stock ${publicStockClass(x)}">${Number(x.stock||0)} metr</span>
+      </div>
+      <div class="trade-card-actions">
+        <button data-trade-order="edge" data-trade-id="${x.id}" type="button">Buyurtma</button>
+        <a href="tel:+998958027755">Qo‘ng‘iroq</a>
+      </div>
+    </article>`).join(""):'<div class="premium-empty">Kromkalar hali kiritilmagan.</div>';
+}
+document.addEventListener("click",e=>{
+  const tab=e.target.closest("[data-trade-tab]");
+  if(tab){
+    activeTradeTab=tab.dataset.tradeTab;
+    document.querySelectorAll("[data-trade-tab]").forEach(b=>b.classList.toggle("active",b===tab));
+    $("laminatePublicGrid").hidden=activeTradeTab!=="laminates";
+    $("edgePublicGrid").hidden=activeTradeTab!=="edges";
+  }
+  const order=e.target.closest("[data-trade-order]");
+  if(order){
+    const item=order.dataset.tradeOrder==="laminate"
+      ?publicLaminates.find(x=>x.id===order.dataset.tradeId)
+      :publicEdges.find(x=>x.id===order.dataset.tradeId);
+    if(!item)return;
+    const unit=order.dataset.tradeOrder==="laminate"?"list":"metr";
+    const text=`Assalomu alaykum!\n\n${order.dataset.tradeOrder==="laminate"?"Laminat":"Kromka"} buyurtma qilmoqchiman:\nKod: ${item.code||""}\nNomi: ${item.name||""}\nNarxi: ${Number(item.salePrice||0).toLocaleString("uz-UZ")} so‘m / ${unit}\nQoldiq: ${item.stock||0} ${unit}`;
+    window.open(`https://t.me/ibratmebel8909?text=${encodeURIComponent(text)}`,"_blank","noopener");
+  }
+});
+$("tradeSearch")?.addEventListener("input",renderPublicTrade);
+$("tradeAvailability")?.addEventListener("change",renderPublicTrade);
+
+onSnapshot(query(collection(db,"laminates"),orderBy("createdAt","desc")),s=>{
+  publicLaminates=s.docs.map(d=>({id:d.id,...d.data()}));renderPublicTrade();
+},console.error);
+
+onSnapshot(query(collection(db,"edges"),orderBy("createdAt","desc")),s=>{
+  publicEdges=s.docs.map(d=>({id:d.id,...d.data()}));renderPublicTrade();
+},console.error);
