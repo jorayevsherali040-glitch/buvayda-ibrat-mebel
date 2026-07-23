@@ -1,0 +1,26 @@
+BUVAYDA IBRAT MEBEL V22.3 — REAL PHOTO EDITION
+
+TUZATILDI:
+- Multfilmga o‘xshagan SVG rasmlar olib tashlandi.
+- Bosh sahifa uchun haqiqiy ishlab chiqarish sexi rasmi qo‘yildi.
+- Laminat kartasiga haqiqiy laminat listlari rasmi qo‘yildi.
+- Kromka kartasiga haqiqiy PVC kromka rulonlari rasmi qo‘yildi.
+- Teshish kartasiga haqiqiy CNC burg‘ulash rasmi qo‘yildi.
+- Dizayn kartasiga haqiqiy kompyuterda mebel loyihalash rasmi qo‘yildi.
+- Rasmlar tiniqlashtirildi, kattalashtirildi va optimallashtirildi.
+- Rasm kesilishi va joylashuvi to‘g‘rilandi.
+
+GITHUB’GA ALBATTA YUKLANG:
+index.html
+v11.css
+v13.js
+hero-workshop-hd.jpg
+service-laminate-hd.jpg
+service-edge-hd.jpg
+service-drill-hd.jpg
+service-design-hd.jpg
+
+COMMIT:
+V22.3 REAL PHOTO EDITION
+
+Deploy tugagach Ctrl + Shift + R bosing.
