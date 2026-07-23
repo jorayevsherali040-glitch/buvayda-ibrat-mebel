@@ -1,0 +1,33 @@
+BUVAYDA IBRAT MEBEL V20 — BUYURTMALAR + MIJOZ QIDIRUVI
+
+PIN:
+1212
+
+YANGI BUYURTMA ERP:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v20-orders.html
+
+V20 YANGILIKLARI:
+- Buyurtma raqami avtomatik.
+- Mijoz, telefon, Telegram, manzil, dizayner va usta.
+- Buyurtma tugash sanasi va ishlab chiqarish holati.
+- Buyurtmaga laminat, kromka, mebel va xizmat qo‘shish.
+- Saqlash va ombordan avtomatik ayirish.
+- Ombor kirim-chiqim harakati tarixi.
+- Har bir buyurtma bo‘yicha tannarx, sotuv va foyda.
+- Ishchilar kunlik ish hisoboti.
+- Buyurtmalar Kanban holatlari.
+- Veb sayt mijozlari uchun kuchli laminat va kromka qidiruvi.
+- Kod, nom, rang, brend, qalinlik va qoldiq bo‘yicha filtr.
+- Mahsulotlar omborda bor, kam yoki tugagan holatda ko‘rinadi.
+- Saytdagi 6 ta rasm tiniqlashtirildi va optimallashtirildi.
+- Avvalgi V19 dashboard, Excel, QR, kalkulyator, CRM va moliya saqlandi.
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V20 ORDERS SEARCH
+4. Deploy tugagach Ctrl + Shift + R bosing.
+
+MUHIM:
+Buyurtmani birinchi marta “Saqlash va ombordan ayirish” bilan saqlang.
+Tahrirlaganda qayta ayirish takrorlanmasligi uchun tizim buyurtmani belgilab qo‘yadi.

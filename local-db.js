@@ -12,7 +12,10 @@ const DEFAULT_DATA={
   suppliers:[],
   purchases:[],
   priceHistory:[],
+  inventoryMovements:[],
+  workerLogs:[],
   inventory:[],
+  orderSettings:{nextNumber:1,statuses:["Kutmoqda","Kesilmoqda","Kromka urilmoqda","Teshilmoqda","Yig‘ilmoqda","Tayyor","Yetkazildi"]},
   settings:{
     cutPrice:40000,
     edgePrice:0,

@@ -16,6 +16,8 @@ function showApp(){
   $("loginView").hidden=true;
   $("appView").hidden=false;
   sessionStorage.setItem("v13PinVerified","1");
+  const v20Destination=sessionStorage.getItem("v20AfterLogin");
+  if(v20Destination){sessionStorage.removeItem("v20AfterLogin");location.href="./v20-orders.html";return;}
   const v19Destination=sessionStorage.getItem("v19AfterLogin");
   if(v19Destination){sessionStorage.removeItem("v19AfterLogin");location.href="./v19-dashboard.html";return;}
   const v17Destination=sessionStorage.getItem("v17AfterLogin");

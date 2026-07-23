@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./v11.css?v=16.0">
+  <link rel="stylesheet" href="./v11.css?v=20">
 </head>
 <body>
   <div class="v15-topbar">
@@ -34,6 +34,7 @@
       <nav id="mainNav">
         <a class="active" href="#bosh">Bosh sahifa</a>
         <a href="#servis">Xizmatlar</a>
+        <a href="#mahsulot-topish">Mahsulot topish</a>
         <a href="#laminat">Mahsulotlar</a>
         <a href="#mebellar">Mebellar</a>
         <a href="#kalkulyator">Hisob-kitob</a>
@@ -103,6 +104,34 @@
             <article><img src="./service-design.jpg" alt=""><div><h3>Dizayn yaratish</h3><p>3D dizayn, loyiha va vizualizatsiya xizmatlari.</p><a href="#servis">Batafsil</a></div></article>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <section class="v20-finder" id="mahsulot-topish">
+      <div class="v15-container">
+        <div class="v20-finder-head">
+          <div>
+            <p>TEZKOR MAHSULOT TOPISH</p>
+            <h2>Laminat yoki kromkani bir necha soniyada toping</h2>
+            <span>Kod, rang, brend, qalinlik yoki kromka o‘lchami bo‘yicha qidiring.</span>
+          </div>
+          <div class="v20-finder-tabs">
+            <button class="active" data-finder-type="laminates">Laminatlar</button>
+            <button data-finder-type="edges">Kromkalar</button>
+          </div>
+        </div>
+
+        <div class="v20-finder-controls">
+          <input id="v20FinderSearch" placeholder="Masalan: H1145, kashmir, oq mat, 04.19...">
+          <select id="v20FinderBrand"><option value="">Barcha brendlar</option></select>
+          <select id="v20FinderThickness"><option value="">Barcha qalinlik</option></select>
+          <select id="v20FinderStock"><option value="">Barcha qoldiq</option><option value="available">Omborda bor</option><option value="low">Kam qolgan</option><option value="empty">Tugagan</option></select>
+          <button id="v20FinderClear">Tozalash</button>
+        </div>
+
+        <div class="v20-finder-info"><span id="v20FinderCount">0 ta mahsulot</span><small>Mahsulot ustiga bosib batafsil ma’lumot oling.</small></div>
+        <div class="v20-finder-grid" id="v20FinderGrid"></div>
       </div>
     </section>
 
@@ -229,6 +258,6 @@
   <div class="v11-toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script type="module" src="./v13.js?v=16.0"></script>
+  <script type="module" src="./v13.js?v=20"></script>
 </body>
 </html>

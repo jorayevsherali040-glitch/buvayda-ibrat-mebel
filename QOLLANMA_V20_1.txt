@@ -1,0 +1,20 @@
+BUVAYDA IBRAT MEBEL V20.1 — MENYU TUZATILDI
+
+TUZATILDI:
+- Chap menyudagi alohida “Laminat qo‘shish” bandi olib tashlandi.
+- Chap menyudagi alohida “Kromka qo‘shish” bandi olib tashlandi.
+- Chap menyudagi alohida “Mebel qo‘shish” bandi olib tashlandi.
+- Endi menyuda faqat:
+  Laminatlar
+  Kromkalar
+  Mebellar
+  ko‘rinadi.
+- Har bir bo‘lim ichida “Yangi laminat”, “Yangi kromka” yoki “Yangi mebel” tugmasi qolgan.
+- Mahsulot boshqaruvi versiyasi V20.1 qilib yangilandi.
+
+YUKLASH:
+1. ZIP faylni oching.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Ayniqsa product-manager.html, product-manager.css va product-manager.js almashtirilganini tekshiring.
+4. Commit: V20.1 PRODUCT MENU FIX
+5. Deploy tugagach Ctrl + Shift + R bosing.

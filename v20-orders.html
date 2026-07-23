@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V20 — Buyurtmalar</title>
+  <link rel="stylesheet" href="./v20-orders.css?v=20">
+</head>
+<body>
+  <aside class="o-sidebar" id="sidebar">
+    <a class="o-brand" href="./v19-dashboard.html">
+      <span class="o-logo">BM</span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V20 Buyurtma ERP</small></span>
+    </a>
+    <nav>
+      <p>BUYURTMALAR</p>
+      <button class="active" data-page="dashboard">▦ Umumiy ko‘rinish</button>
+      <button data-page="new-order">＋ Yangi buyurtma</button>
+      <button data-page="orders">▤ Buyurtmalar</button>
+      <button data-page="production">⚒ Ishlab chiqarish</button>
+      <p>OMBOR VA HISOB</p>
+      <button data-page="movements">⇄ Ombor harakati</button>
+      <button data-page="profit">₽ Buyurtma foydasi</button>
+      <button data-page="workers">♟ Ishchilar hisoboti</button>
+      <p>TIZIM</p>
+      <a href="./v19-dashboard.html">▦ V19 Dashboard</a>
+      <a href="./product-manager.html">▤ Mahsulot boshqaruvi</a>
+      <a href="./korxona.html#calculator">▣ Kalkulyator</a>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+    </nav>
+  </aside>
+
+  <main class="o-main">
+    <header class="o-topbar">
+      <div>
+        <button id="menuBtn">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL V20</p><h1 id="pageTitle">Buyurtmalar boshqaruvi</h1></div>
+      </div>
+      <div class="top-actions">
+        <span id="todayLabel"></span>
+        <button id="themeBtn">🌙</button>
+        <button id="logoutBtn">Chiqish</button>
+      </div>
+    </header>
+
+    <section class="o-page active" id="pageDashboard">
+      <div class="hero">
+        <div><p>V20 BUYURTMA ERP</p><h2>Buyurtma qabul qilishdan yetkazib berishgacha</h2><span>Mahsulotlar ombordan avtomatik ayriladi, foyda va jarayon kuzatiladi.</span></div>
+        <button data-go="new-order">＋ Yangi buyurtma</button>
+      </div>
+      <div class="stats">
+        <article><span>Bugungi buyurtma</span><strong id="dToday">0</strong></article>
+        <article><span>Faol buyurtmalar</span><strong id="dActive">0</strong></article>
+        <article><span>Tayyor</span><strong id="dReady">0</strong></article>
+        <article><span>Jami qarz</span><strong id="dDebt">0 so‘m</strong></article>
+        <article><span>Taxminiy foyda</span><strong id="dProfit">0 so‘m</strong></article>
+      </div>
+      <div class="grid two">
+        <article class="panel"><h2>So‘nggi buyurtmalar</h2><div id="recentOrders"></div></article>
+        <article class="panel"><h2>Ishlab chiqarish holati</h2><canvas id="orderChart" height="160"></canvas></article>
+      </div>
+    </section>
+
+    <section class="o-page" id="pageNewOrder">
+      <div class="page-intro"><div><p>YANGI BUYURTMA</p><h2>Buyurtma yaratish</h2></div><button id="resetOrder">Formani tozalash</button></div>
+      <form class="panel order-form" id="orderForm">
+        <input type="hidden" id="orderId">
+        <div class="client-grid">
+          <label>Buyurtma raqami<input id="orderNumber" readonly></label>
+          <label>Buyurtma sanasi<input id="orderDate" type="date" required></label>
+          <label>Tugash sanasi<input id="orderDeadline" type="date"></label>
+          <label>Holati<select id="orderStatus"></select></label>
+          <label>Mijoz ismi<input id="orderCustomer" required></label>
+          <label>Telefon<input id="orderPhone"></label>
+          <label>Telegram<input id="orderTelegram"></label>
+          <label>Manzil<input id="orderAddress"></label>
+          <label>Dizayner<input id="orderDesigner"></label>
+          <label>Mas’ul usta<input id="orderWorker"></label>
+        </div>
+
+        <div class="line-builder">
+          <select id="lineType">
+            <option value="laminates">Laminat</option>
+            <option value="edges">Kromka</option>
+            <option value="products">Mebel</option>
+            <option value="service">Xizmat</option>
+            <option value="custom">Boshqa</option>
+          </select>
+          <select id="lineProduct"></select>
+          <input id="lineName" placeholder="Nomi">
+          <input id="lineQty" type="number" min="0" step="0.01" value="1" placeholder="Miqdor">
+          <input id="linePrice" type="number" min="0" value="0" placeholder="Sotuv narxi">
+          <input id="lineCost" type="number" min="0" value="0" placeholder="Tannarxi">
+          <button type="button" id="addLine">＋ Qo‘shish</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Mahsulot/xizmat</th><th>Birlik</th><th>Miqdor</th><th>Sotuv narxi</th><th>Tannarxi</th><th>Jami</th><th></th></tr></thead>
+            <tbody id="orderLines"></tbody>
+          </table>
+        </div>
+
+        <div class="order-bottom">
+          <div class="notes">
+            <label>Izoh<textarea id="orderNote"></textarea></label>
+            <label>Oldindan to‘lov<input id="orderPaid" type="number" min="0" value="0"></label>
+          </div>
+          <div class="summary">
+            <div><span>Sotuv summasi</span><b id="sumSales">0 so‘m</b></div>
+            <div><span>Tannarx</span><b id="sumCost">0 so‘m</b></div>
+            <div><span>Taxminiy foyda</span><strong id="sumProfit">0 so‘m</strong></div>
+            <div><span>To‘langan</span><b id="sumPaid">0 so‘m</b></div>
+            <div><span>Qarz</span><strong id="sumDebt">0 so‘m</strong></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">💾 Buyurtmani saqlash</button>
+          <button type="button" id="saveAndDeduct">Saqlash va ombordan ayirish</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="o-page" id="pageOrders">
+      <div class="page-intro"><div><p>BUYURTMALAR</p><h2>Barcha buyurtmalar</h2></div><button data-go="new-order">＋ Yangi buyurtma</button></div>
+      <div class="panel"><div class="toolbar"><input id="orderSearch" placeholder="Buyurtma raqami, mijoz yoki telefon..."><select id="orderFilter"></select></div><div id="ordersTable"></div></div>
+    </section>
+
+    <section class="o-page" id="pageProduction">
+      <div class="page-intro"><div><p>ISHLAB CHIQARISH</p><h2>Jarayon bosqichlari</h2></div></div>
+      <div class="kanban" id="productionBoard"></div>
+    </section>
+
+    <section class="o-page" id="pageMovements">
+      <div class="page-intro"><div><p>OMBOR HARAKATI</p><h2>Kirim va chiqim tarixi</h2></div></div>
+      <div class="panel"><div class="toolbar"><input id="movementSearch" placeholder="Mahsulot yoki buyurtma..."><select id="movementType"><option value="">Barcha</option><option value="in">Kirim</option><option value="out">Chiqim</option></select></div><div id="movementTable"></div></div>
+    </section>
+
+    <section class="o-page" id="pageProfit">
+      <div class="page-intro"><div><p>FOYDA</p><h2>Buyurtmalar foydasi</h2></div></div>
+      <div class="stats compact">
+        <article><span>Jami savdo</span><strong id="pSales">0 so‘m</strong></article>
+        <article><span>Jami tannarx</span><strong id="pCost">0 so‘m</strong></article>
+        <article><span>Jami foyda</span><strong id="pProfit">0 so‘m</strong></article>
+        <article><span>Foyda marjasi</span><strong id="pMargin">0%</strong></article>
+      </div>
+      <div class="panel"><div id="profitTable"></div></div>
+    </section>
+
+    <section class="o-page" id="pageWorkers">
+      <div class="page-intro"><div><p>ISHCHILAR</p><h2>Kunlik ish hisoboti</h2></div></div>
+      <div class="grid form-grid">
+        <form class="panel worker-form" id="workerLogForm">
+          <h2>Yangi ish yozuvi</h2>
+          <label>Ishchi<select id="logWorker"></select></label>
+          <label>Sana<input id="logDate" type="date" required></label>
+          <label>Kesilgan list<input id="logSheets" type="number" min="0" value="0"></label>
+          <label>Kromka metri<input id="logEdge" type="number" min="0" value="0"></label>
+          <label>Teshilgan detal<input id="logDrill" type="number" min="0" value="0"></label>
+          <label>Izoh<textarea id="logNote"></textarea></label>
+          <button type="submit">Saqlash</button>
+        </form>
+        <article class="panel"><div id="workerLogTable"></div></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./v20-orders.js?v=20"></script>
+</body>
+</html>

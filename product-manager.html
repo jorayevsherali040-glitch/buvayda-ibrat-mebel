@@ -6,23 +6,20 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>BUVAYDA IBRAT MEBEL V19 — Laminat va Kromka boshqaruvi</title>
-  <link rel="stylesheet" href="./product-manager.css?v=18.1">
+  <title>BUVAYDA IBRAT MEBEL V20.1 — Mahsulot boshqaruvi</title>
+  <link rel="stylesheet" href="./product-manager.css?v=20.1">
 </head>
 <body>
   <aside class="pm-sidebar" id="pmSidebar">
     <a class="pm-brand" href="./super-admin.html">
       <span class="pm-mark">BM</span>
-      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V19 Mahsulot boshqaruvi</small></span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V20.1 Mahsulot boshqaruvi</small></span>
     </a>
     <nav>
       <p>MAHSULOTLAR</p>
       <button class="active" data-page="dashboard">▦ Umumiy ko‘rinish</button>
-      <button data-page="laminate-form">＋ Laminat qo‘shish</button>
-      <button data-page="edge-form">＋ Kromka qo‘shish</button>
       <button data-page="laminates">▤ Laminatlar</button>
       <button data-page="edges">≡ Kromkalar</button>
-      <button data-page="furniture-form">＋ Mebel qo‘shish</button>
       <button data-page="furniture">▣ Mebellar</button>
       <p>OMMAVIY AMALLAR</p>
       <button data-page="import-export">⇄ Excel import / eksport</button>
@@ -31,6 +28,7 @@
       <p>TIZIM</p>
       <a href="./korxona.html">◫ Korxona boshqaruvi</a>
       <a href="./v19-dashboard.html">▦ V19 Dashboard</a>
+      <a href="./v20-orders.html">▤ V20 Buyurtmalar</a>
       <a href="./super-admin.html">⚙ Super Admin</a>
       <a href="./index.html">⌂ Asosiy sayt</a>
     </nav>
@@ -40,7 +38,7 @@
     <header class="pm-topbar">
       <div>
         <button id="menuToggle" class="pm-menu">☰</button>
-        <div><p>BUVAYDA IBRAT MEBEL V19</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
+        <div><p>BUVAYDA IBRAT MEBEL V20.1</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
       </div>
       <div class="pm-top-actions">
         <button id="themeToggle">🌙</button>
@@ -132,7 +130,7 @@
 
     <section class="pm-page" id="pageLaminates">
       <div class="pm-intro">
-        <div><p>OMBOR</p><h2>Laminatlar</h2></div>
+        <div><p>OMBOR</p><h2>Laminatlar</h2><span>Laminat qo‘shish uchun o‘ngdagi tugmani bosing.</span></div>
         <div class="pm-intro-actions"><button data-go="laminate-form">＋ Yangi laminat</button><button class="pm-secondary" id="exportLaminateExcel">Excel eksport</button></div>
       </div>
       <div class="pm-card">
@@ -143,7 +141,7 @@
 
     <section class="pm-page" id="pageEdges">
       <div class="pm-intro">
-        <div><p>OMBOR</p><h2>Kromkalar</h2></div>
+        <div><p>OMBOR</p><h2>Kromkalar</h2><span>Kromka qo‘shish uchun o‘ngdagi tugmani bosing.</span></div>
         <div class="pm-intro-actions"><button data-go="edge-form">＋ Yangi kromka</button><button class="pm-secondary" id="exportEdgeExcel">Excel eksport</button></div>
       </div>
       <div class="pm-card">
@@ -178,7 +176,7 @@
 
     <section class="pm-page" id="pageFurniture">
       <div class="pm-intro">
-        <div><p>KATALOG</p><h2>Mebellar</h2></div>
+        <div><p>KATALOG</p><h2>Mebellar</h2><span>Mebel qo‘shish uchun o‘ngdagi tugmani bosing.</span></div>
         <div class="pm-intro-actions"><button data-go="furniture-form">＋ Yangi mebel</button></div>
       </div>
       <div class="pm-card">
@@ -238,6 +236,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script type="module" src="./product-manager.js?v=18.1"></script>
+  <script type="module" src="./product-manager.js?v=20.1"></script>
 </body>
 </html>

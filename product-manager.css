@@ -18,3 +18,13 @@
 .pm-furniture-actions button{flex:1;border:0;padding:9px;border-radius:8px;font-weight:900;cursor:pointer}
 @media(max-width:1050px){.pm-furniture-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.pm-furniture-grid{grid-template-columns:1fr}}
+
+
+/* V20.1 menu cleanup */
+.pm-sidebar nav button[data-page="laminates"],
+.pm-sidebar nav button[data-page="edges"],
+.pm-sidebar nav button[data-page="furniture"]{
+  font-size:14px;
+  padding-top:12px;
+  padding-bottom:12px;
+}

@@ -89,3 +89,50 @@ $("contactForm").onsubmit=e=>{e.preventDefault();const username=db.settings.tele
 window.addEventListener("storage",()=>{db=loadDB();renderAll()});
 window.addEventListener("ibrat-db-change",e=>{db=e.detail;renderAll()});
 renderAll();
+
+
+// V20 smart laminate and edge finder
+let v20FinderType="laminates";
+const v20FinderSearch=document.getElementById("v20FinderSearch");
+const v20FinderBrand=document.getElementById("v20FinderBrand");
+const v20FinderThickness=document.getElementById("v20FinderThickness");
+const v20FinderStock=document.getElementById("v20FinderStock");
+const v20FinderGrid=document.getElementById("v20FinderGrid");
+const v20FinderCount=document.getElementById("v20FinderCount");
+function v20StockMatch(x,f){
+  const stock=Number(x.stock||0),min=Number(x.minStock||0);
+  if(!f)return true;
+  if(f==="available")return stock>0;
+  if(f==="low")return stock>0&&stock<=min;
+  return stock<=0;
+}
+function v20FinderImage(x){return x.imageUrl||x.image||"./product-placeholder.svg"}
+function v20PopulateFilters(){
+  if(!v20FinderBrand)return;
+  const list=v20FinderType==="laminates"?state.laminates:state.edges;
+  const brands=[...new Set(list.map(x=>x.brand).filter(Boolean))].sort();
+  v20FinderBrand.innerHTML='<option value="">Barcha brendlar</option>'+brands.map(x=>`<option>${esc(x)}</option>`).join("");
+  const thickness=[...new Set(list.map(x=>String(x.thickness||"")).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
+  v20FinderThickness.innerHTML='<option value="">Barcha qalinlik</option>'+thickness.map(x=>`<option value="${esc(x)}">${esc(x)} mm</option>`).join("");
+}
+function v20RenderFinder(){
+  if(!v20FinderGrid)return;
+  const list=v20FinderType==="laminates"?state.laminates:state.edges;
+  const q=(v20FinderSearch.value||"").trim().toLowerCase(),brand=v20FinderBrand.value,th=v20FinderThickness.value,stock=v20FinderStock.value;
+  const filtered=list.filter(x=>{
+    const hay=`${x.code||""} ${x.name||""} ${x.color||""} ${x.brand||""} ${x.location||""} ${(x.tags||[]).join(" ")} ${x.matchingLaminate||""} ${(x.matchingEdges||[]).join(" ")}`.toLowerCase();
+    return(!q||hay.includes(q))&&(!brand||x.brand===brand)&&(!th||String(x.thickness)===th)&&v20StockMatch(x,stock)
+  });
+  v20FinderCount.textContent=`${filtered.length} ta mahsulot`;
+  v20FinderGrid.innerHTML=filtered.map(x=>{
+    const unit=v20FinderType==="laminates"?"list":"metr",stockNum=Number(x.stock||0),stockClass=stockNum<=0?"empty":stockNum<=Number(x.minStock||0)?"low":"";
+    const dims=v20FinderType==="laminates"?(x.size||"2800×2070"):`${x.thickness||""}×${x.width||""} mm`;
+    return`<article class="v20-finder-card"><img src="${esc(v20FinderImage(x))}" alt="${esc(x.name||"Mahsulot")}"><div><h3>${esc(x.code||"")} ${esc(x.name||"")}</h3><p>${esc(x.brand||"")} · ${esc(dims)}</p><div class="v20-meta"><span>${esc(v20FinderType==="laminates"?"Laminat":"Kromka")}</span>${x.location?`<span>Joy: ${esc(x.location)}</span>`:""}</div><div class="v20-bottom"><span class="v20-price">${money(x.salePrice||x.price||0)}</span><span class="v20-stock ${stockClass}">${stockNum} ${unit}</span></div></div></article>`
+  }).join("")||'<p>Qidiruv bo‘yicha mahsulot topilmadi.</p>';
+}
+document.querySelectorAll("[data-finder-type]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("[data-finder-type]").forEach(x=>x.classList.remove("active"));b.classList.add("active");v20FinderType=b.dataset.finderType;v20PopulateFilters();v20RenderFinder()
+}));
+[v20FinderSearch,v20FinderBrand,v20FinderThickness,v20FinderStock].filter(Boolean).forEach(el=>el.addEventListener(el.tagName==="INPUT"?"input":"change",v20RenderFinder));
+document.getElementById("v20FinderClear")?.addEventListener("click",()=>{v20FinderSearch.value="";v20FinderBrand.value="";v20FinderThickness.value="";v20FinderStock.value="";v20RenderFinder()});
+setTimeout(()=>{v20PopulateFilters();v20RenderFinder()},100);
