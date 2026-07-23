@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https:/
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query, orderBy, increment } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $=id=>document.getElementById(id);
-const state={orders:[],customers:[],inventory:[],production:[],workers:[],suppliers:[],purchases:[],finance:[],debts:[]};
+const state={orders:[],customers:[],inventory:[],laminates:[],laminateSales:[],edges:[],edgeSales:[],production:[],workers:[],suppliers:[],purchases:[],finance:[],debts:[]};
 let financeChart=null,ordersChart=null;
 const statusNames={new:"Yangi",design:"Dizayn",production:"Ishlab chiqarish",ready:"Tayyor",delivered:"Yetkazildi",cancelled:"Bekor",cutting:"Kesish",edge:"Kromka",drilling:"Teshish",assembly:"Yig‘ish"};
 
@@ -29,6 +29,10 @@ function populateSelects(){
   $("productionOrder").innerHTML='<option value="">Buyurtmani tanlang</option>'+state.orders.filter(o=>!["delivered","cancelled"].includes(o.status)).map(o=>`<option value="${o.id}">${esc(o.title)} — ${esc(o.customerName||"")}</option>`).join("");
   $("purchaseSupplier").innerHTML='<option value="">Tanlang</option>'+state.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
   $("purchaseInventory").innerHTML='<option value="">Tanlang</option>'+state.inventory.map(i=>`<option value="${i.id}">${esc(i.name)} (${i.quantity} ${esc(i.unit)})</option>`).join("");
+  $("saleLaminate").innerHTML='<option value="">Laminat tanlang</option>'+state.laminates.filter(x=>Number(x.stock)>0).map(x=>`<option value="${x.id}">${esc(x.code)} — ${esc(x.name)} (${x.stock} list)</option>`).join("");
+  $("saleEdge").innerHTML='<option value="">Kromka tanlang</option>'+state.edges.filter(x=>Number(x.stock)>0).map(x=>`<option value="${x.id}">${esc(x.code)} — ${esc(x.name)} (${x.stock} m)</option>`).join("");
+  const customerOptions='<option value="">Mijoz tanlang</option>'+state.customers.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.phone)}</option>`).join("");
+  $("saleCustomer").innerHTML=customerOptions;$("saleEdgeCustomer").innerHTML=customerOptions;
 }
 
 function updateKpis(){
@@ -70,6 +74,169 @@ function clearInventory(){clear(["inventoryId","inventoryName","inventoryQuantit
 genericForm({form:"inventoryForm",idField:"inventoryId",collectionName:"inventory",getData:()=>({name:$("inventoryName").value.trim(),category:$("inventoryCategory").value,quantity:Number($("inventoryQuantity").value||0),unit:$("inventoryUnit").value,minQuantity:Number($("inventoryMinimum").value||0),cost:Number($("inventoryCost").value||0)}),clearForm:clearInventory,message:"Ombor saqlandi"});$("cancelInventoryEdit").onclick=clearInventory;
 function renderInventory(){const q=$("inventorySearch").value.toLowerCase();const l=state.inventory.filter(i=>!q||`${i.name} ${i.category}`.toLowerCase().includes(q));const html=l.length?l.map(i=>row(i.name,`${esc(i.category)} · ${i.quantity} ${esc(i.unit)}`,`<strong>${money(Number(i.quantity||0)*Number(i.cost||0))}</strong>`,`<button class="edit" data-edit-inventory="${i.id}">Tahrir</button><button class="delete" data-delete-inventory="${i.id}">O‘chirish</button>`,`<span class="status ${Number(i.quantity)<=Number(i.minQuantity)?"warning":""}">${Number(i.quantity)<=Number(i.minQuantity)?"Kam qoldi":"Yetarli"}</span>`)).join(""):"<p>Ombor bo‘sh.</p>";$("inventoryList").innerHTML=html;$("dashboardLowStock").innerHTML=state.inventory.filter(i=>Number(i.quantity)<=Number(i.minQuantity)).slice(0,6).map(i=>row(i.name,`${i.quantity} ${esc(i.unit)}`,"", "",'<span class="status warning">Kam</span>')).join("")||"<p>Kam qolgan material yo‘q.</p>"}$("inventorySearch").oninput=renderInventory;$("inventoryList").onclick=async e=>{const edit=e.target.closest("[data-edit-inventory]"),del=e.target.closest("[data-delete-inventory]");if(edit){const i=state.inventory.find(x=>x.id===edit.dataset.editInventory);$("inventoryId").value=i.id;$("inventoryName").value=i.name||"";$("inventoryCategory").value=i.category||"Boshqa";$("inventoryQuantity").value=i.quantity||0;$("inventoryUnit").value=i.unit||"dona";$("inventoryMinimum").value=i.minQuantity||0;$("inventoryCost").value=i.cost||0;$("cancelInventoryEdit").hidden=false}if(del&&confirm("Ombor mahsuloti o‘chirilsinmi?"))await deleteDoc(doc(db,"inventory",del.dataset.deleteInventory))};
 
+
+function clearLaminate(){
+  clear(["laminateId","laminateName","laminateCode","laminateBrand","laminateSize","laminateStock","laminateSalePrice","laminateCostPrice","laminateNote"]);
+  $("laminateThickness").value="16";$("laminateMinStock").value=5;$("cancelLaminateEdit").hidden=true;
+}
+genericForm({
+  form:"laminateForm",idField:"laminateId",collectionName:"laminates",
+  getData:()=>({
+    name:$("laminateName").value.trim(),code:$("laminateCode").value.trim(),
+    brand:$("laminateBrand").value.trim(),thickness:$("laminateThickness").value,
+    size:$("laminateSize").value.trim(),stock:Number($("laminateStock").value||0),
+    salePrice:Number($("laminateSalePrice").value||0),costPrice:Number($("laminateCostPrice").value||0),
+    minStock:Number($("laminateMinStock").value||0),note:$("laminateNote").value.trim()
+  }),
+  clearForm:clearLaminate,message:"Laminat saqlandi"
+});
+$("cancelLaminateEdit").onclick=clearLaminate;
+
+function renderLaminates(){
+  const q=$("laminateSearch").value.toLowerCase(),f=$("laminateStockFilter").value;
+  const list=state.laminates.filter(x=>{
+    const out=Number(x.stock)<=0,low=!out&&Number(x.stock)<=Number(x.minStock||0);
+    return(!q||`${x.code} ${x.name} ${x.brand}`.toLowerCase().includes(q))
+      &&(!f||(f==="available"&&!out)||(f==="low"&&low)||(f==="out"&&out));
+  });
+  $("laminatesList").innerHTML=list.length?list.map(x=>row(
+    `${x.code} — ${x.name}`,
+    `${esc(x.brand||"Brendsiz")} · ${esc(x.thickness||"")} mm · ${esc(x.size||"O‘lcham yo‘q")} · ${x.stock} list`,
+    `<div><strong>${money(x.salePrice)}</strong><br><small>Ombor: ${money(Number(x.stock||0)*Number(x.costPrice||0))}</small></div>`,
+    `<button class="edit" data-edit-laminate="${x.id}">Tahrir</button><button class="delete" data-delete-laminate="${x.id}">O‘chirish</button>`,
+    `<span class="status ${Number(x.stock)<=0?"danger":Number(x.stock)<=Number(x.minStock||0)?"warning":""}">${Number(x.stock)<=0?"Tugagan":Number(x.stock)<=Number(x.minStock||0)?"Kam qolgan":"Mavjud"}</span>`
+  )).join(""):"<p>Laminatlar yo‘q.</p>";
+  $("laminateTypeCount").textContent=state.laminates.length;
+  $("laminateSheetCount").textContent=state.laminates.reduce((s,x)=>s+Number(x.stock||0),0).toLocaleString("uz-UZ");
+  $("laminateStockValue").textContent=money(state.laminates.reduce((s,x)=>s+Number(x.stock||0)*Number(x.costPrice||0),0));
+  $("laminateLowCount").textContent=state.laminates.filter(x=>Number(x.stock)<=Number(x.minStock||0)).length;
+}
+$("laminateSearch").oninput=renderLaminates;$("laminateStockFilter").onchange=renderLaminates;
+$("laminatesList").onclick=async e=>{
+  const edit=e.target.closest("[data-edit-laminate]"),del=e.target.closest("[data-delete-laminate]");
+  if(edit){
+    const x=state.laminates.find(v=>v.id===edit.dataset.editLaminate);
+    $("laminateId").value=x.id;$("laminateName").value=x.name||"";$("laminateCode").value=x.code||"";
+    $("laminateBrand").value=x.brand||"";$("laminateThickness").value=x.thickness||"16";
+    $("laminateSize").value=x.size||"";$("laminateStock").value=x.stock||0;
+    $("laminateSalePrice").value=x.salePrice||0;$("laminateCostPrice").value=x.costPrice||0;
+    $("laminateMinStock").value=x.minStock||0;$("laminateNote").value=x.note||"";
+    $("cancelLaminateEdit").hidden=false;
+  }
+  if(del&&confirm("Laminat o‘chirilsinmi?"))await deleteDoc(doc(db,"laminates",del.dataset.deleteLaminate));
+};
+
+$("saleLaminate").onchange=()=>{
+  const x=state.laminates.find(v=>v.id===$("saleLaminate").value);
+  $("saleLaminateUnitPrice").value=x?.salePrice||0;
+};
+$("saleLaminateDate").value=today();
+$("laminateSaleForm").onsubmit=async e=>{
+  e.preventDefault();
+  const x=state.laminates.find(v=>v.id===$("saleLaminate").value),c=state.customers.find(v=>v.id===$("saleCustomer").value);
+  if(!x)return;
+  const qty=Number($("saleLaminateQty").value||0),unitPrice=Number($("saleLaminateUnitPrice").value||0),paid=Number($("saleLaminatePaid").value||0),total=qty*unitPrice;
+  if(qty>Number(x.stock||0)){toast("Omborda yetarli laminat yo‘q");return}
+  await addDoc(collection(db,"laminateSales"),{
+    laminateId:x.id,laminateCode:x.code,laminateName:x.name,customerId:c?.id||"",customerName:c?.name||"",
+    qty,unitPrice,total,paid,date:$("saleLaminateDate").value||today(),note:$("saleLaminateNote").value.trim(),createdAt:serverTimestamp()
+  });
+  await updateDoc(doc(db,"laminates",x.id),{stock:increment(-qty),updatedAt:serverTimestamp()});
+  if(paid>0)await addDoc(collection(db,"finance"),{type:"income",amount:paid,category:"Laminat savdosi",method:"Naqd",date:$("saleLaminateDate").value||today(),note:`${x.code} ${x.name} — ${c?.name||"Mijoz"}`,createdAt:serverTimestamp()});
+  $("laminateSaleForm").reset();$("saleLaminateDate").value=today();toast("Laminat sotildi va ombor kamaydi");
+};
+function renderLaminateSales(){
+  const q=$("laminateSalesSearch").value.toLowerCase(),list=state.laminateSales.filter(x=>!q||`${x.laminateCode} ${x.laminateName} ${x.customerName}`.toLowerCase().includes(q));
+  $("laminateSalesList").innerHTML=list.length?list.map(x=>row(
+    `${x.laminateCode} — ${x.laminateName}`,
+    `${esc(x.customerName||"Mijoz ko‘rsatilmagan")} · ${x.qty} list · ${esc(x.date||"")}`,
+    `<strong>${money(x.total)}</strong>`,
+    `<button class="delete" data-delete-laminate-sale="${x.id}">O‘chirish</button>`,
+    `<span class="status">${Number(x.paid||0)>=Number(x.total||0)?"To‘langan":"Qoldiq: "+money(Number(x.total||0)-Number(x.paid||0))}</span>`
+  )).join(""):"<p>Laminat sotuvlari yo‘q.</p>";
+}
+$("laminateSalesSearch").oninput=renderLaminateSales;
+$("laminateSalesList").onclick=async e=>{const d=e.target.closest("[data-delete-laminate-sale]");if(d&&confirm("Sotuv yozuvi o‘chirilsinmi?"))await deleteDoc(doc(db,"laminateSales",d.dataset.deleteLaminateSale))};
+
+function clearEdge(){
+  clear(["edgeId","edgeCode","edgeName","edgeBrand","edgeStock","edgeSalePrice","edgeCostPrice","edgeNote"]);
+  $("edgeThickness").value="0.4";$("edgeWidth").value="19";$("edgeMinStock").value=50;$("cancelEdgeEdit").hidden=true;
+}
+genericForm({
+  form:"edgeForm",idField:"edgeId",collectionName:"edges",
+  getData:()=>({
+    code:$("edgeCode").value.trim(),name:$("edgeName").value.trim(),
+    thickness:$("edgeThickness").value,width:$("edgeWidth").value,
+    brand:$("edgeBrand").value.trim(),stock:Number($("edgeStock").value||0),
+    salePrice:Number($("edgeSalePrice").value||0),costPrice:Number($("edgeCostPrice").value||0),
+    minStock:Number($("edgeMinStock").value||0),note:$("edgeNote").value.trim()
+  }),
+  clearForm:clearEdge,message:"Kromka saqlandi"
+});
+$("cancelEdgeEdit").onclick=clearEdge;
+function renderEdges(){
+  const q=$("edgeSearch").value.toLowerCase(),th=$("edgeThicknessFilter").value,f=$("edgeStockFilter").value;
+  const list=state.edges.filter(x=>{
+    const out=Number(x.stock)<=0,low=!out&&Number(x.stock)<=Number(x.minStock||0);
+    return(!q||`${x.code} ${x.name} ${x.brand}`.toLowerCase().includes(q))
+      &&(!th||String(x.thickness)===th)
+      &&(!f||(f==="available"&&!out)||(f==="low"&&low)||(f==="out"&&out));
+  });
+  $("edgesList").innerHTML=list.length?list.map(x=>row(
+    `${x.code} — ${x.name}`,
+    `${esc(x.brand||"Brendsiz")} · ${esc(x.thickness)}×${esc(x.width)} mm · ${x.stock} metr`,
+    `<div><strong>${money(x.salePrice)} / m</strong><br><small>Ombor: ${money(Number(x.stock||0)*Number(x.costPrice||0))}</small></div>`,
+    `<button class="edit" data-edit-edge="${x.id}">Tahrir</button><button class="delete" data-delete-edge="${x.id}">O‘chirish</button>`,
+    `<span class="code-badge">${esc(x.code)}</span> <span class="status ${Number(x.stock)<=0?"danger":Number(x.stock)<=Number(x.minStock||0)?"warning":""}">${Number(x.stock)<=0?"Tugagan":Number(x.stock)<=Number(x.minStock||0)?"Kam":"Mavjud"}</span>`
+  )).join(""):"<p>Kromkalar yo‘q.</p>";
+  $("edgeTypeCount").textContent=state.edges.length;
+  $("edgeMeterCount").textContent=state.edges.reduce((s,x)=>s+Number(x.stock||0),0).toLocaleString("uz-UZ");
+  $("edgeStockValue").textContent=money(state.edges.reduce((s,x)=>s+Number(x.stock||0)*Number(x.costPrice||0),0));
+  $("edgeLowCount").textContent=state.edges.filter(x=>Number(x.stock)<=Number(x.minStock||0)).length;
+}
+$("edgeSearch").oninput=renderEdges;$("edgeThicknessFilter").onchange=renderEdges;$("edgeStockFilter").onchange=renderEdges;
+$("edgesList").onclick=async e=>{
+  const edit=e.target.closest("[data-edit-edge]"),del=e.target.closest("[data-delete-edge]");
+  if(edit){
+    const x=state.edges.find(v=>v.id===edit.dataset.editEdge);
+    $("edgeId").value=x.id;$("edgeCode").value=x.code||"";$("edgeName").value=x.name||"";
+    $("edgeThickness").value=x.thickness||"0.4";$("edgeWidth").value=x.width||"19";
+    $("edgeBrand").value=x.brand||"";$("edgeStock").value=x.stock||0;
+    $("edgeSalePrice").value=x.salePrice||0;$("edgeCostPrice").value=x.costPrice||0;
+    $("edgeMinStock").value=x.minStock||0;$("edgeNote").value=x.note||"";
+    $("cancelEdgeEdit").hidden=false;
+  }
+  if(del&&confirm("Kromka o‘chirilsinmi?"))await deleteDoc(doc(db,"edges",del.dataset.deleteEdge));
+};
+$("saleEdge").onchange=()=>{const x=state.edges.find(v=>v.id===$("saleEdge").value);$("saleEdgeUnitPrice").value=x?.salePrice||0};
+$("saleEdgeDate").value=today();
+$("edgeSaleForm").onsubmit=async e=>{
+  e.preventDefault();
+  const x=state.edges.find(v=>v.id===$("saleEdge").value),c=state.customers.find(v=>v.id===$("saleEdgeCustomer").value);
+  if(!x)return;
+  const qty=Number($("saleEdgeQty").value||0),unitPrice=Number($("saleEdgeUnitPrice").value||0),paid=Number($("saleEdgePaid").value||0),total=qty*unitPrice;
+  if(qty>Number(x.stock||0)){toast("Omborda yetarli kromka yo‘q");return}
+  await addDoc(collection(db,"edgeSales"),{
+    edgeId:x.id,edgeCode:x.code,edgeName:x.name,customerId:c?.id||"",customerName:c?.name||"",
+    qty,unitPrice,total,paid,date:$("saleEdgeDate").value||today(),note:$("saleEdgeNote").value.trim(),createdAt:serverTimestamp()
+  });
+  await updateDoc(doc(db,"edges",x.id),{stock:increment(-qty),updatedAt:serverTimestamp()});
+  if(paid>0)await addDoc(collection(db,"finance"),{type:"income",amount:paid,category:"Kromka savdosi",method:"Naqd",date:$("saleEdgeDate").value||today(),note:`${x.code} ${x.name} — ${c?.name||"Mijoz"}`,createdAt:serverTimestamp()});
+  $("edgeSaleForm").reset();$("saleEdgeDate").value=today();toast("Kromka sotildi va ombor kamaydi");
+};
+function renderEdgeSales(){
+  const q=$("edgeSalesSearch").value.toLowerCase(),list=state.edgeSales.filter(x=>!q||`${x.edgeCode} ${x.edgeName} ${x.customerName}`.toLowerCase().includes(q));
+  $("edgeSalesList").innerHTML=list.length?list.map(x=>row(
+    `${x.edgeCode} — ${x.edgeName}`,
+    `${esc(x.customerName||"Mijoz ko‘rsatilmagan")} · ${x.qty} metr · ${esc(x.date||"")}`,
+    `<strong>${money(x.total)}</strong>`,
+    `<button class="delete" data-delete-edge-sale="${x.id}">O‘chirish</button>`,
+    `<span class="status">${Number(x.paid||0)>=Number(x.total||0)?"To‘langan":"Qoldiq: "+money(Number(x.total||0)-Number(x.paid||0))}</span>`
+  )).join(""):"<p>Kromka sotuvlari yo‘q.</p>";
+}
+$("edgeSalesSearch").oninput=renderEdgeSales;
+$("edgeSalesList").onclick=async e=>{const d=e.target.closest("[data-delete-edge-sale]");if(d&&confirm("Sotuv yozuvi o‘chirilsinmi?"))await deleteDoc(doc(db,"edgeSales",d.dataset.deleteEdgeSale))};
+
 $("productionForm").onsubmit=async e=>{e.preventDefault();const o=state.orders.find(x=>x.id===$("productionOrder").value),w=state.workers.find(x=>x.id===$("productionWorker").value);await addDoc(collection(db,"production"),{orderId:o?.id||"",orderTitle:o?.title||"",title:$("productionTitle").value.trim(),workerId:w?.id||"",workerName:w?.name||"",status:$("productionStage").value,deadline:$("productionDeadline").value,note:$("productionNote").value.trim(),createdAt:serverTimestamp()});clear(["productionTitle","productionDeadline","productionNote"]);toast("Vazifa saqlandi")};
 function renderProduction(){const f=$("productionFilter").value,l=state.production.filter(p=>!f||p.status===f);$("productionList").innerHTML=l.length?l.map(p=>row(p.title,`${esc(p.orderTitle||"")} · ${esc(p.workerName||"Ishchi yo‘q")} · ${esc(p.deadline||"Muddat yo‘q")}`,"",`<button class="action" data-next-stage="${p.id}">Keyingi bosqich</button><button class="delete" data-delete-production="${p.id}">O‘chirish</button>`,`<span class="status">${statusNames[p.status]||p.status}</span>`)).join(""):"<p>Vazifalar yo‘q.</p>";$("todayTasks").innerHTML=state.production.filter(p=>p.deadline===today()).slice(0,6).map(p=>row(p.title,esc(p.workerName||""),"","",`<span class="status">${statusNames[p.status]||p.status}</span>`)).join("")||"<p>Bugungi vazifa yo‘q.</p>"}$("productionFilter").onchange=renderProduction;$("productionList").onclick=async e=>{const next=e.target.closest("[data-next-stage]"),del=e.target.closest("[data-delete-production]");if(next){const p=state.production.find(x=>x.id===next.dataset.nextStage),seq=["design","cutting","edge","drilling","assembly","ready"],idx=seq.indexOf(p.status);await updateDoc(doc(db,"production",p.id),{status:seq[Math.min(idx+1,seq.length-1)],updatedAt:serverTimestamp()})}if(del&&confirm("Vazifa o‘chirilsinmi?"))await deleteDoc(doc(db,"production",del.dataset.deleteProduction))};
 
@@ -104,5 +271,5 @@ function analysis(){
 $("refreshAnalysis").onclick=analysis;$("sendTelegramReport").onclick=()=>window.open(`https://t.me/share/url?url=&text=${encodeURIComponent($("telegramReport").value)}`,"_blank","noopener");
 $("downloadDashboardPdf").onclick=()=>{const {jsPDF}=window.jspdf,d=new jsPDF();d.setFontSize(18);d.text("BUVAYDA IBRAT MEBEL",14,18);d.setFontSize(12);d.text("V10 BOSHQARUV HISOBOTI",14,28);d.setFontSize(10);d.text($("telegramReport").value.split("\n"),14,42);d.save(`V10-hisobot-${today()}.pdf`)};
 
-function renderAll(){populateSelects();updateKpis();renderOrders();renderCustomers();renderInventory();renderProduction();renderWorkers();renderSuppliers();renderPurchases();renderFinance();renderCharts();analysis()}
-["orders","customers","inventory","production","workers","suppliers","purchases","finance","debts"].forEach(name=>openCollection(name));
+function renderAll(){populateSelects();updateKpis();renderOrders();renderCustomers();renderInventory();renderLaminates();renderLaminateSales();renderEdges();renderEdgeSales();renderProduction();renderWorkers();renderSuppliers();renderPurchases();renderFinance();renderCharts();analysis()}
+["orders","customers","inventory","laminates","laminateSales","edges","edgeSales","production","workers","suppliers","purchases","finance","debts"].forEach(name=>openCollection(name));

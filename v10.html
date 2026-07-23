@@ -53,6 +53,8 @@
         <button data-view="orders">Buyurtmalar</button>
         <button data-view="customers">Mijozlar</button>
         <button data-view="inventory">Ombor</button>
+        <button data-view="laminates">Laminat savdosi</button>
+        <button data-view="edges">Kromkalar</button>
         <button data-view="production">Ishlab chiqarish</button>
         <button data-view="workers">Ishchilar</button>
         <button data-view="suppliers">Yetkazib beruvchilar</button>
@@ -141,6 +143,195 @@
             <button class="v10-secondary" id="cancelInventoryEdit" type="button" hidden>Bekor qilish</button>
           </form>
           <article class="v10-card"><div class="card-head"><h2>Ombor qoldig‘i</h2><input id="inventorySearch" type="search" placeholder="Qidirish..."></div><div id="inventoryList"></div></article>
+        </div>
+      </section>
+
+
+      <section class="v10-view" id="viewLaminates">
+        <div class="v10-grid form-list">
+          <form class="v10-card v10-form" id="laminateForm">
+            <h2>Laminat mahsuloti</h2>
+            <input id="laminateId" type="hidden">
+            <label>Laminat nomi</label>
+            <input id="laminateName" required placeholder="Masalan: Kashmir, Oq mat">
+            <label>Kod / artikul</label>
+            <input id="laminateCode" required placeholder="Masalan: 101, 3025">
+            <label>Brend</label>
+            <input id="laminateBrand" placeholder="Masalan: Kastamonu, AGT">
+            <label>Qalinligi</label>
+            <select id="laminateThickness">
+              <option value="8">8 mm</option>
+              <option value="16">16 mm</option>
+              <option value="18">18 mm</option>
+              <option value="22">22 mm</option>
+              <option value="25">25 mm</option>
+            </select>
+            <label>O‘lchami</label>
+            <input id="laminateSize" placeholder="Masalan: 2800×2070">
+            <label>Qoldiq (list)</label>
+            <input id="laminateStock" type="number" min="0" step="0.01" required>
+            <label>Sotuv narxi</label>
+            <input id="laminateSalePrice" type="number" min="0" required>
+            <label>Tannarxi</label>
+            <input id="laminateCostPrice" type="number" min="0" value="0">
+            <label>Minimal qoldiq</label>
+            <input id="laminateMinStock" type="number" min="0" step="0.01" value="5">
+            <label>Izoh</label>
+            <textarea id="laminateNote"></textarea>
+            <button class="v10-primary" type="submit">Saqlash</button>
+            <button class="v10-secondary" id="cancelLaminateEdit" type="button" hidden>Bekor qilish</button>
+          </form>
+
+          <article class="v10-card">
+            <div class="card-head">
+              <h2>Laminatlar</h2>
+              <div class="inline-filters">
+                <input id="laminateSearch" type="search" placeholder="Kod yoki nom bo‘yicha...">
+                <select id="laminateStockFilter">
+                  <option value="">Barcha qoldiq</option>
+                  <option value="available">Omborda bor</option>
+                  <option value="low">Kam qolgan</option>
+                  <option value="out">Tugagan</option>
+                </select>
+              </div>
+            </div>
+            <div class="laminate-summary">
+              <article><span>Jami tur</span><strong id="laminateTypeCount">0</strong></article>
+              <article><span>Jami list</span><strong id="laminateSheetCount">0</strong></article>
+              <article><span>Ombor qiymati</span><strong id="laminateStockValue">0 so‘m</strong></article>
+              <article><span>Kam qolgan</span><strong id="laminateLowCount">0</strong></article>
+            </div>
+            <div id="laminatesList"></div>
+          </article>
+        </div>
+
+        <div class="v10-grid form-list">
+          <form class="v10-card v10-form" id="laminateSaleForm">
+            <h2>Laminat sotish</h2>
+            <label>Laminat</label>
+            <select id="saleLaminate" required><option value="">Laminat tanlang</option></select>
+            <label>Mijoz</label>
+            <select id="saleCustomer"><option value="">Mijoz tanlang</option></select>
+            <label>Miqdor (list)</label>
+            <input id="saleLaminateQty" type="number" min="0.01" step="0.01" required>
+            <label>Bir list narxi</label>
+            <input id="saleLaminateUnitPrice" type="number" min="0" required>
+            <label>To‘langan summa</label>
+            <input id="saleLaminatePaid" type="number" min="0" value="0">
+            <label>Sana</label>
+            <input id="saleLaminateDate" type="date">
+            <label>Izoh</label>
+            <textarea id="saleLaminateNote"></textarea>
+            <button class="v10-primary" type="submit">Sotuvni saqlash</button>
+          </form>
+
+          <article class="v10-card">
+            <div class="card-head">
+              <h2>Laminat sotuvlari</h2>
+              <input id="laminateSalesSearch" type="search" placeholder="Mijoz yoki laminat...">
+            </div>
+            <div id="laminateSalesList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="v10-view" id="viewEdges">
+        <div class="v10-grid form-list">
+          <form class="v10-card v10-form" id="edgeForm">
+            <h2>Kromka qo‘shish</h2>
+            <input id="edgeId" type="hidden">
+            <label>Kromka kodi</label>
+            <input id="edgeCode" required placeholder="Masalan: 04.19 yoki 08.19">
+            <label>Nomi / rangi</label>
+            <input id="edgeName" required placeholder="Masalan: Oq mat, Kashmir">
+            <label>Qalinligi</label>
+            <select id="edgeThickness">
+              <option value="0.4">0.4 mm</option>
+              <option value="0.8">0.8 mm</option>
+              <option value="1">1 mm</option>
+              <option value="2">2 mm</option>
+            </select>
+            <label>Eni</label>
+            <select id="edgeWidth">
+              <option value="19">19 mm</option>
+              <option value="22">22 mm</option>
+              <option value="28">28 mm</option>
+              <option value="35">35 mm</option>
+              <option value="45">45 mm</option>
+            </select>
+            <label>Brend</label>
+            <input id="edgeBrand" placeholder="Masalan: Rehau, Dollken">
+            <label>Qoldiq (metr)</label>
+            <input id="edgeStock" type="number" min="0" step="0.1" required>
+            <label>Sotuv narxi (1 metr)</label>
+            <input id="edgeSalePrice" type="number" min="0" required>
+            <label>Tannarxi (1 metr)</label>
+            <input id="edgeCostPrice" type="number" min="0" value="0">
+            <label>Minimal qoldiq</label>
+            <input id="edgeMinStock" type="number" min="0" step="0.1" value="50">
+            <label>Izoh</label>
+            <textarea id="edgeNote"></textarea>
+            <button class="v10-primary" type="submit">Saqlash</button>
+            <button class="v10-secondary" id="cancelEdgeEdit" type="button" hidden>Bekor qilish</button>
+          </form>
+
+          <article class="v10-card">
+            <div class="card-head">
+              <h2>Kromkalar ro‘yxati</h2>
+              <div class="inline-filters">
+                <input id="edgeSearch" type="search" placeholder="04.19, 08.19 yoki rang...">
+                <select id="edgeThicknessFilter">
+                  <option value="">Barcha qalinlik</option>
+                  <option value="0.4">0.4 mm</option>
+                  <option value="0.8">0.8 mm</option>
+                  <option value="1">1 mm</option>
+                  <option value="2">2 mm</option>
+                </select>
+                <select id="edgeStockFilter">
+                  <option value="">Barcha qoldiq</option>
+                  <option value="available">Omborda bor</option>
+                  <option value="low">Kam qolgan</option>
+                  <option value="out">Tugagan</option>
+                </select>
+              </div>
+            </div>
+            <div class="laminate-summary">
+              <article><span>Jami kod</span><strong id="edgeTypeCount">0</strong></article>
+              <article><span>Jami metr</span><strong id="edgeMeterCount">0</strong></article>
+              <article><span>Ombor qiymati</span><strong id="edgeStockValue">0 so‘m</strong></article>
+              <article><span>Kam qolgan</span><strong id="edgeLowCount">0</strong></article>
+            </div>
+            <div id="edgesList"></div>
+          </article>
+        </div>
+
+        <div class="v10-grid form-list">
+          <form class="v10-card v10-form" id="edgeSaleForm">
+            <h2>Kromka sotish</h2>
+            <label>Kromka</label>
+            <select id="saleEdge" required><option value="">Kromka tanlang</option></select>
+            <label>Mijoz</label>
+            <select id="saleEdgeCustomer"><option value="">Mijoz tanlang</option></select>
+            <label>Miqdor (metr)</label>
+            <input id="saleEdgeQty" type="number" min="0.1" step="0.1" required>
+            <label>1 metr narxi</label>
+            <input id="saleEdgeUnitPrice" type="number" min="0" required>
+            <label>To‘langan summa</label>
+            <input id="saleEdgePaid" type="number" min="0" value="0">
+            <label>Sana</label>
+            <input id="saleEdgeDate" type="date">
+            <label>Izoh</label>
+            <textarea id="saleEdgeNote"></textarea>
+            <button class="v10-primary" type="submit">Sotuvni saqlash</button>
+          </form>
+
+          <article class="v10-card">
+            <div class="card-head">
+              <h2>Kromka sotuvlari</h2>
+              <input id="edgeSalesSearch" type="search" placeholder="Mijoz yoki kod...">
+            </div>
+            <div id="edgeSalesList"></div>
+          </article>
         </div>
       </section>
 
