@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BUVAYDA IBRAT MEBEL — Super Admin</title>
+  <link rel="stylesheet" href="./super-admin.css">
+</head>
+<body>
+  <section class="sa-login" id="loginView">
+    <div class="sa-login-card">
+      <img src="./logo.png" alt="">
+      <p>BUVAYDA IBRAT MEBEL V11</p>
+      <h1>Super Admin</h1>
+      <form id="loginForm"><input id="loginEmail" type="email" placeholder="Admin email" required><input id="loginPassword" type="password" placeholder="Parol" required><button type="submit">Kirish</button></form>
+      <span id="loginMessage"></span>
+      <a href="./index.html">Saytga qaytish</a>
+    </div>
+  </section>
+
+  <section class="sa-app" id="appView" hidden>
+    <aside class="sa-sidebar">
+      <a class="sa-logo" href="./index.html"><img src="./logo.png" alt=""><span><strong>IBRAT MEBEL</strong><small>Super Admin</small></span></a>
+      <nav>
+        <p>ASOSIY</p>
+        <button class="active" data-page="overview">▦ Umumiy ko‘rinish</button>
+        <button data-page="quick-add">＋ Tez qo‘shish</button>
+        <p>MARKET</p>
+        <button data-page="laminates">▤ Laminatlar</button>
+        <button data-page="edges">≡ Kromkalar</button>
+        <button data-page="furniture">▣ Mebellar</button>
+        <p>BOSHQARUV</p>
+        <a href="./v10.html">◫ ERP va CRM</a>
+        <a href="./hisob.html">₽ Hisob-kitob</a>
+        <p>SOZLAMALAR</p>
+        <button data-page="service-prices">⚙ Xizmat narxlari</button>
+        <button data-page="site-settings">◉ Sayt sozlamalari</button>
+      </nav>
+      <div class="sa-user"><span id="userEmail"></span><button id="logoutButton">Chiqish</button></div>
+    </aside>
+
+    <main class="sa-main">
+      <header class="sa-top">
+        <div><button class="sa-mobile-menu" id="sidebarToggle">☰</button><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
+        <div><a href="./index.html">Saytni ko‘rish</a><button id="themeButton">🌙</button></div>
+      </header>
+
+      <section class="sa-page active" id="pageOverview">
+        <div class="sa-stats">
+          <article><span>Laminat turi</span><strong id="statLaminates">0</strong></article>
+          <article><span>Laminat listi</span><strong id="statSheets">0</strong></article>
+          <article><span>Kromka kodi</span><strong id="statEdges">0</strong></article>
+          <article><span>Kromka metri</span><strong id="statMeters">0</strong></article>
+          <article><span>Kam qoldiq</span><strong id="statLow">0</strong></article>
+          <article><span>Bugungi sotuv</span><strong id="statSales">0 so‘m</strong></article>
+        </div>
+        <div class="sa-grid two">
+          <article class="sa-panel"><h2>Tezkor amallar</h2><div class="sa-quick-buttons"><button data-open-quick="laminate">Laminat qo‘shish</button><button data-open-quick="edge">Kromka qo‘shish</button><a href="./v10.html">Buyurtma kiritish</a><a href="./hisob.html">Kirim-chiqim</a></div></article>
+          <article class="sa-panel"><h2>Ombor ogohlantirishlari</h2><div id="lowStockList"></div></article>
+        </div>
+        <div class="sa-grid two"><article class="sa-panel"><h2>So‘nggi laminatlar</h2><div id="recentLaminates"></div></article><article class="sa-panel"><h2>So‘nggi kromkalar</h2><div id="recentEdges"></div></article></div>
+      </section>
+
+      <section class="sa-page" id="pageQuickAdd">
+        <div class="sa-quick-add-grid">
+          <form class="sa-panel sa-simple-form" id="quickLaminateForm">
+            <div class="sa-form-icon">▤</div><h2>Laminatni tez qo‘shish</h2><p>Faqat zarur maydonlar. Keyin istasangiz batafsil tahrirlaysiz.</p>
+            <div class="sa-two"><label>Kod<input id="qlCode" required placeholder="A101"></label><label>Nomi / rang<input id="qlName" required placeholder="Kashmir"></label></div>
+            <div class="sa-two"><label>Brend<input id="qlBrand" placeholder="Egger"></label><label>Qalinlik<select id="qlThickness"><option>16</option><option>18</option><option>25</option></select></label></div>
+            <div class="sa-two"><label>List qoldig‘i<input id="qlStock" type="number" min="0" required></label><label>1 list narxi<input id="qlPrice" type="number" min="0" required></label></div>
+            <div class="sa-two"><label>Ombor joyi<input id="qlLocation" placeholder="A-15"></label><label>Rasm URL<input id="qlImage" placeholder="https://..."></label></div>
+            <button type="submit">Laminatni saqlash</button>
+          </form>
+
+          <form class="sa-panel sa-simple-form" id="quickEdgeForm">
+            <div class="sa-form-icon">≡</div><h2>Kromkani tez qo‘shish</h2><p>04.19, 08.19 kabi kodni kiriting va qoldiqni yozing.</p>
+            <div class="sa-two"><label>Kod<input id="qeCode" required placeholder="04.19"></label><label>Nomi / rang<input id="qeName" required placeholder="Oq mat"></label></div>
+            <div class="sa-three"><label>Qalinlik<select id="qeThickness"><option value="0.4">0.4</option><option value="0.8">0.8</option><option value="1">1</option><option value="2">2</option></select></label><label>Eni<select id="qeWidth"><option>19</option><option>22</option><option>28</option><option>45</option></select></label><label>Brend<input id="qeBrand"></label></div>
+            <div class="sa-two"><label>Metr qoldig‘i<input id="qeStock" type="number" min="0" required></label><label>1 metr narxi<input id="qePrice" type="number" min="0" required></label></div>
+            <div class="sa-two"><label>Mos laminat<input id="qeMatch" placeholder="A101, H1145"></label><label>Ombor joyi<input id="qeLocation" placeholder="K-08"></label></div>
+            <button type="submit">Kromkani saqlash</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="sa-page" id="pageLaminates">
+        <div class="sa-page-toolbar"><input id="laminateSearch" type="search" placeholder="Kod, nom yoki brend..."><button data-open-quick="laminate">＋ Laminat qo‘shish</button></div>
+        <div class="sa-panel"><div id="laminateTable"></div></div>
+      </section>
+
+      <section class="sa-page" id="pageEdges">
+        <div class="sa-page-toolbar"><input id="edgeSearch" type="search" placeholder="04.19, 08.19 yoki rang..."><button data-open-quick="edge">＋ Kromka qo‘shish</button></div>
+        <div class="sa-panel"><div id="edgeTable"></div></div>
+      </section>
+
+      <section class="sa-page" id="pageFurniture">
+        <div class="sa-empty-page"><h2>Mebellar 2-darajali katalog</h2><p>Eski mahsulot admin paneli saqlangan.</p><a href="./admin.html">Mebel admin panelini ochish</a></div>
+      </section>
+
+      <section class="sa-page" id="pageServicePrices">
+        <form class="sa-panel sa-settings-form" id="servicePriceForm">
+          <h2>Xizmat narxlari</h2><p>Bosh sahifadagi kalkulyator uchun standart narxlar.</p>
+          <label>Bir list kesish narxi<input id="settingCutPrice" type="number" min="0"></label>
+          <label>Bir metr kromka xizmati<input id="settingEdgePrice" type="number" min="0"></label>
+          <label>Bazis teshish standart narxi<input id="settingDrillPrice" type="number" min="0"></label>
+          <label>CNC boshlang‘ich narxi<input id="settingCncPrice" type="number" min="0"></label>
+          <button type="submit">Sozlamalarni saqlash</button>
+        </form>
+      </section>
+
+      <section class="sa-page" id="pageSiteSettings">
+        <form class="sa-panel sa-settings-form" id="siteSettingsForm">
+          <h2>Sayt sozlamalari</h2>
+          <label>Asosiy shior<input id="settingSlogan" value="Mebel ustalari uchun barcha xizmatlar bir platformada."></label>
+          <label>Telefon<input id="settingPhone" value="+998 95 802 77 55"></label>
+          <label>Telegram username<input id="settingTelegram" value="ibratmebel8909"></label>
+          <label>Bosh banner matni<textarea id="settingHero">Laminat va kromkalarni ombordagi real qoldiq bilan tanlang.</textarea></label>
+          <button type="submit">Saqlash</button>
+        </form>
+      </section>
+    </main>
+    <div class="sa-toast" id="toast"></div>
+  </section>
+
+  <script type="module" src="./super-admin.js"></script>
+</body>
+</html>

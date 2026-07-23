@@ -1,0 +1,48 @@
+BUVAYDA IBRAT MEBEL V11
+
+ASOSIY O‘ZGARISHLAR:
+- Laminat va kromka saytning asosiy yo‘nalishi
+- Professional Laminat Market
+- Professional Kromka Market
+- Kesish, kromka, Bazis teshish, CNC va dizayn servis bo‘limi
+- Online servis kalkulyatori
+- PDF va Telegram hisob-kitob
+- Savatcha va sevimlilar
+- Tayyor mebellar 2-darajali katalog
+- Dark/Light rejim
+- Mobil telefon uchun mos
+- Firestore real vaqt sinxronizatsiyasi
+
+SUPER ADMIN:
+- Admin panel alohida super-admin.html fayliga ko‘chirildi
+- Google/Firebase Settings uslubiga o‘xshash chap menyu
+- Laminat va kromka qo‘shish juda soddalashtirildi
+- “Tez qo‘shish” sahifasida faqat zarur maydonlar
+- Laminat va kromka ro‘yxati, qidirish va o‘chirish
+- Ombor ogohlantirishlari
+- Xizmat narxlari sozlamasi
+- Sayt sozlamalari
+- ERP, CRM va moliya bo‘limlariga tez havolalar
+
+MANZILLAR:
+Asosiy sayt:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/
+
+Super Admin:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/super-admin.html
+
+ERP:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v10.html
+
+MUHIM CHEKLOVLAR:
+- GitHub Pages statik hosting bo‘lgani uchun AI Menejer hozir real generativ AI emas; u ma’lumotlarga asoslangan qoidaviy tavsiyalar beradi.
+- DXF/Bazis/AutoCAD fayllari Firebase Storage yo‘qligi sababli saytda saqlanmaydi. Fayl tanlangach, uni Telegram chatida biriktirish kerak.
+- Video fon uchun hero-video.mp4 faylini repository ildiziga yuklang. Fayl bo‘lmasa, qorong‘i hero fon ishlaydi.
+
+YUKLASH:
+1. ZIPni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni eski fayllar ustiga yuklang.
+4. Commit: BUVAYDA IBRAT MEBEL V11
+5. Yangi firestore.rules kodini Firebase Firestore Rules bo‘limiga qo‘yib Publish bosing.
+6. Deploy tugagach Ctrl + F5 bosing.
