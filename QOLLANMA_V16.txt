@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V17 — TOZALANGAN VERSIYA
+BUVAYDA IBRAT MEBEL V18 — TOZALANGAN VERSIYA
 
 TUZATILDI:
 - Sayt ichida takroran ko‘rinayotgan kichik IBRAT MEBEL rasmi olib tashlandi.
@@ -16,5 +16,5 @@ STANDART PIN:
 YUKLASH:
 1. ZIP faylni Extract qiling.
 2. Ichidagi barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V17 CLEAN
+3. Commit: BUVAYDA IBRAT MEBEL V18 CLEAN
 4. Deploy tugagach Ctrl + F5 bosing.

@@ -5,13 +5,15 @@ let pendingImport=[];
 let deleteTarget=null;
 let scannerStream=null;
 let scannerTimer=null;
+const deleteModal=$("deleteModal");
+if(deleteModal){deleteModal.hidden=true;deleteModal.setAttribute("aria-hidden","true")}
 
 if(sessionStorage.getItem("v13PinVerified")!=="1"){
   sessionStorage.setItem("v17AfterLogin","product-manager");
   location.href="./super-admin.html";
 }
 
-const pageTitles={dashboard:"Umumiy ko‘rinish","laminate-form":"Laminat qo‘shish","edge-form":"Kromka qo‘shish",laminates:"Laminatlar",edges:"Kromkalar","import-export":"Excel import / eksport",qr:"QR kodlar",scanner:"QR skaner"};
+const pageTitles={dashboard:"Umumiy ko‘rinish","laminate-form":"Laminat qo‘shish","edge-form":"Kromka qo‘shish","furniture-form":"Mebel qo‘shish",laminates:"Laminatlar",edges:"Kromkalar",furniture:"Mebellar","import-export":"Excel import / eksport",qr:"QR kodlar",scanner:"QR skaner"};
 function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
 function num(v){return Number(v||0)}
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
@@ -45,11 +47,13 @@ async function handleImage(file,preview){
   const data=await compressImage(file);
   preview.src=data;return data
 }
-let laminateImageData="",edgeImageData="";
+let laminateImageData="",edgeImageData="",furnitureImageData="";
 $("laminateImageFile").onchange=async e=>{laminateImageData=await handleImage(e.target.files[0],$("laminatePreview"))};
 $("edgeImageFile").onchange=async e=>{edgeImageData=await handleImage(e.target.files[0],$("edgePreview"))};
+$("furnitureImageFile").onchange=async e=>{furnitureImageData=await handleImage(e.target.files[0],$("furniturePreview"))};
 $("laminateImageUrl").oninput=e=>{if(e.target.value)$("laminatePreview").src=e.target.value};
 $("edgeImageUrl").oninput=e=>{if(e.target.value)$("edgePreview").src=e.target.value};
+$("furnitureImageUrl").oninput=e=>{if(e.target.value)$("furniturePreview").src=e.target.value};
 
 function resetLaminate(){
   $("laminateForm").reset();$("laminateId").value="";$("laminateSize").value="2800×2070";$("laminateMinStock").value=5;$("laminatePreview").src="./product-placeholder.svg";laminateImageData="";$("laminateFormTitle").textContent="Yangi laminat"
@@ -79,14 +83,41 @@ function edgeData(){
     imageUrl:edgeImageData||$("edgeImageUrl").value.trim()||$("edgePreview").src,updatedAt:nowISO()
   }
 }
+
+function resetFurniture(){
+  $("furnitureForm").reset();
+  $("furnitureId").value="";
+  $("furnitureStock").value=1;
+  $("furniturePreview").src="./product-placeholder.svg";
+  furnitureImageData="";
+  $("furnitureFormTitle").textContent="Yangi mebel qo‘shish";
+}
+$("resetFurnitureForm").onclick=resetFurniture;
+function furnitureData(){
+  return{
+    id:$("furnitureId").value||uid("furniture"),
+    name:$("furnitureName").value.trim(),
+    category:$("furnitureCategory").value,
+    price:num($("furniturePrice").value),
+    oldPrice:num($("furnitureOldPrice").value),
+    stock:num($("furnitureStock").value),
+    material:$("furnitureMaterial").value.trim(),
+    color:$("furnitureColor").value.trim(),
+    description:$("furnitureDescription").value.trim(),
+    imageUrl:furnitureImageData||$("furnitureImageUrl").value.trim()||$("furniturePreview").src,
+    updatedAt:nowISO()
+  }
+}
 function upsert(list,item){
   const i=list.findIndex(x=>x.id===item.id);
   if(i>=0)list[i]={...list[i],...item};else list.unshift({...item,createdAt:nowISO()});
 }
 $("laminateForm").onsubmit=e=>{e.preventDefault();const item=laminateData();upsert(db.laminates,item);save();toast("Laminat saqlandi");resetLaminate();go("laminates")};
 $("edgeForm").onsubmit=e=>{e.preventDefault();const item=edgeData();upsert(db.edges,item);save();toast("Kromka saqlandi");resetEdge();go("edges")};
+$("furnitureForm").onsubmit=e=>{e.preventDefault();const item=furnitureData();upsert(db.products,item);save();toast("Mebel saqlandi");resetFurniture();go("furniture")};
 $("saveAndNewLaminate").onclick=()=>{if(!$("laminateForm").reportValidity())return;upsert(db.laminates,laminateData());save();resetLaminate();$("laminateCode").focus();toast("Saqlandi. Yangi laminat kiriting.")};
 $("saveAndNewEdge").onclick=()=>{if(!$("edgeForm").reportValidity())return;upsert(db.edges,edgeData());save();resetEdge();$("edgeCode").focus();toast("Saqlandi. Yangi kromka kiriting.")};
+$("saveAndNewFurniture").onclick=()=>{if(!$("furnitureForm").reportValidity())return;upsert(db.products,furnitureData());save();resetFurniture();$("furnitureName").focus();toast("Saqlandi. Yangi mebel kiriting.")};
 
 function stockBadge(x,unit){
   if(num(x.stock)<=0)return`<span class="pm-badge empty">Tugagan</span>`;
@@ -101,7 +132,7 @@ function renderDashboard(){
   $("statLamTypes").textContent=db.laminates.length;$("statLamStock").textContent=db.laminates.reduce((s,x)=>s+num(x.stock),0).toLocaleString("uz-UZ")+" list";
   $("statEdgeTypes").textContent=db.edges.length;$("statEdgeStock").textContent=db.edges.reduce((s,x)=>s+num(x.stock),0).toLocaleString("uz-UZ")+" m";
   const low=[...db.laminates.map(x=>({...x,type:"laminate"})),...db.edges.map(x=>({...x,type:"edge"}))].filter(x=>num(x.stock)<=num(x.minStock||0));
-  $("statLow").textContent=low.length;$("lowStockList").innerHTML=low.slice(0,10).map(x=>row(x,x.type)).join("")||"<p>Kam qolgan mahsulot yo‘q.</p>";
+  $("statFurniture").textContent=db.products.length;$("statLow").textContent=low.length;$("lowStockList").innerHTML=low.slice(0,10).map(x=>row(x,x.type)).join("")||"<p>Kam qolgan mahsulot yo‘q.</p>";
   $("recentLaminates").innerHTML=db.laminates.slice(0,6).map(x=>row(x,"laminate")).join("")||"<p>Ma’lumot yo‘q.</p>";
   $("recentEdges").innerHTML=db.edges.slice(0,6).map(x=>row(x,"edge")).join("")||"<p>Ma’lumot yo‘q.</p>";
 }
@@ -113,6 +144,36 @@ function renderLaminates(){
   const list=db.laminates.filter(x=>(!q||`${x.code} ${x.name} ${x.brand} ${x.location}`.toLowerCase().includes(q))&&filterStock(x,f));
   $("laminateTable").innerHTML=`<div class="pm-table-wrap"><table class="pm-table"><thead><tr><th>Rasm</th><th>Kod / nom</th><th>Brend</th><th>Qalinlik</th><th>Qoldiq</th><th>Narx</th><th>Joy</th><th>Amal</th></tr></thead><tbody>${list.map(x=>`<tr><td><img class="pm-thumb" src="${esc(imageOf(x))}"></td><td><b>${esc(x.code)}</b><br>${esc(x.name)}</td><td>${esc(x.brand||"")}</td><td>${esc(x.thickness||"")} mm</td><td>${stockBadge(x,"list")}</td><td>${money(x.salePrice)}</td><td>${esc(x.location||"")}</td><td><button class="pm-edit" data-edit-l="${x.id}">Edit</button> <button class="pm-qr" data-qr-l="${x.id}">QR</button> <button class="pm-delete" data-delete-l="${x.id}">O‘chirish</button></td></tr>`).join("")}</tbody></table></div>`
 }
+
+function renderFurniture(){
+  const q=$("furnitureSearch").value.toLowerCase(),cat=$("furnitureCategoryFilter").value;
+  const list=db.products.filter(x=>(!q||`${x.name} ${x.category} ${x.material} ${x.color}`.toLowerCase().includes(q))&&(!cat||x.category===cat));
+  $("furnitureGrid").innerHTML=list.length?list.map(x=>`<article class="pm-furniture-card"><img src="${esc(imageOf(x))}" alt=""><div><h3>${esc(x.name)}</h3><p>${esc(x.category||"Boshqa")} · ${esc(x.material||"")}</p><p><b>${money(x.price)}</b> · Ombor: ${num(x.stock)}</p><div class="pm-furniture-actions"><button class="pm-edit" data-edit-f="${x.id}">Edit</button><button class="pm-delete" data-delete-f="${x.id}">O‘chirish</button></div></div></article>`).join(""):"<p>Mebellar hali qo‘shilmagan.</p>";
+}
+function fillFurniture(x){
+  $("furnitureId").value=x.id;
+  $("furnitureName").value=x.name||"";
+  $("furnitureCategory").value=x.category||"Boshqa";
+  $("furniturePrice").value=x.price||0;
+  $("furnitureOldPrice").value=x.oldPrice||0;
+  $("furnitureStock").value=x.stock??1;
+  $("furnitureMaterial").value=x.material||"";
+  $("furnitureColor").value=x.color||"";
+  $("furnitureDescription").value=x.description||"";
+  $("furnitureImageUrl").value=x.imageUrl&&x.imageUrl.startsWith("http")?x.imageUrl:"";
+  $("furniturePreview").src=imageOf(x);
+  furnitureImageData=x.imageUrl||"";
+  $("furnitureFormTitle").textContent="Mebelni tahrirlash";
+  go("furniture-form");
+}
+$("furnitureSearch").oninput=renderFurniture;
+$("furnitureCategoryFilter").onchange=renderFurniture;
+$("furnitureGrid").onclick=e=>{
+  const edit=e.target.closest("[data-edit-f]"),del=e.target.closest("[data-delete-f]");
+  if(edit)fillFurniture(db.products.find(x=>x.id===edit.dataset.editF));
+  if(del)openDelete("products",del.dataset.deleteF);
+};
+
 function renderEdges(){
   const q=$("edgeSearch").value.toLowerCase(),f=$("edgeStockFilter").value;
   const list=db.edges.filter(x=>(!q||`${x.code} ${x.name} ${x.brand} ${x.location}`.toLowerCase().includes(q))&&filterStock(x,f));
@@ -127,9 +188,26 @@ function fillEdge(x){
 }
 $("laminateTable").onclick=e=>{const edit=e.target.closest("[data-edit-l]"),del=e.target.closest("[data-delete-l]"),qr=e.target.closest("[data-qr-l]");if(edit)fillLaminate(db.laminates.find(x=>x.id===edit.dataset.editL));if(del)openDelete("laminates",del.dataset.deleteL);if(qr)openSingleQr("laminates",qr.dataset.qrL)};
 $("edgeTable").onclick=e=>{const edit=e.target.closest("[data-edit-e]"),del=e.target.closest("[data-delete-e]"),qr=e.target.closest("[data-qr-e]");if(edit)fillEdge(db.edges.find(x=>x.id===edit.dataset.editE));if(del)openDelete("edges",del.dataset.deleteE);if(qr)openSingleQr("edges",qr.dataset.qrE)};
-function openDelete(type,id){const x=db[type].find(v=>v.id===id);deleteTarget={type,id};$("deleteModalText").textContent=`${x.code} — ${x.name} butunlay o‘chiriladi.`;$("deleteModal").hidden=false}
-$("cancelDelete").onclick=()=>{$("deleteModal").hidden=true;deleteTarget=null};
-$("confirmDelete").onclick=()=>{if(!deleteTarget)return;db[deleteTarget.type]=db[deleteTarget.type].filter(x=>x.id!==deleteTarget.id);save();$("deleteModal").hidden=true;deleteTarget=null;toast("Mahsulot o‘chirildi")};
+function openDelete(type,id){
+  const list=db[type];
+  const x=Array.isArray(list)?list.find(v=>v.id===id):null;
+  if(!x)return;
+  deleteTarget={type,id};
+  $("deleteModalText").textContent=`${x.code||x.name||"Mahsulot"} — ${x.name||""} butunlay o‘chiriladi.`;
+  deleteModal.hidden=false;
+  deleteModal.setAttribute("aria-hidden","false");
+}
+function closeDeleteModal(){deleteModal.hidden=true;deleteModal.setAttribute("aria-hidden","true");deleteTarget=null}
+$("cancelDelete").onclick=closeDeleteModal;
+deleteModal.addEventListener("click",e=>{if(e.target===deleteModal)closeDeleteModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!deleteModal.hidden)closeDeleteModal()});
+$("confirmDelete").onclick=()=>{
+  if(!deleteTarget)return closeDeleteModal();
+  db[deleteTarget.type]=db[deleteTarget.type].filter(x=>x.id!==deleteTarget.id);
+  save();
+  closeDeleteModal();
+  toast("Mahsulot o‘chirildi");
+};
 
 function csvEscape(v){const s=Array.isArray(v)?v.join(", "):String(v??"");return`"${s.replaceAll('"','""')}"`}
 function downloadBlob(content,name,type="text/csv;charset=utf-8"){
@@ -148,7 +226,7 @@ function exportXlsx(type){
   const headers=type==="laminates"?laminateHeaders:edgeHeaders,ws=XLSX.utils.aoa_to_sheet([headers,...toRows(type)]),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,type==="laminates"?"Laminatlar":"Kromkalar");XLSX.writeFile(wb,`${type}-${new Date().toISOString().slice(0,10)}.xlsx`)
 }
 $("exportLaminateExcel").onclick=()=>exportXlsx("laminates");$("exportEdgeExcel").onclick=()=>exportXlsx("edges");$("exportLaminatesCsv").onclick=()=>exportCsv("laminates");$("exportEdgesCsv").onclick=()=>exportCsv("edges");
-$("exportAllExcel").onclick=()=>{if(!window.XLSX){toast("Internet yo‘q. CSV tugmalaridan foydalaning.");return}const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([laminateHeaders,...toRows("laminates")]),"Laminatlar");XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([edgeHeaders,...toRows("edges")]),"Kromkalar");XLSX.writeFile(wb,"Buvayda-Ibrat-Mebel-V17.xlsx")};
+$("exportAllExcel").onclick=()=>{if(!window.XLSX){toast("Internet yo‘q. CSV tugmalaridan foydalaning.");return}const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([laminateHeaders,...toRows("laminates")]),"Laminatlar");XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([edgeHeaders,...toRows("edges")]),"Kromkalar");XLSX.writeFile(wb,"Buvayda-Ibrat-Mebel-V18.xlsx")};
 $("downloadTemplate").onclick=()=>{const type=$("importType").value,headers=type==="laminates"?laminateHeaders:edgeHeaders,sample=type==="laminates"?["A101","Kashmir","Egger",16,"2800×2070",850000,900000,750000,25,5,"A-15","04.19, 08.19","","Namuna"]:["04.19","Oq mat","Rehau",.4,19,2500,1800,200,1200,50,"K-08","A101, W980","","Namuna"];if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([headers,sample]),"Shablon");XLSX.writeFile(wb,`${type}-shablon.xlsx`)}else downloadBlob([headers,sample].map(r=>r.map(csvEscape).join(",")).join("\n"),`${type}-shablon.csv`)};
 $("importFile").onchange=async e=>{
   const file=e.target.files[0];if(!file)return;const ext=file.name.split(".").pop().toLowerCase();
@@ -171,7 +249,7 @@ function renderImportPreview(){
 }
 $("confirmImport").onclick=()=>{const type=$("importType").value;for(const item of pendingImport){const existing=db[type].find(x=>x.code.toLowerCase()===item.code.toLowerCase());if(existing)Object.assign(existing,item,{id:existing.id});else db[type].push(item)}save();toast(`${pendingImport.length} ta mahsulot import qilindi`);pendingImport=[];$("importPreview").innerHTML="";$("confirmImport").disabled=true};
 
-function qrPayload(type,x){return JSON.stringify({app:"BIM-V17",type,id:x.id,code:x.code})}
+function qrPayload(type,x){return JSON.stringify({app:"BIM-V18",type,id:x.id,code:x.code})}
 function renderQr(){
   const type=$("qrType").value,q=$("qrSearch").value.toLowerCase(),list=db[type].filter(x=>!q||`${x.code} ${x.name}`.toLowerCase().includes(q));
   $("qrGrid").innerHTML=list.map(x=>`<article class="pm-qr-card"><strong>${esc(x.code)}</strong><small>${esc(x.name)}</small><div class="pm-qr-code" id="qr-${x.id}"></div><small>${type==="laminates"?x.stock+" list":x.stock+" m"}</small><button data-print-qr="${type}:${x.id}">Chop etish</button></article>`).join("");
@@ -201,6 +279,8 @@ $("startScanner").onclick=async()=>{
 function stopScanner(){if(scannerTimer)clearInterval(scannerTimer);scannerTimer=null;if(scannerStream)scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;$("scannerVideo").srcObject=null}
 $("stopScanner").onclick=stopScanner;
 
-function renderAll(){db=loadDB();renderDashboard();renderLaminates();renderEdges()}
+function renderAll(){db=loadDB();renderDashboard();renderLaminates();renderEdges();renderFurniture()}
 window.addEventListener("storage",renderAll);window.addEventListener("ibrat-db-change",renderAll);
-renderAll();resetLaminate();resetEdge();
+renderAll();resetLaminate();resetEdge();resetFurniture();
+const hashPage=location.hash.replace("#","");
+if(pageTitles[hashPage])go(hashPage);

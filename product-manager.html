@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>BUVAYDA IBRAT MEBEL V17 — Laminat va Kromka boshqaruvi</title>
-  <link rel="stylesheet" href="./product-manager.css?v=17">
+  <title>BUVAYDA IBRAT MEBEL V18 — Laminat va Kromka boshqaruvi</title>
+  <link rel="stylesheet" href="./product-manager.css?v=18">
 </head>
 <body>
   <aside class="pm-sidebar" id="pmSidebar">
     <a class="pm-brand" href="./super-admin.html">
       <span class="pm-mark">BM</span>
-      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V17 Mahsulot boshqaruvi</small></span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V18 Mahsulot boshqaruvi</small></span>
     </a>
     <nav>
       <p>MAHSULOTLAR</p>
@@ -19,6 +19,8 @@
       <button data-page="edge-form">＋ Kromka qo‘shish</button>
       <button data-page="laminates">▤ Laminatlar</button>
       <button data-page="edges">≡ Kromkalar</button>
+      <button data-page="furniture-form">＋ Mebel qo‘shish</button>
+      <button data-page="furniture">▣ Mebellar</button>
       <p>OMMAVIY AMALLAR</p>
       <button data-page="import-export">⇄ Excel import / eksport</button>
       <button data-page="qr">▦ QR kodlar</button>
@@ -34,7 +36,7 @@
     <header class="pm-topbar">
       <div>
         <button id="menuToggle" class="pm-menu">☰</button>
-        <div><p>BUVAYDA IBRAT MEBEL V17</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
+        <div><p>BUVAYDA IBRAT MEBEL V18</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
       </div>
       <div class="pm-top-actions">
         <button id="themeToggle">🌙</button>
@@ -48,6 +50,7 @@
         <article><span>Jami laminat</span><strong id="statLamStock">0 list</strong></article>
         <article><span>Kromka turi</span><strong id="statEdgeTypes">0</strong></article>
         <article><span>Jami kromka</span><strong id="statEdgeStock">0 m</strong></article>
+        <article><span>Mebellar</span><strong id="statFurniture">0</strong></article>
         <article><span>Kam qolgan</span><strong id="statLow">0</strong></article>
       </div>
 
@@ -59,6 +62,7 @@
             <button data-go="edge-form">＋ Yangi kromka</button>
             <button data-go="import-export">Excel import</button>
             <button data-go="scanner">QR skaner</button>
+            <button data-go="furniture-form">＋ Yangi mebel</button>
           </div>
         </article>
         <article class="pm-card">
@@ -144,6 +148,41 @@
       </div>
     </section>
 
+
+    <section class="pm-page" id="pageFurnitureForm">
+      <div class="pm-intro">
+        <div><p>MEBEL KATALOGI</p><h2 id="furnitureFormTitle">Yangi mebel qo‘shish</h2><span>Rasm, nom, kategoriya va narxni kiriting.</span></div>
+        <button class="pm-secondary" id="resetFurnitureForm">Formani tozalash</button>
+      </div>
+      <form class="pm-card pm-product-form" id="furnitureForm">
+        <input type="hidden" id="furnitureId">
+        <div class="pm-image-column">
+          <div class="pm-image-preview"><img id="furniturePreview" src="./product-placeholder.svg" alt=""></div>
+          <label class="pm-upload">📷 Kompyuterdan rasm tanlash<input id="furnitureImageFile" type="file" accept="image/*" hidden></label>
+          <label>Yoki rasm URL<input id="furnitureImageUrl" placeholder="https://..."></label>
+          <small>Rasm avtomatik siqiladi va brauzerda saqlanadi.</small>
+        </div>
+        <div class="pm-fields">
+          <div class="pm-row two"><label>Mebel nomi *<input id="furnitureName" required placeholder="Deco spalniy"></label><label>Kategoriya *<select id="furnitureCategory"><option>Yotoqxona</option><option>Oshxona</option><option>Shkaf</option><option>Komod</option><option>TV stend</option><option>Ugalok</option><option>Stol-stul</option><option>Boshqa</option></select></label></div>
+          <div class="pm-row three"><label>Narxi *<input id="furniturePrice" type="number" min="0" required></label><label>Eski narxi<input id="furnitureOldPrice" type="number" min="0"></label><label>Ombor soni<input id="furnitureStock" type="number" min="0" value="1"></label></div>
+          <div class="pm-row two"><label>Material<input id="furnitureMaterial" placeholder="Krashinniy MDF"></label><label>Rang<input id="furnitureColor" placeholder="Kashmir"></label></div>
+          <label>Xarakteristikasi<textarea id="furnitureDescription" placeholder="Fasad, korpus, mexanizm va boshqa ma’lumotlar..."></textarea></label>
+          <div class="pm-form-actions"><button type="submit">💾 Mebelni saqlash</button><button type="button" class="pm-secondary" id="saveAndNewFurniture">Saqlash va yangisini ochish</button></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="pm-page" id="pageFurniture">
+      <div class="pm-intro">
+        <div><p>KATALOG</p><h2>Mebellar</h2></div>
+        <div class="pm-intro-actions"><button data-go="furniture-form">＋ Yangi mebel</button></div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-toolbar"><input id="furnitureSearch" placeholder="Nomi yoki kategoriya..."><select id="furnitureCategoryFilter"><option value="">Barcha kategoriya</option><option>Yotoqxona</option><option>Oshxona</option><option>Shkaf</option><option>Komod</option><option>TV stend</option><option>Ugalok</option><option>Stol-stul</option><option>Boshqa</option></select></div>
+        <div class="pm-furniture-grid" id="furnitureGrid"></div>
+      </div>
+    </section>
+
     <section class="pm-page" id="pageImportExport">
       <div class="pm-intro"><div><p>OMMAVIY YUKLASH</p><h2>Excel import va eksport</h2><span>Yuzlab mahsulotni bir marta yuklang.</span></div></div>
       <div class="pm-grid two">
@@ -199,6 +238,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script type="module" src="./product-manager.js?v=17"></script>
+  <script type="module" src="./product-manager.js?v=18"></script>
 </body>
 </html>

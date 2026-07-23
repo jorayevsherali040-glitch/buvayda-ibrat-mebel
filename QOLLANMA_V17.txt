@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V17 — LAMINAT VA KROMKA BOSHQARUVI
+BUVAYDA IBRAT MEBEL V18 — LAMINAT VA KROMKA BOSHQARUVI
 
 STANDART PIN:
 1212
@@ -6,7 +6,7 @@ STANDART PIN:
 YANGI SAHIFA:
 https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/product-manager.html
 
-V17 IMKONIYATLARI:
+V18 IMKONIYATLARI:
 - Laminatni tez qo‘shish.
 - Kromkani tez qo‘shish.
 - Telefon yoki kompyuterdan rasm tanlash.
@@ -31,9 +31,9 @@ Kromka: Kod, Nomi, Brend, Qalinlik, Eni, Sotuv narxi, Tannarxi, Rulon metri, Qol
 YUKLASH:
 1. ZIP faylni Extract qiling.
 2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V17 PRODUCT MANAGER
+3. Commit: BUVAYDA IBRAT MEBEL V18 PRODUCT MANAGER
 4. Deploy tugagach Ctrl + F5 bosing.
 
 MUHIM:
 Rasmlar LocalStorage’da saqlangani uchun juda ko‘p katta rasm qo‘shmang.
-V17 rasmlarni avtomatik siqadi, lekin muntazam Backup oling.
+V18 rasmlarni avtomatik siqadi, lekin muntazam Backup oling.

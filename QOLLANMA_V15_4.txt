@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V17 — VISUAL FIX
+BUVAYDA IBRAT MEBEL V18 — VISUAL FIX
 
 TUZATILDI:
 - Xizmat kartalaridagi rasm ichida takrorlanib qolgan yozuvlar olib tashlandi.
@@ -11,5 +11,5 @@ TUZATILDI:
 YUKLASH:
 1. ZIP faylni oching.
 2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V17 VISUAL FIX
+3. Commit: BUVAYDA IBRAT MEBEL V18 VISUAL FIX
 4. Deploy tugagach Ctrl + F5 bosing.
