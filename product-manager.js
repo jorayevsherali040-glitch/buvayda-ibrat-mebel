@@ -2,11 +2,9 @@ import {loadDB,saveDB,uid,nowISO,money} from "./local-db.js";
 const $=id=>document.getElementById(id);
 let db=loadDB();
 let pendingImport=[];
-let deleteTarget=null;
 let scannerStream=null;
 let scannerTimer=null;
-const deleteModal=$("deleteModal");
-if(deleteModal){deleteModal.hidden=true;deleteModal.setAttribute("aria-hidden","true")}
+
 
 if(sessionStorage.getItem("v13PinVerified")!=="1"){
   sessionStorage.setItem("v17AfterLogin","product-manager");
@@ -190,24 +188,15 @@ $("laminateTable").onclick=e=>{const edit=e.target.closest("[data-edit-l]"),del=
 $("edgeTable").onclick=e=>{const edit=e.target.closest("[data-edit-e]"),del=e.target.closest("[data-delete-e]"),qr=e.target.closest("[data-qr-e]");if(edit)fillEdge(db.edges.find(x=>x.id===edit.dataset.editE));if(del)openDelete("edges",del.dataset.deleteE);if(qr)openSingleQr("edges",qr.dataset.qrE)};
 function openDelete(type,id){
   const list=db[type];
-  const x=Array.isArray(list)?list.find(v=>v.id===id):null;
-  if(!x)return;
-  deleteTarget={type,id};
-  $("deleteModalText").textContent=`${x.code||x.name||"Mahsulot"} — ${x.name||""} butunlay o‘chiriladi.`;
-  deleteModal.hidden=false;
-  deleteModal.setAttribute("aria-hidden","false");
-}
-function closeDeleteModal(){deleteModal.hidden=true;deleteModal.setAttribute("aria-hidden","true");deleteTarget=null}
-$("cancelDelete").onclick=closeDeleteModal;
-deleteModal.addEventListener("click",e=>{if(e.target===deleteModal)closeDeleteModal()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!deleteModal.hidden)closeDeleteModal()});
-$("confirmDelete").onclick=()=>{
-  if(!deleteTarget)return closeDeleteModal();
-  db[deleteTarget.type]=db[deleteTarget.type].filter(x=>x.id!==deleteTarget.id);
+  const item=Array.isArray(list)?list.find(v=>v.id===id):null;
+  if(!item)return;
+  const title=item.code?`${item.code} — ${item.name||""}`:(item.name||"Mahsulot");
+  const accepted=window.confirm(`${title}\n\nMahsulot butunlay o‘chirilsinmi?`);
+  if(!accepted)return;
+  db[type]=list.filter(x=>x.id!==id);
   save();
-  closeDeleteModal();
   toast("Mahsulot o‘chirildi");
-};
+}
 
 function csvEscape(v){const s=Array.isArray(v)?v.join(", "):String(v??"");return`"${s.replaceAll('"','""')}"`}
 function downloadBlob(content,name,type="text/csv;charset=utf-8"){
@@ -249,7 +238,7 @@ function renderImportPreview(){
 }
 $("confirmImport").onclick=()=>{const type=$("importType").value;for(const item of pendingImport){const existing=db[type].find(x=>x.code.toLowerCase()===item.code.toLowerCase());if(existing)Object.assign(existing,item,{id:existing.id});else db[type].push(item)}save();toast(`${pendingImport.length} ta mahsulot import qilindi`);pendingImport=[];$("importPreview").innerHTML="";$("confirmImport").disabled=true};
 
-function qrPayload(type,x){return JSON.stringify({app:"BIM-V18",type,id:x.id,code:x.code})}
+function qrPayload(type,x){return JSON.stringify({app:"BIM-V18.1",type,id:x.id,code:x.code})}
 function renderQr(){
   const type=$("qrType").value,q=$("qrSearch").value.toLowerCase(),list=db[type].filter(x=>!q||`${x.code} ${x.name}`.toLowerCase().includes(q));
   $("qrGrid").innerHTML=list.map(x=>`<article class="pm-qr-card"><strong>${esc(x.code)}</strong><small>${esc(x.name)}</small><div class="pm-qr-code" id="qr-${x.id}"></div><small>${type==="laminates"?x.stock+" list":x.stock+" m"}</small><button data-print-qr="${type}:${x.id}">Chop etish</button></article>`).join("");

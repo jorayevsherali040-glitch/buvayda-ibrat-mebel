@@ -1,0 +1,18 @@
+BUVAYDA IBRAT MEBEL V18.1 — DELETE MODAL FIX
+
+ASOSIY TUZATISH:
+- Sahifa ochilganda chiqib qolayotgan maxsus “Mahsulot o‘chirilsinmi?” oynasi butunlay olib tashlandi.
+- Endi tasdiqlash faqat mahsulot yonidagi O‘chirish tugmasi bosilganda brauzerning oddiy tasdiqlash oynasi orqali chiqadi.
+- Mahsulot qo‘shishga modal xalaqit bermaydi.
+- Keshni kamaytirish uchun V18.1 versiya raqami va no-cache sozlamalari qo‘shildi.
+
+PIN:
+1212
+
+YUKLASH:
+1. ZIP faylni oching.
+2. Ichidagi BARCHA fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. product-manager.html, product-manager.js va product-manager.css fayllari albatta almashtirilganini tekshiring.
+4. Commit: V18.1 DELETE MODAL FIX
+5. GitHub Pages deploy yashil bo‘lgach sahifani Ctrl+Shift+R bilan yangilang.
+6. Yuqori chap tomonda “V18.1 Mahsulot boshqaruvi” yozuvi ko‘rinishi kerak.
