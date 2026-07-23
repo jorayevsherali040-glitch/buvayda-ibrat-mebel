@@ -42,6 +42,7 @@
         <article><span>Top mahsulot</span><strong id="statFeatured">0</strong></article>
         <article><span>Sotilgan</span><strong id="statSold">0</strong></article>
         <article><span>Ombordagi jami</span><strong id="statStock">0</strong></article>
+        <article><span>Kategoriyalar</span><strong id="statCategories">0</strong></article>
       </div>
 
       <div class="admin-grid">
@@ -77,24 +78,37 @@
           <div class="github-image-box">
             <div class="github-image-heading">
               <div>
-                <label for="productImageSelect">GitHub’dagi rasmni tanlang</label>
-                <small>Rasmlar repository ichidagi <b>images</b> papkasidan olinadi.</small>
+                <label>Mahsulot rasmlari</label>
+                <small>GitHub’dagi <b>images</b> papkasidan 1–5 ta rasm tanlang.</small>
               </div>
               <button class="button button-light compact-button" id="refreshImagesButton" type="button">
                 Rasmlarni yangilash
               </button>
             </div>
 
-            <select id="productImageSelect">
-              <option value="">Rasm tanlang...</option>
-            </select>
+            <div class="image-picker-grid">
+              <div>
+                <label for="productImageSelect">Rasm tanlash</label>
+                <select id="productImageSelect">
+                  <option value="">Rasm tanlang...</option>
+                </select>
+              </div>
+              <button class="button button-gold add-image-button" id="addImageButton" type="button">
+                + Rasm qo‘shish
+              </button>
+            </div>
+
+            <div class="selected-images" id="selectedImages">
+              <p class="muted-text">Hozircha rasm tanlanmagan.</p>
+            </div>
 
             <label for="productImageName">Yoki rasm nomini yozing</label>
-            <input id="productImageName" type="text" placeholder="Masalan: 30.jpg">
+            <div class="manual-image-row">
+              <input id="productImageName" type="text" placeholder="Masalan: 30.jpg">
+              <button class="button button-dark" id="addManualImageButton" type="button">Qo‘shish</button>
+            </div>
 
-            <img class="image-preview" id="imagePreview" alt="Rasm ko‘rinishi" hidden>
-
-            <a class="button button-dark full-width" id="openGithubImages"
+            <a class="button button-dark full-width"
                href="https://github.com/jorayevsherali040-glitch/buvayda-ibrat-mebel/tree/main/images"
                target="_blank" rel="noopener">
               GitHub’ga yangi rasm yuklash
@@ -111,6 +125,7 @@
             </div>
             <div class="checkbox-stack">
               <label><input id="productFeatured" type="checkbox"> Top mahsulot</label>
+              <label><input id="productNew" type="checkbox"> Yangi mahsulot</label>
               <label><input id="productSoldOut" type="checkbox"> Sotildi</label>
             </div>
           </div>

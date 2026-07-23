@@ -1,396 +1,89 @@
 import { auth, db } from "./firebase-config.js";
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  serverTimestamp,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-const GITHUB_OWNER = "jorayevsherali040-glitch";
-const GITHUB_REPO = "buvayda-ibrat-mebel";
-const GITHUB_BRANCH = "main";
-const IMAGE_FOLDER = "images";
-const GITHUB_API_URL =
-  `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${IMAGE_FOLDER}?ref=${GITHUB_BRANCH}`;
+const OWNER="jorayevsherali040-glitch", REPO="buvayda-ibrat-mebel", BRANCH="main", FOLDER="images";
+const API=`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`;
+const $=id=>document.getElementById(id);
+const productsCollection=collection(db,"products");
+let products=[], githubImages=[], selectedImages=[];
 
-const $ = id => document.getElementById(id);
+function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function status(msg,type="success"){const b=$("adminStatus");b.textContent=msg;b.className=`admin-status show ${type}`;setTimeout(()=>b.className="admin-status",4500)}
+function img(name=""){const clean=String(name).trim().replace(/^images\//,"");return clean?`./images/${encodeURIComponent(clean).replaceAll("%2F","/")}`:"./logo.png"}
+function getImages(p={}){if(Array.isArray(p.images)&&p.images.length)return p.images;if(p.imageName)return[p.imageName];return[]}
 
-const loginCard = $("loginCard");
-const dashboard = $("dashboard");
-const loginForm = $("loginForm");
-const loginMessage = $("loginMessage");
-const logoutButton = $("logoutButton");
-const loggedInEmail = $("loggedInEmail");
-const adminStatus = $("adminStatus");
-const adminProducts = $("adminProducts");
-const adminSearch = $("adminSearch");
-const saveProductButton = $("saveProductButton");
-const cancelEditButton = $("cancelEditButton");
-const productImageSelect = $("productImageSelect");
-const productImageName = $("productImageName");
-const imagePreview = $("imagePreview");
-const refreshImagesButton = $("refreshImagesButton");
-const productsCollection = collection(db, "products");
-
-let products = [];
-let githubImages = [];
-
-function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+async function loadImages(show=false){
+  $("refreshImagesButton").disabled=true;$("refreshImagesButton").textContent="Yuklanmoqda...";
+  try{
+    const r=await fetch(API,{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok)throw new Error(r.status);
+    githubImages=(await r.json()).filter(x=>x.type==="file").map(x=>x.name).filter(n=>/\.(jpe?g|png|webp|gif|avif)$/i.test(n)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+    $("productImageSelect").innerHTML='<option value="">Rasm tanlang...</option>'+githubImages.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+    if(show)status(`${githubImages.length} ta rasm topildi.`);
+  }catch(e){console.error(e);status("Rasmlar ro‘yxati yuklanmadi. Nomini qo‘lda yozing.","error")}
+  finally{$("refreshImagesButton").disabled=false;$("refreshImagesButton").textContent="Rasmlarni yangilash"}
 }
-
-function showStatus(message, type = "success") {
-  adminStatus.textContent = message;
-  adminStatus.className = `admin-status show ${type}`;
-  window.setTimeout(() => {
-    adminStatus.className = "admin-status";
-  }, 4500);
+function renderSelected(){
+  $("selectedImages").innerHTML=selectedImages.length?selectedImages.map((n,i)=>`<article class="selected-image-card"><img src="${esc(img(n))}" alt=""><div><strong>${i+1}. ${esc(n)}</strong>${i===0?'<span class="main-image-label">Asosiy rasm</span>':""}</div><div class="selected-image-actions">${i>0?`<button data-up="${i}">↑</button>`:""}${i<selectedImages.length-1?`<button data-down="${i}">↓</button>`:""}<button class="remove-image" data-remove="${i}">×</button></div></article>`).join(""):'<p class="muted-text">Hozircha rasm tanlanmagan.</p>';
 }
-
-function githubImageUrl(filename = "") {
-  const cleanName = String(filename).trim().replace(/^images\//, "");
-  if (!cleanName) return "";
-  return `./images/${encodeURIComponent(cleanName).replaceAll("%2F", "/")}`;
+function addImage(name){
+  const n=String(name||"").trim().replace(/^images\//,"");
+  if(!n)return status("Rasm tanlang yoki nomini yozing.","error");
+  if(!/\.(jpe?g|png|webp|gif|avif)$/i.test(n))return status("Rasm formati noto‘g‘ri.","error");
+  if(selectedImages.includes(n))return status("Bu rasm qo‘shilgan.","error");
+  if(selectedImages.length>=5)return status("Ko‘pi bilan 5 ta rasm.","error");
+  selectedImages.push(n);renderSelected();$("productImageSelect").value="";$("productImageName").value="";
 }
+$("addImageButton").onclick=()=>addImage($("productImageSelect").value);
+$("addManualImageButton").onclick=()=>addImage($("productImageName").value);
+$("refreshImagesButton").onclick=()=>loadImages(true);
+$("selectedImages").onclick=e=>{
+  const r=e.target.closest("[data-remove]"),u=e.target.closest("[data-up]"),d=e.target.closest("[data-down]");
+  if(r)selectedImages.splice(Number(r.dataset.remove),1);
+  if(u){const i=Number(u.dataset.up);[selectedImages[i-1],selectedImages[i]]=[selectedImages[i],selectedImages[i-1]]}
+  if(d){const i=Number(d.dataset.down);[selectedImages[i+1],selectedImages[i]]=[selectedImages[i],selectedImages[i+1]]}
+  renderSelected();
+};
 
-function imageFilenameFromProduct(product = {}) {
-  if (product.imageName) return product.imageName;
-  const image = String(product.image || "");
-  const marker = "/images/";
-  const markerIndex = image.lastIndexOf(marker);
-  if (markerIndex >= 0) {
-    return decodeURIComponent(image.slice(markerIndex + marker.length));
-  }
-  if (image.startsWith("./images/")) {
-    return decodeURIComponent(image.slice("./images/".length));
-  }
-  return "";
+function stats(){
+  $("statTotal").textContent=products.length;
+  $("statFeatured").textContent=products.filter(p=>p.featured).length;
+  $("statSold").textContent=products.filter(p=>p.soldOut||Number(p.stock)===0).length;
+  $("statStock").textContent=products.reduce((s,p)=>s+Number(p.stock||0),0);
+  $("statCategories").textContent=new Set(products.map(p=>p.category).filter(Boolean)).size;
 }
-
-function setImagePreview(filename = "") {
-  const imageUrl = githubImageUrl(filename);
-  if (!imageUrl) {
-    imagePreview.hidden = true;
-    imagePreview.removeAttribute("src");
-    return;
-  }
-  imagePreview.src = imageUrl;
-  imagePreview.hidden = false;
-  imagePreview.onerror = () => {
-    imagePreview.hidden = true;
-    showStatus("Rasm topilmadi. Fayl nomini tekshiring.", "error");
-  };
+function clearForm(){
+  ["editingProductId","productName","productPrice","productOldPrice","productVideo","productDescription"].forEach(id=>$(id).value="");
+  $("productCategory").value="Spalniy";$("productStock").value="1";$("productFeatured").checked=false;$("productNew").checked=false;$("productSoldOut").checked=false;$("productSort").value="0";$("productStatus").value="active";$("formTitle").textContent="Yangi mahsulot";$("saveProductButton").textContent="Mahsulotni saqlash";$("cancelEditButton").hidden=true;selectedImages=[];renderSelected();
 }
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginMessage").textContent="Tekshirilmoqda...";try{await signInWithEmailAndPassword(auth,$("adminEmail").value.trim(),$("adminPassword").value);$("loginMessage").textContent="Muvaffaqiyatli kirdingiz."}catch(err){console.error(err);$("loginMessage").textContent="Email yoki parol noto‘g‘ri."}};
+$("logoutButton").onclick=()=>signOut(auth);$("cancelEditButton").onclick=clearForm;
+onAuthStateChanged(auth,u=>{$("loginCard").hidden=!!u;$("dashboard").hidden=!u;$("loggedInEmail").textContent=u?`Kirish: ${u.email}`:"";if(u)loadImages()});
 
-async function loadGithubImages(showMessage = false) {
-  refreshImagesButton.disabled = true;
-  refreshImagesButton.textContent = "Yuklanmoqda...";
-
-  try {
-    const response = await fetch(GITHUB_API_URL, {
-      headers: { Accept: "application/vnd.github+json" },
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub API: ${response.status}`);
-    }
-
-    const items = await response.json();
-    githubImages = items
-      .filter(item => item.type === "file")
-      .map(item => item.name)
-      .filter(name => /\.(jpe?g|png|webp|gif|avif)$/i.test(name))
-      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-    const selected = productImageName.value.trim();
-    productImageSelect.innerHTML =
-      '<option value="">Rasm tanlang...</option>' +
-      githubImages
-        .map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
-        .join("");
-
-    if (selected && githubImages.includes(selected)) {
-      productImageSelect.value = selected;
-    }
-
-    if (showMessage) {
-      showStatus(`${githubImages.length} ta rasm topildi.`);
-    }
-  } catch (error) {
-    console.error(error);
-    showStatus(
-      "GitHub rasmlar ro‘yxatini yuklab bo‘lmadi. Rasm nomini qo‘lda yozishingiz mumkin.",
-      "error"
-    );
-  } finally {
-    refreshImagesButton.disabled = false;
-    refreshImagesButton.textContent = "Rasmlarni yangilash";
-  }
-}
-
-function updateStats() {
-  $("statTotal").textContent = products.length;
-  $("statFeatured").textContent = products.filter(item => item.featured).length;
-  $("statSold").textContent = products.filter(
-    item => item.soldOut || Number(item.stock) === 0
-  ).length;
-  $("statStock").textContent = products.reduce(
-    (sum, item) => sum + Number(item.stock || 0),
-    0
-  );
-}
-
-function clearForm() {
-  $("editingProductId").value = "";
-  $("productName").value = "";
-  $("productPrice").value = "";
-  $("productOldPrice").value = "";
-  $("productCategory").value = "Spalniy";
-  productImageSelect.value = "";
-  productImageName.value = "";
-  $("productVideo").value = "";
-  $("productStock").value = "1";
-  $("productFeatured").checked = false;
-  $("productSoldOut").checked = false;
-  $("productSort").value = "0";
-  $("productStatus").value = "active";
-  $("productDescription").value = "";
-  $("formTitle").textContent = "Yangi mahsulot";
-  saveProductButton.textContent = "Mahsulotni saqlash";
-  cancelEditButton.hidden = true;
-  setImagePreview("");
-}
-
-loginForm.addEventListener("submit", async event => {
-  event.preventDefault();
-  loginMessage.textContent = "Tekshirilmoqda...";
-
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      $("adminEmail").value.trim(),
-      $("adminPassword").value
-    );
-    loginMessage.textContent = "Muvaffaqiyatli kirdingiz.";
-  } catch (error) {
-    console.error(error);
-    loginMessage.textContent = "Email yoki parol noto‘g‘ri.";
-  }
-});
-
-logoutButton.addEventListener("click", () => signOut(auth));
-cancelEditButton.addEventListener("click", clearForm);
-refreshImagesButton.addEventListener("click", () => loadGithubImages(true));
-
-productImageSelect.addEventListener("change", () => {
-  productImageName.value = productImageSelect.value;
-  setImagePreview(productImageSelect.value);
-});
-
-productImageName.addEventListener("input", () => {
-  const filename = productImageName.value.trim();
-  productImageSelect.value = githubImages.includes(filename) ? filename : "";
-  setImagePreview(filename);
-});
-
-onAuthStateChanged(auth, user => {
-  loginCard.hidden = Boolean(user);
-  dashboard.hidden = !user;
-  loggedInEmail.textContent = user ? `Kirish: ${user.email}` : "";
-
-  if (user) {
-    loadGithubImages();
-  }
-});
-
-saveProductButton.addEventListener("click", async () => {
-  if (!auth.currentUser) {
-    showStatus("Avval admin sifatida kiring.", "error");
-    return;
-  }
-
-  const name = $("productName").value.trim();
-  const price = $("productPrice").value.trim();
-  const imageName = productImageName.value.trim();
-
-  if (!name || !price) {
-    showStatus("Mahsulot nomi va narxini kiriting.", "error");
-    return;
-  }
-
-  if (!imageName) {
-    showStatus("Mahsulot rasmini tanlang yoki rasm nomini yozing.", "error");
-    return;
-  }
-
-  saveProductButton.disabled = true;
-  saveProductButton.textContent = "Saqlanmoqda...";
-
-  try {
-    const data = {
-      name,
-      price,
-      oldPrice: $("productOldPrice").value.trim(),
-      category: $("productCategory").value,
-      imageName,
-      image: githubImageUrl(imageName),
-      video: $("productVideo").value.trim(),
-      stock: Math.max(0, Number($("productStock").value || 0)),
-      featured: $("productFeatured").checked,
-      soldOut: $("productSoldOut").checked,
-      sortOrder: Number($("productSort").value || 0),
-      status: $("productStatus").value,
-      description: $("productDescription").value.trim(),
-      updatedAt: serverTimestamp()
-    };
-
-    const editingId = $("editingProductId").value;
-
-    if (editingId) {
-      await updateDoc(doc(db, "products", editingId), data);
-      showStatus("Mahsulot yangilandi.");
-    } else {
-      await addDoc(productsCollection, {
-        ...data,
-        createdAt: serverTimestamp()
-      });
-      showStatus("Mahsulot qo‘shildi.");
-    }
-
+$("saveProductButton").onclick=async()=>{
+  if(!auth.currentUser)return status("Avval admin sifatida kiring.","error");
+  const name=$("productName").value.trim(),price=$("productPrice").value.trim();
+  if(!name||!price)return status("Nom va narxni kiriting.","error");
+  if(!selectedImages.length)return status("Kamida bitta rasm qo‘shing.","error");
+  $("saveProductButton").disabled=true;$("saveProductButton").textContent="Saqlanmoqda...";
+  try{
+    const data={name,price,oldPrice:$("productOldPrice").value.trim(),category:$("productCategory").value,images:[...selectedImages],imageName:selectedImages[0],image:img(selectedImages[0]),video:$("productVideo").value.trim(),stock:Math.max(0,Number($("productStock").value||0)),featured:$("productFeatured").checked,isNew:$("productNew").checked,soldOut:$("productSoldOut").checked,sortOrder:Number($("productSort").value||0),status:$("productStatus").value,description:$("productDescription").value.trim(),updatedAt:serverTimestamp()};
+    const id=$("editingProductId").value;
+    if(id){await updateDoc(doc(db,"products",id),data);status("Mahsulot yangilandi.")}else{await addDoc(productsCollection,{...data,createdAt:serverTimestamp()});status("Mahsulot qo‘shildi.")}
     clearForm();
-  } catch (error) {
-    console.error(error);
-    showStatus("Mahsulotni saqlashda xatolik yuz berdi.", "error");
-  } finally {
-    saveProductButton.disabled = false;
-    saveProductButton.textContent = "Mahsulotni saqlash";
-  }
-});
-
-function renderProducts() {
-  const search = adminSearch.value.trim().toLowerCase();
-
-  const filtered = products.filter(item => {
-    if (!search) return true;
-    return (
-      String(item.name || "").toLowerCase().includes(search) ||
-      String(item.category || "").toLowerCase().includes(search) ||
-      String(item.price || "").toLowerCase().includes(search)
-    );
-  });
-
-  adminProducts.innerHTML = filtered.length
-    ? filtered
-        .map(item => {
-          const filename = imageFilenameFromProduct(item);
-          const imageUrl = filename ? githubImageUrl(filename) : item.image || "./logo.png";
-          return `
-            <article class="admin-item">
-              <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name)}">
-              <div>
-                <h3>${escapeHtml(item.name)}</h3>
-                <p>
-                  ${escapeHtml(item.category || "Boshqa")}
-                  · Ombor: ${Number(item.stock ?? 1)}
-                  · Rasm: ${escapeHtml(filename || "URL")}
-                </p>
-                <div class="admin-item-price">${escapeHtml(item.price)}</div>
-                <div class="admin-badges">
-                  ${item.featured ? "<span>TOP</span>" : ""}
-                  ${item.soldOut ? "<span>SOTILDI</span>" : ""}
-                  ${item.status === "hidden" ? "<span>YASHIRIN</span>" : ""}
-                </div>
-              </div>
-              <div class="admin-actions">
-                <button class="edit-button" data-edit="${item.id}">Tahrirlash</button>
-                <button class="delete-button" data-delete="${item.id}">O‘chirish</button>
-              </div>
-            </article>
-          `;
-        })
-        .join("")
-    : "<p>Hozircha mahsulot yo‘q.</p>";
+  }catch(e){console.error(e);status("Saqlashda xatolik.","error")}
+  finally{$("saveProductButton").disabled=false;$("saveProductButton").textContent="Mahsulotni saqlash"}
+};
+function renderProducts(){
+  const q=$("adminSearch").value.trim().toLowerCase();
+  const list=products.filter(p=>!q||`${p.name} ${p.category} ${p.price}`.toLowerCase().includes(q));
+  $("adminProducts").innerHTML=list.length?list.map(p=>{const a=getImages(p);return`<article class="admin-item"><img src="${esc(img(a[0]||""))}" alt=""><div><h3>${esc(p.name)}</h3><p>${esc(p.category||"Boshqa")} · Ombor: ${Number(p.stock??1)} · ${a.length} ta rasm</p><div class="admin-item-price">${esc(p.price)}</div><div class="admin-badges">${p.featured?"<span>TOP</span>":""}${p.isNew?"<span>YANGI</span>":""}${p.soldOut?"<span>SOTILDI</span>":""}${p.status==="hidden"?"<span>YASHIRIN</span>":""}</div></div><div class="admin-actions"><button class="edit-button" data-edit="${p.id}">Tahrirlash</button><button class="delete-button" data-delete="${p.id}">O‘chirish</button></div></article>`}).join(""):"<p>Hozircha mahsulot yo‘q.</p>";
 }
-
-adminSearch.addEventListener("input", renderProducts);
-
-adminProducts.addEventListener("click", async event => {
-  const editButton = event.target.closest("[data-edit]");
-  const deleteButton = event.target.closest("[data-delete]");
-
-  if (editButton) {
-    const item = products.find(product => product.id === editButton.dataset.edit);
-    if (!item) return;
-
-    const filename = imageFilenameFromProduct(item);
-
-    $("editingProductId").value = item.id;
-    $("productName").value = item.name || "";
-    $("productPrice").value = item.price || "";
-    $("productOldPrice").value = item.oldPrice || "";
-    $("productCategory").value = item.category || "Boshqa";
-    productImageName.value = filename;
-    productImageSelect.value = githubImages.includes(filename) ? filename : "";
-    $("productVideo").value = item.video || "";
-    $("productStock").value = Number(item.stock ?? 1);
-    $("productFeatured").checked = Boolean(item.featured);
-    $("productSoldOut").checked = Boolean(item.soldOut);
-    $("productSort").value = Number(item.sortOrder || 0);
-    $("productStatus").value = item.status || "active";
-    $("productDescription").value = item.description || "";
-
-    setImagePreview(filename);
-    $("formTitle").textContent = "Mahsulotni tahrirlash";
-    saveProductButton.textContent = "O‘zgarishlarni saqlash";
-    cancelEditButton.hidden = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  if (deleteButton) {
-    const accepted = window.confirm("Mahsulotni o‘chirmoqchimisiz?");
-    if (!accepted) return;
-
-    try {
-      await deleteDoc(doc(db, "products", deleteButton.dataset.delete));
-      showStatus("Mahsulot o‘chirildi.");
-    } catch (error) {
-      console.error(error);
-      showStatus("Mahsulotni o‘chirishda xatolik.", "error");
-    }
-  }
-});
-
-const productsQuery = query(productsCollection, orderBy("createdAt", "desc"));
-
-onSnapshot(
-  productsQuery,
-  snapshot => {
-    products = snapshot.docs.map(productDoc => ({
-      id: productDoc.id,
-      ...productDoc.data()
-    }));
-
-    renderProducts();
-    updateStats();
-  },
-  error => {
-    console.error(error);
-    adminProducts.innerHTML = "<p>Mahsulotlarni yuklashda xatolik.</p>";
-  }
-);
+$("adminSearch").oninput=renderProducts;
+$("adminProducts").onclick=async e=>{
+  const ed=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");
+  if(ed){const p=products.find(x=>x.id===ed.dataset.edit);if(!p)return;$("editingProductId").value=p.id;$("productName").value=p.name||"";$("productPrice").value=p.price||"";$("productOldPrice").value=p.oldPrice||"";$("productCategory").value=p.category||"Boshqa";$("productVideo").value=p.video||"";$("productStock").value=Number(p.stock??1);$("productFeatured").checked=!!p.featured;$("productNew").checked=!!p.isNew;$("productSoldOut").checked=!!p.soldOut;$("productSort").value=Number(p.sortOrder||0);$("productStatus").value=p.status||"active";$("productDescription").value=p.description||"";selectedImages=getImages(p).slice(0,5);renderSelected();$("formTitle").textContent="Mahsulotni tahrirlash";$("saveProductButton").textContent="O‘zgarishlarni saqlash";$("cancelEditButton").hidden=false;scrollTo({top:0,behavior:"smooth"})}
+  if(del&&confirm("Mahsulotni o‘chirmoqchimisiz?")){try{await deleteDoc(doc(db,"products",del.dataset.delete));status("Mahsulot o‘chirildi.")}catch(err){console.error(err);status("O‘chirishda xatolik.","error")}}
+};
+onSnapshot(query(productsCollection,orderBy("createdAt","desc")),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));renderProducts();stats()},e=>{console.error(e);$("adminProducts").innerHTML="<p>Yuklashda xatolik.</p>"});

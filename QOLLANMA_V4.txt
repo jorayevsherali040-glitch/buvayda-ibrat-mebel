@@ -1,0 +1,14 @@
+IBRAT MEBEL V4
+
+- Har bir mahsulotga 1–5 ta GitHub rasmi
+- Rasmlarni tartiblash va asosiy rasmni tanlash
+- Galereya va oldingi/keyingi tugmalari
+- YANGI, TOP, SOTILDI belgilari
+- Top mahsulotlar slayderi
+- Savatcha, sevimlilar, Telegram buyurtma
+- Firebase Storage kerak emas
+
+GitHub'ga yuklash:
+index.html, admin.html, styles.css, app.js, admin.js, firebase-config.js, firestore.rules
+Commit: Ibrat Mebel V4
+logo.png va images papkasini o'chirmang.
