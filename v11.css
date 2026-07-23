@@ -103,7 +103,7 @@
 
 
 /* ============================
-   V15.3 REFERENCE DESIGN
+   V16 REFERENCE DESIGN
    ============================ */
 .v11-topbar,.v11-header,.v11-hero,.v11-quick-services{display:none!important}
 .v15-container{width:min(1280px,calc(100% - 40px));margin:auto}
@@ -203,4 +203,134 @@
   .v15-hero-copy h1{font-size:38px}.v15-hero-buttons{flex-direction:column}
   .v15-service-strip,.v15-service-cards,.v15-why-stats{grid-template-columns:1fr}
   .v15-experience-card{right:10px;bottom:12px;padding:12px}.v15-experience-card>span{width:44px;height:44px}
+}
+
+
+/* ============================
+   V16 VISUAL FIX
+   ============================ */
+.v15-hero-photo{
+  overflow:hidden;
+  border-radius:0 0 0 100px;
+  background:#eef4ef;
+}
+.v15-hero-photo img{
+  object-position:center 42%;
+  transform:scale(1.02);
+}
+.v15-experience-card{
+  min-width:300px;
+  right:26px;
+  bottom:26px;
+  padding:17px 22px;
+  border:1px solid rgba(8,121,67,.08);
+}
+.v15-experience-card>span{
+  flex:0 0 58px;
+  font-family:Arial,sans-serif;
+  line-height:1;
+}
+.v15-experience-card strong{
+  color:#13213b;
+  white-space:nowrap;
+}
+.v15-experience-card small{
+  color:#65726a;
+  white-space:nowrap;
+}
+.v15-service-cards article{
+  display:flex;
+  flex-direction:column;
+  min-height:300px;
+}
+.v15-service-cards img{
+  height:150px;
+  object-fit:cover;
+  object-position:center;
+  flex:0 0 150px;
+}
+.v15-service-cards article>div{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  background:#fff;
+  position:relative;
+  z-index:2;
+}
+.v15-service-cards h3{
+  line-height:1.25;
+}
+.v15-service-cards p{
+  flex:1;
+  min-height:0;
+}
+.v15-service-cards a{
+  margin-top:auto;
+}
+@media(max-width:820px){
+  .v15-hero-photo{border-radius:0 0 32px 32px}
+  .v15-experience-card{
+    min-width:0;
+    right:14px;
+    left:14px;
+    bottom:14px;
+  }
+  .v15-experience-card strong,.v15-experience-card small{
+    white-space:normal;
+  }
+}
+
+
+/* =====================================
+   V16 CLEAN DESIGN — repeated logo removed
+   ===================================== */
+.v15-brand{
+  min-width:300px;
+  gap:0;
+}
+.v15-brand>span{
+  display:block;
+  padding-left:0;
+}
+.v15-brand strong{
+  font-size:25px;
+  letter-spacing:.015em;
+}
+.v15-brand small{
+  margin-top:8px;
+}
+.v16-text-brand img,
+.v15-brand>img{
+  display:none!important;
+}
+.v11-footer .v16-text-brand{
+  display:inline-flex;
+}
+.v11-footer .v16-text-brand strong{
+  font-size:18px;
+}
+.v15-hero-photo{
+  border-radius:0 0 0 88px;
+}
+.v15-hero-photo img{
+  transform:none;
+  object-position:center;
+}
+.v15-experience-card{
+  display:none!important;
+}
+.v15-service-cards img{
+  background:#eef6f1;
+}
+.v15-service-cards article{
+  overflow:hidden;
+}
+@media(max-width:1120px){
+  .v15-brand{min-width:230px}
+  .v15-brand strong{font-size:19px}
+}
+@media(max-width:820px){
+  .v15-brand{min-width:0}
+  .v15-brand strong{font-size:15px}
+  .v15-brand small{display:none}
 }

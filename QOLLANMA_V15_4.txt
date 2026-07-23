@@ -1,0 +1,15 @@
+BUVAYDA IBRAT MEBEL V16 — VISUAL FIX
+
+TUZATILDI:
+- Xizmat kartalaridagi rasm ichida takrorlanib qolgan yozuvlar olib tashlandi.
+- Laminat, kromka, teshish va dizayn rasmlari qayta toza kesildi.
+- Hero rasmdagi eski tajriba kartasi olib tashlandi.
+- Faqat bitta, toza “10+ yillik tajriba” kartasi qoldi.
+- Kartalar balandligi, matn va “Batafsil” tugmalari bir xil tekislandi.
+- Telefon ko‘rinishi ham yaxshilandi.
+
+YUKLASH:
+1. ZIP faylni oching.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V16 VISUAL FIX
+4. Deploy tugagach Ctrl + F5 bosing.

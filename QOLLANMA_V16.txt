@@ -1,0 +1,20 @@
+BUVAYDA IBRAT MEBEL V16 — TOZALANGAN VERSIYA
+
+TUZATILDI:
+- Sayt ichida takroran ko‘rinayotgan kichik IBRAT MEBEL rasmi olib tashlandi.
+- Header endi yozuvli, toza brend ko‘rinishida.
+- Footer ichidagi takroriy logo rasmi ham olib tashlandi.
+- Hero ichidagi ustma-ust tajriba kartasi olib tashlandi.
+- Rasm mavjud bo‘lmagan mahsulotlarda logo o‘rniga neytral placeholder ko‘rinadi.
+- Xizmat kartalari, rasmlar va tugmalar tekislandi.
+- Mobil menyu va responsive ko‘rinish saqlandi.
+- V15 dagi ombor, sotuv, Edit/Save, kalkulyator va kirim-chiqim funksiyalari saqlandi.
+
+STANDART PIN:
+1212
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Ichidagi barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V16 CLEAN
+4. Deploy tugagach Ctrl + F5 bosing.

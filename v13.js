@@ -5,7 +5,7 @@ let cart=JSON.parse(localStorage.getItem("v13Cart")||"[]");
 let favorites=JSON.parse(localStorage.getItem("v13Favorites")||"[]");
 
 function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
-function img(x){return x.image||x.imageUrl||"./logo.png"}
+function img(x){return x.image||x.imageUrl||"./product-placeholder.svg"}
 function key(type,id){return `${type}:${id}`}
 function saveUser(){localStorage.setItem("v13Cart",JSON.stringify(cart));localStorage.setItem("v13Favorites",JSON.stringify(favorites));$("cartCount").textContent=cart.length;$("favoriteCount").textContent=favorites.length}
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
