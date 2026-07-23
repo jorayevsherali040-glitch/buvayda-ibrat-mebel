@@ -1,419 +1,158 @@
 import { db } from "./firebase-config.js";
-import {
-  collection, addDoc, onSnapshot, query, orderBy, serverTimestamp,
-  where, limit
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, where, limit } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $ = id => document.getElementById(id);
-
 let products = [];
 let favorites = JSON.parse(localStorage.getItem("ibratFavorites") || "[]");
 let cart = JSON.parse(localStorage.getItem("ibratCart") || "[]");
 let viewed = JSON.parse(localStorage.getItem("ibratViewed") || "[]");
+let currentProduct = null;
 let gallery = [];
 let galleryIndex = 0;
-let sliderTimer = null;
-let currentProduct = null;
+let visibleCount = 8;
 let reviewsUnsubscribe = null;
+let drawerMode = "cart";
 
-$("menuButton")?.addEventListener("click", () => $("mainNav").classList.toggle("open"));
-$("mainNav")?.querySelectorAll("a").forEach(a => a.onclick = () => $("mainNav").classList.remove("open"));
-
-function esc(v=""){
-  return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function imageUrl(name=""){const clean=String(name).replace(/^images\//,"");return clean?`./images/${encodeURIComponent(clean).replaceAll("%2F","/")}`:"./logo.png"}
+function images(p={}){if(Array.isArray(p.images)&&p.images.length)return p.images.slice(0,10);if(p.imageName)return[p.imageName];return[]}
+function mainImage(p){const list=images(p);return list.length?imageUrl(list[0]):(p.image||"./logo.png")}
+function numberPrice(value=""){const n=Number(String(value).replace(/[^\d]/g,""));return Number.isFinite(n)?n:0}
+function discount(p){const old=numberPrice(p.oldPrice),now=numberPrice(p.price);return old>now&&now>0?Math.round((old-now)/old*100):0}
+function activeProducts(){return products.filter(p=>p.status!=="hidden")}
+function toast(message){const t=$("siteToast");t.textContent=message;t.classList.add("show");clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),2500)}
+function saveState(){localStorage.setItem("ibratFavorites",JSON.stringify(favorites));localStorage.setItem("ibratCart",JSON.stringify(cart));localStorage.setItem("ibratViewed",JSON.stringify(viewed));$("favoritesCount").textContent=favorites.length;$("cartCount").textContent=cart.length}
+function cleanState(){const ids=new Set(products.map(p=>p.id));favorites=favorites.filter(id=>ids.has(id));cart=cart.filter(id=>ids.has(id));viewed=viewed.filter(id=>ids.has(id));saveState()}
+function markViewed(id){viewed=[id,...viewed.filter(x=>x!==id)].slice(0,20);saveState()}
+function sorted(list){
+  const mode=$("catalogSort").value;
+  const copy=[...list];
+  if(mode==="newest")return copy.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  if(mode==="popular")return copy.sort((a,b)=>Number(b.salesCount||0)-Number(a.salesCount||0));
+  if(mode==="price-low")return copy.sort((a,b)=>numberPrice(a.price)-numberPrice(b.price));
+  if(mode==="price-high")return copy.sort((a,b)=>numberPrice(b.price)-numberPrice(a.price));
+  return copy.sort((a,b)=>Number(Boolean(b.featured))-Number(Boolean(a.featured))||Number(a.sortOrder||0)-Number(b.sortOrder||0));
 }
-function img(name=""){
-  const clean = String(name).replace(/^images\//,"");
-  return clean ? `./images/${encodeURIComponent(clean).replaceAll("%2F","/")}` : "./logo.png";
+function filterProducts(){
+  const search=$("catalogSearch").value.trim().toLowerCase();
+  const category=$("catalogCategory").value;
+  const stock=$("stockFilter").value;
+  return activeProducts().filter(p=>{
+    const text=`${p.name} ${p.category} ${p.description} ${p.material||""} ${(p.colors||[]).join(" ")}`.toLowerCase();
+    const sold=p.soldOut||Number(p.stock)===0;
+    return(!search||text.includes(search))&&(!category||p.category===category)&&(!stock||(stock==="available"&&!sold)||(stock==="low"&&!sold&&Number(p.stock)<=3)||(stock==="sold"&&sold));
+  });
 }
-function images(p={}){
-  if(Array.isArray(p.images) && p.images.length) return p.images.slice(0,10);
-  if(p.imageName) return [p.imageName];
-  return [];
-}
-function mainImage(p){
-  const list = images(p);
-  return list.length ? img(list[0]) : (p.image || "./logo.png");
-}
-function numericPrice(value=""){
-  const n = Number(String(value).replace(/[^\d]/g,""));
-  return Number.isFinite(n) ? n : 0;
-}
-function discount(p){
-  const old = numericPrice(p.oldPrice), current = numericPrice(p.price);
-  return old > current && current > 0 ? Math.round((old-current)/old*100) : 0;
-}
-function active(){
-  return products.filter(p => p.status !== "hidden");
-}
-function recommended(){
-  return active().sort((a,b)=>
-    Number(Boolean(b.featured))-Number(Boolean(a.featured)) ||
-    Number(a.sortOrder||0)-Number(b.sortOrder||0) ||
-    (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
-  );
-}
-function showToast(message){
-  const t = $("siteToast");
-  t.textContent = message;
-  t.classList.add("show");
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>t.classList.remove("show"),2500);
-}
-function saveViewed(id){
-  viewed = [id, ...viewed.filter(x=>x!==id)].slice(0,20);
-  localStorage.setItem("ibratViewed", JSON.stringify(viewed));
-}
-function sync(){
-  const valid = new Set(products.map(p=>p.id));
-  favorites = favorites.filter(id=>valid.has(id));
-  cart = cart.filter(id=>valid.has(id));
-  viewed = viewed.filter(id=>valid.has(id));
-  localStorage.setItem("ibratFavorites",JSON.stringify(favorites));
-  localStorage.setItem("ibratCart",JSON.stringify(cart));
-  localStorage.setItem("ibratViewed",JSON.stringify(viewed));
-  $("favoritesCount").textContent = favorites.length;
-  $("cartCount").textContent = cart.length;
-}
-function chips(items=[],className="option-chip"){
-  return items.map(item=>`<span class="${className}">${esc(item)}</span>`).join("");
-}
-function renderCategories(){
-  const selected = $("catalogCategory").value;
-  const counts = {};
-  active().forEach(p => counts[p.category||"Boshqa"] = (counts[p.category||"Boshqa"]||0)+1);
-  const cats = Object.keys(counts).sort();
-  $("catalogCategory").innerHTML = '<option value="">Barcha kategoriyalar</option>' +
-    cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-  if(cats.includes(selected)) $("catalogCategory").value = selected;
-  $("categoryGrid").innerHTML = cats.length ? cats.map(c=>{
-    const sample = active().find(p=>p.category===c);
-    return `<button class="category-card" data-category-card="${esc(c)}" type="button">
-      <img src="${esc(sample?mainImage(sample):"./logo.png")}" alt="${esc(c)}">
-      <div><strong>${esc(c)}</strong><span>${counts[c]} ta mahsulot</span></div>
-    </button>`;
-  }).join("") : '<div class="empty-state">Kategoriya topilmadi.</div>';
-}
-function sortedProducts(list){
-  const sort = $("catalogSort").value;
-  const copy = [...list];
-  if(sort==="newest") return copy.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  if(sort==="price-low") return copy.sort((a,b)=>numericPrice(a.price)-numericPrice(b.price));
-  if(sort==="price-high") return copy.sort((a,b)=>numericPrice(b.price)-numericPrice(a.price));
-  if(sort==="popular") return copy.sort((a,b)=>Number(b.salesCount||0)-Number(a.salesCount||0));
-  return copy.sort((a,b)=>
-    Number(Boolean(b.featured))-Number(Boolean(a.featured)) ||
-    Number(a.sortOrder||0)-Number(b.sortOrder||0)
-  );
-}
-function card(p){
-  const sold = p.soldOut || Number(p.stock)===0;
-  const fav = favorites.includes(p.id);
-  const gallery = images(p);
-  const off = discount(p);
-  return `<article class="product-card instagram-card ${sold?"sold-card":""}">
-    <div class="product-image-wrap">
+function productCard(p){
+  const sold=p.soldOut||Number(p.stock)===0;
+  const fav=favorites.includes(p.id);
+  const off=discount(p);
+  return `<article class="premium-product-card">
+    <div class="premium-product-image">
       <img loading="lazy" src="${esc(mainImage(p))}" alt="${esc(p.name)}">
-      ${p.featured?'<span class="featured-badge">TOP</span>':""}
-      ${p.isNew?'<span class="new-badge">YANGI</span>':""}
-      ${sold?'<span class="sold-badge">SOTILDI</span>':""}
-      ${off?`<span class="discount-badge">-${off}%</span>`:""}
-      <button class="heart-button ${fav?"active":""}" data-favorite="${p.id}" type="button">♥</button>
-      ${gallery.length>1?`<span class="image-count">📷 ${gallery.length}</span>`:""}
+      <div class="product-badges">${p.isNew?'<span>YANGI</span>':""}${p.featured?'<span class="dark-badge">TOP</span>':""}${off?`<span class="sale-badge">-${off}%</span>`:""}</div>
+      <button class="favorite-heart ${fav?"active":""}" data-favorite="${p.id}" type="button">♥</button>
+      ${images(p).length>1?`<span class="photo-count">${images(p).length} rasm</span>`:""}
     </div>
-    <div class="product-body">
-      <div class="card-meta"><span class="category-badge">${esc(p.category||"Boshqa")}</span>${p.sku?`<span class="sku">#${esc(p.sku)}</span>`:""}</div>
+    <div class="premium-product-info">
+      <div class="product-category-line"><span>${esc(p.category||"Boshqa")}</span>${p.sku?`<small>#${esc(p.sku)}</small>`:""}</div>
       <h3>${esc(p.name)}</h3>
-      <p>${esc(p.description||"Qo‘shimcha ma’lumot uchun bog‘laning.")}</p>
-      ${p.material?`<div class="material-line">${esc(p.material)}</div>`:""}
-      <div class="price-row"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}</div>
-      <div class="stock-line">${sold?"Hozir sotuvda yo‘q":Number(p.stock)<=3?`Faqat ${Number(p.stock)} ta qoldi`:`Omborda: ${Number(p.stock??1)} ta`}</div>
-      <div class="product-actions">
-        <button class="button button-dark" data-detail="${p.id}" type="button">Batafsil</button>
-        <button class="button button-gold" data-cart="${p.id}" type="button" ${sold?"disabled":""}>Savatchaga</button>
-      </div>
+      <p>${esc(p.description||"Sifatli va zamonaviy mebel.")}</p>
+      <div class="premium-price"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}</div>
+      <div class="availability ${sold?"sold":Number(p.stock)<=3?"low":""}">${sold?"Sotuvda yo‘q":Number(p.stock)<=3?`Faqat ${Number(p.stock)} ta qoldi`:"Omborda mavjud"}</div>
+      <div class="card-buttons"><button data-detail="${p.id}" type="button">Batafsil</button><button class="green-card-button" data-cart="${p.id}" type="button" ${sold?"disabled":""}>Savatchaga</button></div>
     </div>
   </article>`;
 }
-function filteredProducts(){
-  const search = $("catalogSearch").value.trim().toLowerCase();
-  const category = $("catalogCategory").value;
-  const min = Number($("minPrice").value||0);
-  const max = Number($("maxPrice").value||0);
-  const stock = $("stockFilter").value;
-  return active().filter(p=>{
-    const text = `${p.name} ${p.category} ${p.description} ${p.price} ${p.material||""} ${(p.colors||[]).join(" ")}`.toLowerCase();
-    const price = numericPrice(p.price);
-    const sold = p.soldOut || Number(p.stock)===0;
-    return (!search || text.includes(search))
-      && (!category || p.category===category)
-      && (!min || price>=min)
-      && (!max || price<=max)
-      && (!stock
-        || (stock==="available" && !sold)
-        || (stock==="low" && !sold && Number(p.stock)<=3)
-        || (stock==="sold" && sold));
-  });
+function renderCategories(){
+  const counts={};
+  activeProducts().forEach(p=>counts[p.category||"Boshqa"]=(counts[p.category||"Boshqa"]||0)+1);
+  const cats=Object.keys(counts).sort();
+  $("catalogCategory").innerHTML='<option value="">Barcha kategoriyalar</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  $("categoryGrid").innerHTML=cats.length?cats.slice(0,8).map(c=>{
+    const sample=activeProducts().find(p=>p.category===c);
+    return `<button class="premium-category-card" data-category="${esc(c)}" type="button"><img src="${esc(sample?mainImage(sample):"./logo.png")}" alt="${esc(c)}"><span><strong>${esc(c)}</strong><small>${counts[c]} ta mahsulot</small></span><b>→</b></button>`;
+  }).join(""):'<div class="premium-empty">Kategoriya topilmadi.</div>';
 }
 function renderCatalog(){
-  const list = sortedProducts(filteredProducts());
-  $("catalogCount").textContent = `${list.length} ta mahsulot`;
-  $("catalogGrid").innerHTML = list.length ? list.map(card).join("") :
-    '<div class="empty-state">Hozircha mos mahsulot topilmadi.</div>';
+  const all=sorted(filterProducts());
+  const shown=all.slice(0,visibleCount);
+  $("catalogCount").textContent=`${all.length} ta mahsulot`;
+  $("catalogGrid").innerHTML=shown.length?shown.map(productCard).join(""):'<div class="premium-empty">Mos mahsulot topilmadi.</div>';
+  $("loadMoreButton").hidden=shown.length>=all.length;
+  renderActiveFilters();
+}
+function renderActiveFilters(){
+  const tags=[];
+  if($("catalogSearch").value)tags.push(`Qidiruv: ${$("catalogSearch").value}`);
+  if($("catalogCategory").value)tags.push($("catalogCategory").value);
+  if($("stockFilter").value)tags.push($("stockFilter").selectedOptions[0].text);
+  $("activeFilters").innerHTML=tags.map(t=>`<span>${esc(t)}</span>`).join("");
 }
 function renderFeatured(){
-  const list = recommended().filter(p=>p.featured).slice(0,12);
-  $("featuredSlider").innerHTML = list.length ? list.map(card).join("") :
-    '<div class="empty-state">Top mahsulotlar hali belgilanmagan.</div>';
-}
-function renderBestsellers(){
-  const list = active().filter(p=>Number(p.salesCount||0)>0)
-    .sort((a,b)=>Number(b.salesCount||0)-Number(a.salesCount||0)).slice(0,12);
-  $("bestsellerSlider").innerHTML = list.length ? list.map(card).join("") :
-    '<div class="empty-state">Sotuv ma’lumotlari hali kiritilmagan.</div>';
-  startAutoSlider();
+  const list=sorted(activeProducts()).filter(p=>p.featured).slice(0,10);
+  $("featuredSlider").innerHTML=list.length?list.map(productCard).join(""):'<div class="premium-empty">Top mahsulotlar hali belgilanmagan.</div>';
+  const hero=list[0]||activeProducts()[0];
+  if(hero){$("heroProductImage").src=mainImage(hero);$("heroProductName").textContent=hero.name;$("heroProductButton").dataset.detail=hero.id}
 }
 function renderRecommendations(){
-  const favoriteProducts = favorites.map(id=>products.find(p=>p.id===id)).filter(Boolean);
-  const viewedProducts = viewed.map(id=>products.find(p=>p.id===id)).filter(Boolean);
-  const preferredCategories = [...favoriteProducts,...viewedProducts].map(p=>p.category).filter(Boolean);
-  const scores = active().filter(p=>!favorites.includes(p.id)).map(p=>{
-    let score = Number(p.featured?3:0) + Number(p.salesCount||0)/10;
-    score += preferredCategories.filter(c=>c===p.category).length*5;
-    if(viewed.includes(p.id)) score += 2;
-    return {p,score};
-  }).sort((a,b)=>b.score-a.score).slice(0,10).map(x=>x.p);
-  $("recommendationSlider").innerHTML = scores.length ? scores.map(card).join("") :
-    '<div class="empty-state">Tavsiyalar uchun mahsulotlarni ko‘ring.</div>';
+  const categoryScore={};
+  [...favorites,...viewed].forEach(id=>{const p=products.find(x=>x.id===id);if(p?.category)categoryScore[p.category]=(categoryScore[p.category]||0)+1});
+  const list=activeProducts().filter(p=>!favorites.includes(p.id)).map(p=>({p,score:(categoryScore[p.category]||0)*5+Number(p.featured?3:0)+Number(p.salesCount||0)/10})).sort((a,b)=>b.score-a.score).slice(0,8).map(x=>x.p);
+  $("recommendationSlider").innerHTML=list.length?list.map(productCard).join(""):'<div class="premium-empty">Mahsulotlarni ko‘rganingizdan so‘ng tavsiyalar paydo bo‘ladi.</div>';
 }
-function startAutoSlider(){
-  clearInterval(sliderTimer);
-  const slider = $("bestsellerSlider");
-  if(!slider || slider.children.length<2) return;
-  sliderTimer = setInterval(()=>{
-    const amount = Math.min(330,slider.clientWidth*.8);
-    if(slider.scrollLeft+slider.clientWidth>=slider.scrollWidth-10)
-      slider.scrollTo({left:0,behavior:"smooth"});
-    else slider.scrollBy({left:amount,behavior:"smooth"});
-  },4500);
+function showDrawer(mode){
+  drawerMode=mode;
+  $("drawerTitle").textContent=mode==="cart"?"Savatcha":"Sevimlilar";
+  const ids=mode==="cart"?cart:favorites;
+  const list=ids.map(id=>products.find(p=>p.id===id)).filter(Boolean);
+  $("drawerContent").innerHTML=list.length?list.map(p=>`<article class="drawer-item"><img src="${esc(mainImage(p))}" alt=""><div><strong>${esc(p.name)}</strong><span>${esc(p.price)}</span></div><button data-drawer-remove="${p.id}" type="button">×</button></article>`).join(""):'<div class="premium-empty">Hozircha bo‘sh.</div>';
+  if(mode==="cart"&&list.length){const total=list.reduce((s,p)=>s+numberPrice(p.price),0);$("drawerFooter").innerHTML=`<div class="drawer-total"><span>Jami</span><strong>${total.toLocaleString("uz-UZ")} so‘m</strong></div><button class="drawer-checkout" id="drawerCheckout" type="button">Buyurtma berish</button>`;$("drawerCheckout").onclick=checkout}else{$("drawerFooter").innerHTML=""}
+  $("sideDrawer").classList.add("open");$("drawerOverlay").classList.add("show");$("sideDrawer").setAttribute("aria-hidden","false");
 }
-function galleryRender(index=0){
-  galleryIndex = (index+gallery.length)%gallery.length;
-  const main = $("modalMainImage");
-  if(main) main.src = img(gallery[galleryIndex]);
-  document.querySelectorAll(".gallery-thumb").forEach((thumb,i)=>thumb.classList.toggle("active",i===galleryIndex));
+function closeDrawer(){$("sideDrawer").classList.remove("open");$("drawerOverlay").classList.remove("show");$("sideDrawer").setAttribute("aria-hidden","true")}
+async function checkout(){
+  const list=cart.map(id=>products.find(p=>p.id===id)).filter(Boolean);if(!list.length)return;
+  const name=prompt("Ismingiz:");if(!name)return;const phone=prompt("Telefon raqamingiz:");if(!phone)return;
+  const total=list.reduce((s,p)=>s+numberPrice(p.price),0);
+  try{await addDoc(collection(db,"orders"),{customerName:name,phone,items:list.map(p=>({id:p.id,name:p.name,price:p.price,image:mainImage(p)})),total,status:"new",createdAt:serverTimestamp()});const message=`Assalomu alaykum!\n\n${list.map((p,i)=>`${i+1}. ${p.name} — ${p.price}`).join("\n")}\n\nJami: ${total.toLocaleString("uz-UZ")} so‘m\nIsm: ${name}\nTelefon: ${phone}`;window.open(`https://t.me/ibratmebel8909?text=${encodeURIComponent(message)}`,"_blank","noopener");cart=[];saveState();closeDrawer();toast("Buyurtma saqlandi")}catch(e){console.error(e);toast("Buyurtma yuborilmadi")}
 }
+function renderGallery(index=0){galleryIndex=(index+gallery.length)%gallery.length;const main=$("modalMainImage");if(main)main.src=imageUrl(gallery[galleryIndex]);document.querySelectorAll("[data-thumb]").forEach((b,i)=>b.classList.toggle("active",i===galleryIndex))}
 function loadReviews(productId){
   reviewsUnsubscribe?.();
-  const q = query(
-    collection(db,"reviews"),
-    where("productId","==",productId),
-    where("status","==","approved"),
-    orderBy("createdAt","desc"),
-    limit(20)
-  );
-  reviewsUnsubscribe = onSnapshot(q,snapshot=>{
-    const reviews = snapshot.docs.map(d=>({id:d.id,...d.data()}));
-    $("reviewsList").innerHTML = reviews.length ? reviews.map(r=>`
-      <article class="review-item">
-        <div><strong>${esc(r.name)}</strong><span>${"★".repeat(Number(r.rating||0))}</span></div>
-        <p>${esc(r.text)}</p>
-      </article>`).join("") : '<p class="muted-text">Hozircha izoh yo‘q.</p>';
-    const avg = reviews.length ? reviews.reduce((s,r)=>s+Number(r.rating||0),0)/reviews.length : 0;
-    $("reviewsAverage").textContent = `${avg.toFixed(1)} ★`;
-  },error=>{
-    console.error(error);
-    $("reviewsList").innerHTML = '<p class="muted-text">Izohlarni yuklashda xatolik.</p>';
-  });
+  const q=query(collection(db,"reviews"),where("productId","==",productId),where("status","==","approved"),orderBy("createdAt","desc"),limit(20));
+  reviewsUnsubscribe=onSnapshot(q,s=>{const rows=s.docs.map(d=>d.data());$("reviewsList").innerHTML=rows.length?rows.map(r=>`<article class="review-item"><div><strong>${esc(r.name)}</strong><span>${"★".repeat(Number(r.rating||0))}</span></div><p>${esc(r.text)}</p></article>`).join(""):'<p class="premium-empty">Hozircha izoh yo‘q.</p>';const avg=rows.length?rows.reduce((a,r)=>a+Number(r.rating||0),0)/rows.length:0;$("reviewsAverage").textContent=`${avg.toFixed(1)} ★`},console.error);
 }
-function detail(p){
-  currentProduct = p;
-  saveViewed(p.id);
-  renderRecommendations();
-  gallery = images(p);
-  if(!gallery.length) gallery = [""];
-  const off = discount(p);
-  $("productModalContent").innerHTML = `<div class="modal-product-grid">
-    <div class="product-gallery">
-      <img id="modalMainImage" class="modal-main-image zoomable-image" src="${esc(img(gallery[0]))}" alt="${esc(p.name)}">
-      <div class="gallery-thumbs">${gallery.map((name,i)=>`<button class="gallery-thumb ${i===0?"active":""}" data-gallery-index="${i}" type="button"><img src="${esc(img(name))}" alt=""></button>`).join("")}</div>
-    </div>
-    <div>
-      <span class="category-badge">${esc(p.category||"Boshqa")}</span>
-      ${p.isNew?'<span class="inline-new-badge">YANGI</span>':""}
-      ${off?`<span class="inline-discount">-${off}%</span>`:""}
-      <h2>${esc(p.name)}</h2>
-      ${p.sku?`<p class="sku-detail">Mahsulot kodi: ${esc(p.sku)}</p>`:""}
-      <p>${esc(p.description||"")}</p>
-      <div class="price-row modal-price"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}</div>
-      ${p.material?`<p><b>Material:</b> ${esc(p.material)}</p>`:""}
-      ${p.colors?.length?`<div class="option-group"><b>Ranglar:</b><div>${chips(p.colors,"color-chip")}</div></div>`:""}
-      ${p.sizes?.length?`<div class="option-group"><b>O‘lchamlar:</b><div>${chips(p.sizes)}</div></div>`:""}
-      <p><b>Holati:</b> ${p.soldOut||Number(p.stock)===0?"Sotuvda yo‘q":`Omborda ${Number(p.stock??1)} ta`}</p>
-      <div class="button-row">
-        ${p.video?`<a class="button button-dark" target="_blank" rel="noopener" href="${esc(p.video)}">Videoni ko‘rish</a>`:""}
-        <button class="button button-gold" data-cart="${p.id}" type="button">Savatchaga qo‘shish</button>
-      </div>
-    </div>
-  </div>`;
-  loadReviews(p.id);
-  $("productModal").showModal();
+function openProduct(p){
+  currentProduct=p;markViewed(p.id);renderRecommendations();gallery=images(p);if(!gallery.length)gallery=[""];
+  const off=discount(p);
+  $("productModalContent").innerHTML=`<div class="premium-modal-grid"><div class="modal-gallery"><img id="modalMainImage" class="modal-main-image" src="${esc(imageUrl(gallery[0]))}" alt="${esc(p.name)}"><div class="modal-thumbs">${gallery.map((n,i)=>`<button data-thumb="${i}" class="${i===0?"active":""}" type="button"><img src="${esc(imageUrl(n))}" alt=""></button>`).join("")}</div></div><div class="modal-details"><span class="modal-category">${esc(p.category||"Boshqa")}</span><h2>${esc(p.name)}</h2><p>${esc(p.description||"")}</p><div class="modal-price"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}${off?`<span>-${off}%</span>`:""}</div>${p.material?`<p><b>Material:</b> ${esc(p.material)}</p>`:""}${p.colors?.length?`<div class="option-block"><b>Ranglar</b><div>${p.colors.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`:""}${p.sizes?.length?`<div class="option-block"><b>O‘lchamlar</b><div>${p.sizes.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`:""}<div class="modal-actions">${p.video?`<a href="${esc(p.video)}" target="_blank">Videoni ko‘rish</a>`:""}<button data-cart="${p.id}" type="button">Savatchaga qo‘shish</button></div></div></div>`;
+  loadReviews(p.id);$("productModal").showModal();
 }
-$("reviewForm").onsubmit = async event=>{
-  event.preventDefault();
-  if(!currentProduct) return;
-  try{
-    await addDoc(collection(db,"reviews"),{
-      productId:currentProduct.id,
-      productName:currentProduct.name,
-      name:$("reviewName").value.trim(),
-      rating:Number($("reviewRating").value),
-      text:$("reviewText").value.trim(),
-      status:"pending",
-      createdAt:serverTimestamp()
-    });
-    $("reviewForm").reset();
-    showToast("Izoh yuborildi. Tasdiqlangach ko‘rinadi.");
-  }catch(error){
-    console.error(error);
-    showToast("Izoh yuborilmadi.");
-  }
-};
-$("productModalContent").onclick = event=>{
-  const thumb = event.target.closest("[data-gallery-index]");
-  if(thumb) galleryRender(Number(thumb.dataset.galleryIndex));
-  const zoom = event.target.closest(".zoomable-image");
-  if(zoom){$("imageZoomView").src=zoom.src;$("imageZoomDialog").showModal()}
-};
-$("lightboxPrev").onclick=()=>galleryRender(galleryIndex-1);
-$("lightboxNext").onclick=()=>galleryRender(galleryIndex+1);
-$("imageZoomClose").onclick=()=>$("imageZoomDialog").close();
-
-function showList(type){
-  const ids = type==="favorites" ? favorites : cart;
-  const list = ids.map(id=>products.find(p=>p.id===id)).filter(Boolean);
-  $("listModalContent").innerHTML = `<h2>${type==="favorites"?"Sevimli mahsulotlar":"Savatcha"}</h2>` +
-    (list.length ? list.map(p=>`<div class="list-product">
-      <img src="${esc(mainImage(p))}" alt="">
-      <div><b>${esc(p.name)}</b><span>${esc(p.price)}</span></div>
-      <button data-remove-list="${type}" data-id="${p.id}" type="button">Olib tashlash</button>
-    </div>`).join("") : "<p>Hozircha bo‘sh.</p>");
-  $("cartCheckoutButton").hidden = type!=="cart" || !list.length;
-  if(type==="cart" && list.length){
-    const total = list.reduce((sum,p)=>sum+numericPrice(p.price),0);
-    $("cartSummary").hidden=false;
-    $("cartSummary").innerHTML=`<strong>Jami:</strong><span>${total.toLocaleString("uz-UZ")} so‘m</span>`;
-  }else{
-    $("cartSummary").hidden=true;
-  }
-  $("listModal").showModal();
-}
-async function createOrder(){
-  const list = cart.map(id=>products.find(p=>p.id===id)).filter(Boolean);
-  if(!list.length) return;
-  const name = prompt("Ismingiz:");
-  if(!name) return;
-  const phone = prompt("Telefon raqamingiz:");
-  if(!phone) return;
-  const total = list.reduce((sum,p)=>sum+numericPrice(p.price),0);
-  try{
-    await addDoc(collection(db,"orders"),{
-      customerName:name,
-      phone,
-      items:list.map(p=>({id:p.id,name:p.name,price:p.price,image:mainImage(p)})),
-      total,
-      status:"new",
-      createdAt:serverTimestamp()
-    });
-    const message = `Assalomu alaykum! Buyurtma:\n\n${list.map((p,i)=>`${i+1}. ${p.name} — ${p.price}`).join("\n")}\n\nJami: ${total.toLocaleString("uz-UZ")} so‘m\nIsm: ${name}\nTelefon: ${phone}`;
-    window.open(`https://t.me/ibratmebel8909?text=${encodeURIComponent(message)}`,"_blank","noopener");
-    cart=[];sync();showToast("Buyurtma saqlandi");
-    $("listModal").close();
-  }catch(error){
-    console.error(error);
-    showToast("Buyurtma yuborilmadi");
-  }
-}
-document.addEventListener("click",event=>{
-  const favorite = event.target.closest("[data-favorite]");
-  const add = event.target.closest("[data-cart]");
-  const details = event.target.closest("[data-detail]");
-  const categoryCard = event.target.closest("[data-category-card]");
-  if(favorite){
-    const id=favorite.dataset.favorite;
-    favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
-    sync();renderCatalog();renderFeatured();renderBestsellers();renderRecommendations();
-    showToast(favorites.includes(id)?"Sevimlilarga qo‘shildi":"Sevimlilardan olib tashlandi");
-  }
-  if(add){
-    const id=add.dataset.cart;
-    if(!cart.includes(id)) cart.push(id);
-    sync();add.textContent="Qo‘shildi ✓";showToast("Savatchaga qo‘shildi");
-  }
-  if(details){
-    const p=products.find(x=>x.id===details.dataset.detail);
-    if(p) detail(p);
-  }
-  if(categoryCard){
-    $("catalogCategory").value = categoryCard.dataset.categoryCard;
-    renderCatalog();
-    document.querySelector("#katalog")?.scrollIntoView({behavior:"smooth"});
-  }
+document.addEventListener("click",e=>{
+  const fav=e.target.closest("[data-favorite]"),cartBtn=e.target.closest("[data-cart]"),detail=e.target.closest("[data-detail]"),category=e.target.closest("[data-category]");
+  if(fav){const id=fav.dataset.favorite;favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];saveState();renderCatalog();renderFeatured();renderRecommendations();toast(favorites.includes(id)?"Sevimlilarga qo‘shildi":"Sevimlilardan olib tashlandi")}
+  if(cartBtn){const id=cartBtn.dataset.cart;if(!cart.includes(id))cart.push(id);saveState();cartBtn.textContent="Qo‘shildi ✓";toast("Savatchaga qo‘shildi")}
+  if(detail){const p=products.find(x=>x.id===detail.dataset.detail);if(p)openProduct(p)}
+  if(category){$("catalogCategory").value=category.dataset.category;visibleCount=8;renderCatalog();document.querySelector("#katalog").scrollIntoView({behavior:"smooth"})}
 });
-$("favoritesButton").onclick=()=>showList("favorites");
-$("cartButton").onclick=()=>showList("cart");
+$("menuButton").onclick=()=>$("mainNav").classList.toggle("open");
+$("mainNav").querySelectorAll("a").forEach(a=>a.onclick=()=>$("mainNav").classList.remove("open"));
+$("favoritesButton").onclick=()=>showDrawer("favorites");
+$("cartButton").onclick=()=>showDrawer("cart");
+$("drawerClose").onclick=closeDrawer;$("drawerOverlay").onclick=closeDrawer;
+$("drawerContent").onclick=e=>{const b=e.target.closest("[data-drawer-remove]");if(!b)return;if(drawerMode==="cart")cart=cart.filter(x=>x!==b.dataset.drawerRemove);else favorites=favorites.filter(x=>x!==b.dataset.drawerRemove);saveState();showDrawer(drawerMode);renderCatalog();renderFeatured()};
 $("modalClose").onclick=()=>{$("productModal").close();reviewsUnsubscribe?.()};
-$("listModalClose").onclick=()=>$("listModal").close();
-$("listModalContent").onclick=event=>{
-  const button=event.target.closest("[data-remove-list]");
-  if(!button)return;
-  if(button.dataset.removeList==="favorites") favorites=favorites.filter(x=>x!==button.dataset.id);
-  else cart=cart.filter(x=>x!==button.dataset.id);
-  sync();showList(button.dataset.removeList);renderCatalog();renderFeatured();renderRecommendations();
-};
-$("cartCheckoutButton").onclick=createOrder;
+$("productModalContent").onclick=e=>{const t=e.target.closest("[data-thumb]");if(t)renderGallery(Number(t.dataset.thumb));const main=e.target.closest(".modal-main-image");if(main){$("imageZoomView").src=main.src;$("imageZoomDialog").showModal()}};
+$("imageZoomClose").onclick=()=>$("imageZoomDialog").close();
+$("reviewForm").onsubmit=async e=>{e.preventDefault();if(!currentProduct)return;try{await addDoc(collection(db,"reviews"),{productId:currentProduct.id,productName:currentProduct.name,name:$("reviewName").value.trim(),rating:Number($("reviewRating").value),text:$("reviewText").value.trim(),status:"pending",createdAt:serverTimestamp()});$("reviewForm").reset();toast("Izoh yuborildi. Tasdiqlangach ko‘rinadi.")}catch(err){console.error(err);toast("Izoh yuborilmadi")}};
+["catalogSearch"].forEach(id=>$(id).oninput=()=>{visibleCount=8;renderCatalog()});
+["catalogCategory","catalogSort","stockFilter"].forEach(id=>$(id).onchange=()=>{visibleCount=8;renderCatalog()});
+$("loadMoreButton").onclick=()=>{visibleCount+=8;renderCatalog()};
+$("featuredPrev").onclick=()=>$("featuredSlider").scrollBy({left:-360,behavior:"smooth"});$("featuredNext").onclick=()=>$("featuredSlider").scrollBy({left:360,behavior:"smooth"});
+$("themeToggle").onclick=()=>{const dark=document.documentElement.classList.toggle("premium-dark");localStorage.setItem("ibratTheme",dark?"dark":"light");$("themeToggle").textContent=dark?"☀":"☾"};
+if(localStorage.getItem("ibratTheme")==="dark"){document.documentElement.classList.add("premium-dark");$("themeToggle").textContent="☀"}
+$("downloadPdfButton").onclick=()=>{const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(18);doc.text("IBRAT MEBEL KATALOGI",14,18);doc.setFontSize(10);let y=30;sorted(filterProducts()).forEach((p,i)=>{if(y>280){doc.addPage();y=20}doc.text(`${i+1}. ${p.name}`,14,y);doc.text(`${p.category||"Boshqa"} | ${p.price}`,14,y+6);y+=18});doc.save("ibrat-mebel-katalog.pdf")};
+$("buyurtma").onsubmit=e=>{e.preventDefault();const text=encodeURIComponent(`Assalomu alaykum!\nIsm: ${$("customerName").value.trim()}\nTelefon: ${$("customerPhone").value.trim()}\nXizmat: ${$("customerService").value}\nIzoh: ${$("customerMessage").value.trim()}`);window.open(`https://t.me/ibratmebel8909?text=${text}`,"_blank","noopener")};
 
-["catalogSearch","minPrice","maxPrice"].forEach(id=>$(id).oninput=renderCatalog);
-["catalogCategory","catalogSort","stockFilter"].forEach(id=>$(id).onchange=renderCatalog);
-
-$("themeToggle").onclick=()=>{
-  const dark = document.documentElement.classList.toggle("dark-theme");
-  localStorage.setItem("ibratTheme", dark?"dark":"light");
-  $("themeToggle").textContent = dark?"☀️":"🌙";
-};
-if(localStorage.getItem("ibratTheme")==="dark"){
-  document.documentElement.classList.add("dark-theme");
-  $("themeToggle").textContent="☀️";
-}
-
-$("downloadPdfButton").onclick=()=>{
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("IBRAT MEBEL KATALOGI",14,18);
-  doc.setFontSize(10);
-  let y=30;
-  sortedProducts(filteredProducts()).forEach((p,i)=>{
-    if(y>280){doc.addPage();y=20}
-    doc.text(`${i+1}. ${p.name}`,14,y);
-    doc.text(`${p.category||"Boshqa"} | ${p.price}`,14,y+6);
-    if(p.description) doc.text(doc.splitTextToSize(p.description,175),14,y+12);
-    y += 28;
-  });
-  doc.save("ibrat-mebel-katalog.pdf");
-};
-
-onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),snapshot=>{
-  products=snapshot.docs.map(d=>({id:d.id,...d.data()}));
-  renderCategories();sync();renderCatalog();renderFeatured();renderBestsellers();renderRecommendations();
-},error=>{
-  console.error(error);
-  $("catalogGrid").innerHTML='<div class="empty-state">Mahsulotlarni yuklashda xatolik.</div>';
-});
-
-$("buyurtma").onsubmit=event=>{
-  event.preventDefault();
-  const text=encodeURIComponent(`Assalomu alaykum!\nIsm: ${$("customerName").value.trim()}\nTelefon: ${$("customerPhone").value.trim()}\nXizmat: ${$("customerService").value}\nIzoh: ${$("customerMessage").value.trim()}`);
-  window.open(`https://t.me/ibratmebel8909?text=${text}`,"_blank","noopener");
-};
+onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));cleanState();renderCategories();renderFeatured();renderCatalog();renderRecommendations()},e=>{$("catalogGrid").innerHTML='<div class="premium-empty">Mahsulotlarni yuklashda xatolik.</div>';console.error(e)});

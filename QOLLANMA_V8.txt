@@ -1,0 +1,32 @@
+IBRAT MEBEL V8 — C VARIANT PREMIUM SAYT
+
+V8 asosiy yangiliklari:
+- Bosh sahifa to‘liq yangilandi
+- Ibrat Mebel uchun maxsus premium dizayn
+- Yashil, oq va tabiiy ranglar
+- Premium hero va dinamik mahsulot rasmi
+- Kategoriyalar
+- Top mahsulotlar slayderi
+- Kuchli qidiruv va filtr
+- Savatcha yon paneli
+- Sevimlilar yon paneli
+- Telegram buyurtma
+- Firestore buyurtmalar
+- Mijoz izohlari
+- Dark mode
+- PDF katalog
+- Mobil telefonga to‘liq mos
+- V7 Admin va ERP saqlanadi
+
+YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. Barcha fayllarni eski fayllar ustiga yuklang.
+4. images papkasi va logo.png ni o‘chirmang.
+5. Commit: IBRAT MEBEL V8
+6. Deploy tugagach Ctrl + F5 bosing.
+
+MANZILLAR:
+Sayt: /index.html
+Admin: /admin.html
+ERP: /erp.html
