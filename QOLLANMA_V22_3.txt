@@ -1,4 +1,4 @@
-BUVAYDA IBRAT MEBEL V22.3 — REAL PHOTO EDITION
+BUVAYDA IBRAT MEBEL V23 — REAL PHOTO EDITION
 
 TUZATILDI:
 - Multfilmga o‘xshagan SVG rasmlar olib tashlandi.
@@ -21,6 +21,6 @@ service-drill-hd.jpg
 service-design-hd.jpg
 
 COMMIT:
-V22.3 REAL PHOTO EDITION
+V23 REAL PHOTO EDITION
 
 Deploy tugagach Ctrl + Shift + R bosing.

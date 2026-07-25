@@ -1,0 +1,31 @@
+BUVAYDA IBRAT MEBEL V23 — PROFESSIONAL COMPLETE PLATFORM
+
+PIN:
+1212
+
+YANGI BOSHQARUV MARKAZI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v23.html
+
+V23 YANGILIKLARI:
+- Yagona professional boshqaruv markazi.
+- Mahsulotlar, Smart Cut, buyurtmalar, ERP va saytga tezkor kirish.
+- Real vaqt asosiy statistika.
+- Kam qolgan mahsulotlar.
+- So‘nggi buyurtmalar.
+- Tizim diagnostikasi.
+- To‘liq JSON backup yuklash.
+- Backup faylidan ma’lumotlarni tiklash.
+- Tezkor foydalanish qo‘llanmasi.
+- Asosiy sayt dizayni yanada premium qilindi.
+- Bosh va xizmat rasmlari yagona sifat va kesimda optimallashtirildi.
+- Mobil ko‘rinish yaxshilandi.
+- Oldingi Smart Cut, ERP, CRM, QR, Excel va PDF funksiyalari saqlandi.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V23 COMPLETE PLATFORM
+4. Deploy tugagach Ctrl + Shift + R bosing.
+
+MUHIM:
+Katta o‘zgarishlardan oldin V23 Backup markazidan JSON backup saqlang.

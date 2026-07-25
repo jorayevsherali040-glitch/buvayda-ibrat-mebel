@@ -41,9 +41,12 @@ function renderFurniture(){
   $("furnitureGrid").innerHTML=db.products.length?db.products.slice(0,8).map(x=>`<article class="v11-furniture-card"><img src="${esc(img(x))}" alt="${esc(x.name)}"><div><h3>${esc(x.name)}</h3><strong>${esc(x.price||"Narx kelishiladi")}</strong></div></article>`).join(""):'<div class="v11-empty">Mebellar hali qo‘shilmagan.</div>';
 }
 function renderStats(){
-  $("heroLaminateCount").textContent=db.laminates.length;
-  $("heroEdgeCount").textContent=db.edges.length;
-  $("heroOrderCount").textContent=db.orders.filter(x=>x.date===today()).length;
+  const laminateCount=$("heroLaminateCount");
+  const edgeCount=$("heroEdgeCount");
+  const orderCount=$("heroOrderCount");
+  if(laminateCount)laminateCount.textContent=db.laminates.length;
+  if(edgeCount)edgeCount.textContent=db.edges.length;
+  if(orderCount)orderCount.textContent=db.orders.filter(x=>x.date===today()).length;
 }
 function renderAll(){renderLaminates();renderEdges();renderFurniture();renderStats();saveUser()}
 
@@ -241,4 +244,38 @@ v21PartsList?.addEventListener("click",e=>{
 });
 ["v21SheetWidth","v21SheetHeight","v21Waste"].forEach(id=>document.getElementById(id)?.addEventListener("input",v21RenderParts));
 document.getElementById("v21ClearParts")?.addEventListener("click",()=>{v21Parts=[];v21RenderParts()});
-v21RenderParts();
+try{
+  v21RenderParts();
+}catch(error){
+  console.error("V22 quick calculator init error:",error);
+}
+
+// V23 hard fallback for the homepage quick calculator.
+// This listener is used only when the main handler did not process the click.
+document.addEventListener("click",event=>{
+  const button=event.target.closest("#v21AddPart");
+  if(!button||button.dataset.v224Handled==="1")return;
+
+  const widthInput=document.getElementById("v21PartWidth");
+  const heightInput=document.getElementById("v21PartHeight");
+  const qtyInput=document.getElementById("v21PartQty");
+  const edgeInput=document.getElementById("v21EdgeSides");
+
+  const width=Number(widthInput?.value||0);
+  const height=Number(heightInput?.value||0);
+  const qty=Number(qtyInput?.value||1);
+  const edgeSides=Number(edgeInput?.value||0);
+
+  if(width<=0||height<=0||qty<=0)return;
+
+  const before=Array.isArray(v21Parts)?v21Parts.length:0;
+  setTimeout(()=>{
+    if(!Array.isArray(v21Parts)||v21Parts.length!==before)return;
+    v21Parts.push({width,height,qty,edgeSides});
+    widthInput.value="";
+    heightInput.value="";
+    qtyInput.value=1;
+    v21RenderParts();
+    toast("Detal qo‘shildi.");
+  },0);
+});

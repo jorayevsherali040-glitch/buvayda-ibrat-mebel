@@ -1,0 +1,30 @@
+BUVAYDA IBRAT MEBEL V23 — TEZKOR KALKULYATOR TUZATILDI
+
+ANIQLANGAN ASOSIY SABAB:
+- v13.js eski hero statistika elementlarini qidirgan:
+  heroLaminateCount
+  heroEdgeCount
+  heroOrderCount
+- Bu elementlar V22 dizaynida yo‘q edi.
+- JavaScript shu joyda to‘xtab qolgan.
+- Natijada pastdagi “Detal qo‘shish” tugmasiga kod umuman yetib bormagan.
+
+TUZATILDI:
+- Eski statistika elementlari mavjud bo‘lsagina yangilanadi.
+- Kalkulyator alohida xavfsiz ishga tushiriladi.
+- Qo‘shimcha fallback click handler qo‘shildi.
+- Detal qo‘shilganda jami detal, maydon, list va kromka darhol hisoblanadi.
+- Kesh versiyasi V23 ga yangilandi.
+
+GITHUB’GA ALBATTA ALMASHTIRING:
+index.html
+v13.js
+
+COMMIT:
+V23 QUICK CALCULATOR FIX
+
+Deploy tugagach:
+1. Ctrl + Shift + R bosing.
+2. Sahifa sarlavhasida V23 ko‘ring.
+3. 1450 × 900, 5 dona kiriting.
+4. “Detal qo‘shish”ni bosing.
