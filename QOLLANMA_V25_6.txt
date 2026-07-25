@@ -1,0 +1,16 @@
+BUVAYDA IBRAT MEBEL V25.6 — BLACK NIGHT EDITION
+
+O‘ZGARISHLAR:
+- “Buvayda Ibrat Mebel ichkaridan” galereya bo‘limi butunlay olib tashlandi.
+- Rasmlar soni kamaytirildi.
+- Tungi rejim oq-yashil ranglardan qora, grafit va kulrang ranglarga o‘tkazildi.
+- Header, hero, kartalar, bo‘limlar, formalar va footer qora rangga moslashtirildi.
+- Yashil rang faqat aksent sifatida qoldirildi.
+- Qora rejimda matnlar oq va kulrang ko‘rinadi.
+- Kesh versiyasi V25.6 ga yangilandi.
+
+GITHUB’GA:
+1. ZIP ichidagi barcha fayllarni root qismiga yuklang.
+2. Asosan site.html va v11.css almashtirilganini tekshiring.
+3. Commit: V25.6 BLACK NIGHT CLEAN
+4. Deploy tugagach Ctrl + Shift + R bosing.
