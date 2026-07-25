@@ -1,62 +1,292 @@
-import {loadDB,saveDB,uid,nowISO,today,money} from "./local-db.js";
+import {loadDB,saveDB,uid,money,today} from "./local-db.js";
 const $=id=>document.getElementById(id);
-let db=loadDB(),charts={};
-if(sessionStorage.getItem("v13PinVerified")!=="1"){sessionStorage.setItem("v19AfterLogin","1");location.href="./super-admin.html"}
+let db=loadDB();
+let cart=JSON.parse(localStorage.getItem("v13Cart")||"[]");
+let favorites=JSON.parse(localStorage.getItem("v13Favorites")||"[]");
 
-const titles={overview:"Professional Dashboard",inventory:"Ombor tahlili",sales:"Sotuv tahlili",finance:"Moliya",customers:"CRM",production:"Ishlab chiqarish",suppliers:"Yetkazib beruvchilar",purchases:"Xaridlar",reports:"Hisobotlar"};
-const num=v=>Number(v||0),esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
+function img(x){return x.image||x.imageUrl||"./product-placeholder.svg"}
+function key(type,id){return `${type}:${id}`}
+function saveUser(){localStorage.setItem("v13Cart",JSON.stringify(cart));localStorage.setItem("v13Favorites",JSON.stringify(favorites));$("cartCount").textContent=cart.length;$("favoriteCount").textContent=favorites.length}
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
-function persist(){db=saveDB(db);renderAll()}
-function go(page){document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));document.querySelectorAll(".v19-page").forEach(x=>x.classList.remove("active"));$("page"+page[0].toUpperCase()+page.slice(1)).classList.add("active");$("pageTitle").textContent=titles[page];$("sidebar").classList.remove("open");if(page==="overview")setTimeout(renderCharts,50)}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));
-$("menuBtn").onclick=()=>$("sidebar").classList.toggle("open");$("themeBtn").onclick=()=>document.documentElement.classList.toggle("dark");$("logoutBtn").onclick=()=>{sessionStorage.removeItem("v13PinVerified");location.href="./super-admin.html"};$("todayLabel").textContent=new Date().toLocaleDateString("uz-UZ",{day:"2-digit",month:"long",year:"numeric"});
+function stockClass(x){return Number(x.stock)<=Number(x.minStock||0)?"low":""}
+function findItem(k){const [type,id]=k.split(":");const list=type==="laminate"?db.laminates:type==="edge"?db.edges:db.products;const x=list.find(v=>v.id===id);return x?{...x,type}:null}
 
-function listRow(title,sub,value,badge=""){return`<div class="list-row"><div><strong>${esc(title)}</strong><p>${esc(sub)}</p></div><span class="badge ${badge}">${esc(value)}</span></div>`}
-function renderOverview(){
-  const todaySales=(db.sales||[]).filter(x=>x.date===today()),todayFinance=db.finance.filter(x=>x.date===today()),income=todayFinance.filter(x=>x.type==="income").reduce((s,x)=>s+num(x.amount),0),expense=todayFinance.filter(x=>x.type==="expense").reduce((s,x)=>s+num(x.amount),0);
-  $("statTodaySales").textContent=money(todaySales.reduce((s,x)=>s+num(x.total),0));$("statTodaySalesCount").textContent=`${todaySales.length} ta sotuv`;$("statTodayProfit").textContent=money(income-expense);
-  $("statLamStock").textContent=db.laminates.reduce((s,x)=>s+num(x.stock),0).toLocaleString("uz-UZ")+" list";$("statLamTypes").textContent=db.laminates.length+" tur";$("statEdgeStock").textContent=db.edges.reduce((s,x)=>s+num(x.stock),0).toLocaleString("uz-UZ")+" m";$("statEdgeTypes").textContent=db.edges.length+" tur";
-  $("statActiveOrders").textContent=db.orders.filter(x=>!["Yetkazildi","Bekor qilindi"].includes(x.status)).length;$("statDebts").textContent=money(db.orders.reduce((s,x)=>s+num(x.debt),0))+" qarz";
-  const low=[...db.laminates.map(x=>({...x,unit:"list"})),...db.edges.map(x=>({...x,unit:"m"}))].filter(x=>num(x.stock)<=num(x.minStock||0));$("statLowStock").textContent=low.length;$("lowStock").innerHTML=low.slice(0,8).map(x=>listRow(`${x.code||""} ${x.name}`,x.location||"",`${x.stock} ${x.unit}`,x.stock<=0?"red":"low")).join("")||"<p>Kam mahsulot yo‘q.</p>";
-  const productMap={};for(const sale of db.sales||[])for(const line of sale.lines||[]){const k=line.name;productMap[k]=(productMap[k]||0)+num(line.qty)}$("topProducts").innerHTML=Object.entries(productMap).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>listRow(k,"Sotilgan miqdor",String(v))).join("")||"<p>Sotuv ma’lumoti yo‘q.</p>";
-  const customerMap={};for(const o of db.orders){const k=o.customer||"Noma’lum";customerMap[k]=(customerMap[k]||0)+num(o.total)}$("topCustomers").innerHTML=Object.entries(customerMap).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>listRow(k,"Jami xarid",money(v))).join("")||"<p>Mijoz ma’lumoti yo‘q.</p>";
+function laminateCard(x){return `<article class="v11-market-card">
+<div class="v11-market-image"><img src="${esc(img(x))}" alt="${esc(x.name)}"><span class="code">${esc(x.code||"KODSIZ")}</span><button class="fav ${favorites.includes(key("laminate",x.id))?"active":""}" data-fav="laminate:${x.id}">♥</button></div>
+<div class="v11-market-body"><small>${esc(x.brand||"Brend ko‘rsatilmagan")}</small><h3>${esc(x.name||"Laminat")}</h3>
+<div class="v11-market-meta"><span>Rang: ${esc(x.color||x.name||"-")}</span><span>Qalinlik: ${esc(x.thickness||"-")} mm</span><span>O‘lcham: ${esc(x.size||"-")}</span><span>Joy: ${esc(x.location||"-")}</span></div>
+<div class="v11-market-price"><strong>${money(x.salePrice)}</strong><span class="v11-stock ${stockClass(x)}">${Number(x.stock||0)} list</span></div>
+<div class="v11-card-actions"><button data-telegram="laminate:${x.id}">Telegram</button><button data-cart="laminate:${x.id}">Savatchaga</button></div></div></article>`}
+function edgeCard(x){return `<article class="v11-market-card">
+<div class="v11-market-image"><img src="${esc(img(x))}" alt="${esc(x.name)}"><span class="code">${esc(x.code||"KODSIZ")}</span><button class="fav ${favorites.includes(key("edge",x.id))?"active":""}" data-fav="edge:${x.id}">♥</button></div>
+<div class="v11-market-body"><small>${esc(x.brand||"Brend ko‘rsatilmagan")}</small><h3>${esc(x.name||"Kromka")}</h3>
+<div class="v11-market-meta"><span>Qalinlik: ${esc(x.thickness||"-")} mm</span><span>Eni: ${esc(x.width||"-")} mm</span><span>Mos laminat: ${esc(x.matchingLaminate||"-")}</span><span>Joy: ${esc(x.location||"-")}</span></div>
+<div class="v11-market-price"><strong>${money(x.salePrice)} / m</strong><span class="v11-stock ${stockClass(x)}">${Number(x.stock||0)} m</span></div>
+<div class="v11-card-actions"><button data-telegram="edge:${x.id}">Telegram</button><button data-cart="edge:${x.id}">Savatchaga</button></div></div></article>`}
+
+function renderLaminates(){
+  const s=$("laminateSearch").value.toLowerCase(),brand=$("laminateBrandFilter").value,th=$("laminateThicknessFilter").value,stock=$("laminateStockFilter").value;
+  const list=db.laminates.filter(x=>{const low=Number(x.stock)<=Number(x.minStock||0),available=Number(x.stock)>0;return(!s||`${x.code} ${x.name} ${x.brand} ${x.color}`.toLowerCase().includes(s))&&(!brand||x.brand===brand)&&(!th||String(x.thickness)===th)&&(!stock||(stock==="available"&&available)||(stock==="low"&&low))});
+  $("laminateGrid").innerHTML=list.length?list.map(laminateCard).join(""):'<div class="v11-empty">Laminatlar hali kiritilmagan.</div>';
+  const brands=[...new Set(db.laminates.map(x=>x.brand).filter(Boolean))].sort(),cur=$("laminateBrandFilter").value;
+  $("laminateBrandFilter").innerHTML='<option value="">Barcha brendlar</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");$("laminateBrandFilter").value=cur;
 }
-function chart(id,type,labels,data,label){if(!window.Chart)return;if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),{type,data:{labels,datasets:[{label,data,borderWidth:2,tension:.35}]},options:{responsive:true,plugins:{legend:{display:type==="doughnut"}},scales:type==="doughnut"?{}:{y:{beginAtZero:true}}}})}
-function renderCharts(){
-  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10))}
-  chart("salesChart","line",days.map(d=>d.slice(5)),days.map(d=>(db.sales||[]).filter(x=>x.date===d).reduce((s,x)=>s+num(x.total),0)),"Savdo");
-  chart("stockChart","doughnut",["Laminat list","Kromka metr","Mebel dona"],[db.laminates.reduce((s,x)=>s+num(x.stock),0),db.edges.reduce((s,x)=>s+num(x.stock),0),db.products.reduce((s,x)=>s+num(x.stock),0)],"Ombor");
-  const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);months.push(d.toISOString().slice(0,7))}
-  chart("financeChart","bar",months.map(x=>x.slice(5)),months.map(m=>db.finance.filter(x=>x.date?.startsWith(m)&&x.type==="income").reduce((s,x)=>s+num(x.amount),0)-db.finance.filter(x=>x.date?.startsWith(m)&&x.type==="expense").reduce((s,x)=>s+num(x.amount),0)),"Sof natija")
+function renderEdges(){
+  const s=$("edgeSearch").value.toLowerCase(),th=$("edgeThicknessFilter").value,w=$("edgeWidthFilter").value,stock=$("edgeStockFilter").value;
+  const list=db.edges.filter(x=>{const low=Number(x.stock)<=Number(x.minStock||0),available=Number(x.stock)>0;return(!s||`${x.code} ${x.name} ${x.brand}`.toLowerCase().includes(s))&&(!th||String(x.thickness)===th)&&(!w||String(x.width)===w)&&(!stock||(stock==="available"&&available)||(stock==="low"&&low))});
+  $("edgeGrid").innerHTML=list.length?list.map(edgeCard).join(""):'<div class="v11-empty">Kromkalar hali kiritilmagan.</div>';
 }
-function renderInventory(){
-  const lv=db.laminates.reduce((s,x)=>s+num(x.stock)*num(x.costPrice),0),ev=db.edges.reduce((s,x)=>s+num(x.stock)*num(x.costPrice),0),ls=db.laminates.reduce((s,x)=>s+num(x.stock)*num(x.salePrice),0),es=db.edges.reduce((s,x)=>s+num(x.stock)*num(x.salePrice),0);
-  $("invLamValue").textContent=money(lv);$("invEdgeValue").textContent=money(ev);$("invTotalValue").textContent=money(lv+ev);$("invPotentialProfit").textContent=money((ls+es)-(lv+ev));
-  $("inventoryLaminates").innerHTML=db.laminates.map(x=>listRow(`${x.code} ${x.name}`,`${x.brand||""} · ${x.location||""}`,`${x.stock} list`,num(x.stock)<=num(x.minStock||0)?"low":"")).join("")||"<p>Laminat yo‘q.</p>";
-  $("inventoryEdges").innerHTML=db.edges.map(x=>listRow(`${x.code} ${x.name}`,`${x.thickness||""}×${x.width||""} · ${x.location||""}`,`${x.stock} m`,num(x.stock)<=num(x.minStock||0)?"low":"")).join("")||"<p>Kromka yo‘q.</p>"
+function renderFurniture(){
+  $("furnitureGrid").innerHTML=db.products.length?db.products.slice(0,8).map(x=>`<article class="v11-furniture-card"><img src="${esc(img(x))}" alt="${esc(x.name)}"><div><h3>${esc(x.name)}</h3><strong>${esc(x.price||"Narx kelishiladi")}</strong></div></article>`).join(""):'<div class="v11-empty">Mebellar hali qo‘shilmagan.</div>';
 }
-function renderSales(){
-  const total=db.orders.reduce((s,x)=>s+num(x.total),0),paid=db.orders.reduce((s,x)=>s+num(x.paid),0),debt=db.orders.reduce((s,x)=>s+num(x.debt),0);$("salesTotal").textContent=money(total);$("salesPaid").textContent=money(paid);$("salesDebt").textContent=money(debt);$("salesOrders").textContent=db.orders.length;
-  const q=$("salesSearch").value.toLowerCase(),st=$("salesStatus").value,list=db.orders.filter(x=>(!q||`${x.number} ${x.customer} ${x.phone}`.toLowerCase().includes(q))&&(!st||x.status===st));
-  $("salesTable").innerHTML=`<table class="data-table"><thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Jami</th><th>To‘langan</th><th>Qarz</th><th>Holat</th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.number)}</td><td>${esc(x.customer||"-")}</td><td>${x.date||""}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.debt)}</td><td><span class="badge">${esc(x.status||"")}</span></td></tr>`).join("")}</tbody></table>`
+function renderStats(){
+  const laminateCount=$("heroLaminateCount");
+  const edgeCount=$("heroEdgeCount");
+  const orderCount=$("heroOrderCount");
+  if(laminateCount)laminateCount.textContent=db.laminates.length;
+  if(edgeCount)edgeCount.textContent=db.edges.length;
+  if(orderCount)orderCount.textContent=db.orders.filter(x=>x.date===today()).length;
 }
-$("salesSearch").oninput=renderSales;$("salesStatus").onchange=renderSales;
-function renderFinance(){
-  const inc=db.finance.filter(x=>x.type==="income").reduce((s,x)=>s+num(x.amount),0),exp=db.finance.filter(x=>x.type==="expense").reduce((s,x)=>s+num(x.amount),0),tf=db.finance.filter(x=>x.date===today()),ti=tf.filter(x=>x.type==="income").reduce((s,x)=>s+num(x.amount),0),te=tf.filter(x=>x.type==="expense").reduce((s,x)=>s+num(x.amount),0);$("finIncome").textContent=money(inc);$("finExpense").textContent=money(exp);$("finProfit").textContent=money(inc-exp);$("finToday").textContent=money(ti-te);$("financeList").innerHTML=db.finance.slice(0,10).map(x=>listRow(x.category,x.note||x.payment,`${x.type==="income"?"+":"-"}${money(x.amount)}`,x.type==="expense"?"red":"")).join("")||"<p>Harakat yo‘q.</p>"
+function renderAll(){renderLaminates();renderEdges();renderFurniture();renderStats();saveUser()}
+
+function toggleFav(k){favorites=favorites.includes(k)?favorites.filter(x=>x!==k):[...favorites,k];saveUser();renderAll();toast(favorites.includes(k)?"Sevimlilarga qo‘shildi":"Sevimlilardan olib tashlandi")}
+function addCart(k){if(!cart.includes(k))cart.push(k);saveUser();toast("Savatchaga qo‘shildi")}
+function openDrawer(mode){
+  const keys=mode==="favorites"?favorites:cart,list=keys.map(findItem).filter(Boolean);
+  $("drawerTitle").textContent=mode==="favorites"?"Sevimlilar":"Savatcha";
+  $("drawerContent").innerHTML=list.length?list.map(x=>`<article class="v11-drawer-item"><div><strong>${esc(x.code||"")} ${esc(x.name||"")}</strong><span>${money(x.salePrice||x.price)}</span></div><button data-remove="${key(x.type,x.id)}" data-mode="${mode}">×</button></article>`).join(""):'<div class="v11-empty">Hozircha bo‘sh.</div>';
+  $("drawerFooter").innerHTML=mode==="cart"&&list.length?'<button class="v11-primary" id="cartCheckout">Telegram orqali buyurtma</button>':"";
+  if($("cartCheckout"))$("cartCheckout").onclick=()=>sendTelegram(list);
+  $("drawer").classList.add("open");$("drawerOverlay").classList.add("show")
 }
-function renderCustomers(){
-  const q=$("customerSearch").value.toLowerCase(),list=db.customers.filter(x=>!q||`${x.name} ${x.phone}`.toLowerCase().includes(q));$("customerTable").innerHTML=`<table class="data-table"><thead><tr><th>Mijoz</th><th>Telefon</th><th>Telegram</th><th>Buyurtma</th><th>Jami xarid</th><th>Qarz</th></tr></thead><tbody>${list.map(c=>{const os=db.orders.filter(o=>o.phone&&o.phone===c.phone);return`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.telegram||"")}</td><td>${os.length}</td><td>${money(os.reduce((s,o)=>s+num(o.total),0))}</td><td>${money(os.reduce((s,o)=>s+num(o.debt),0))}</td></tr>`}).join("")}</tbody></table>`
+function sendTelegram(list){
+  const username=db.settings.telegram||"ibratmebel8909";
+  const text=`Assalomu alaykum!\n\n${list.map((x,i)=>`${i+1}. ${x.code||""} ${x.name||""} — ${money(x.salePrice||x.price)}`).join("\n")}`;
+  window.open(`https://t.me/${username}?text=${encodeURIComponent(text)}`,"_blank","noopener")
 }
-$("customerSearch").oninput=renderCustomers;
-function renderProduction(){const sts=["Yangi","Kesilmoqda","Kromka urilmoqda","Teshilmoqda","Tayyor","Yetkazildi"];$("productionBoard").innerHTML=sts.map(s=>`<section class="kanban-col"><h3>${s} (${db.orders.filter(x=>x.status===s).length})</h3>${db.orders.filter(x=>x.status===s).map(x=>`<article class="kanban-card"><strong>${esc(x.number)} — ${esc(x.customer||"Mijoz")}</strong><p>${money(x.total)}</p></article>`).join("")}</section>`).join("")}
-$("supplierForm").onsubmit=e=>{e.preventDefault();db.suppliers.unshift({id:uid("sup"),name:$("supplierName").value.trim(),phone:$("supplierPhone").value.trim(),telegram:$("supplierTelegram").value.trim(),category:$("supplierCategory").value,note:$("supplierNote").value.trim(),createdAt:nowISO()});e.target.reset();persist();toast("Yetkazib beruvchi saqlandi")};
-function renderSuppliers(){$("supplierTable").innerHTML=`<table class="data-table"><thead><tr><th>Nomi</th><th>Telefon</th><th>Yo‘nalish</th><th>Izoh</th></tr></thead><tbody>${db.suppliers.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${esc(x.category)}</td><td>${esc(x.note)}</td></tr>`).join("")}</tbody></table>`;$("purchaseSupplier").innerHTML='<option value="">Tanlang</option>'+db.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}
-function populateProducts(){const type=$("purchaseType").value,list=db[type];$("purchaseProduct").innerHTML=list.map(x=>`<option value="${x.id}">${esc(x.code||"")} ${esc(x.name)}</option>`).join("")}$("purchaseType").onchange=populateProducts;
-$("purchaseForm").onsubmit=e=>{e.preventDefault();const type=$("purchaseType").value,item=db[type].find(x=>x.id===$("purchaseProduct").value),qty=num($("purchaseQty").value),cost=num($("purchaseCost").value);if(!item)return;item.stock=num(item.stock)+qty;item.costPrice=cost;db.purchases.unshift({id:uid("pur"),type,productId:item.id,product:`${item.code||""} ${item.name}`,supplierId:$("purchaseSupplier").value,qty,cost,total:qty*cost,payment:$("purchasePayment").value,note:$("purchaseNote").value.trim(),date:today(),createdAt:nowISO()});db.inventoryMovements.unshift({id:uid("mov"),type:"in",productType:type,productId:item.id,product:`${item.code||""} ${item.name}`,qty,unit:type==="laminates"?"list":"metr",orderId:"",orderNumber:"",note:"Xarid orqali omborga kirdi",date:today(),createdAt:nowISO()});db.finance.unshift({id:uid("fin"),type:"expense",amount:qty*cost,category:"Xomashyo",payment:$("purchasePayment").value,note:`Xarid: ${item.code||""} ${item.name}`,date:today(),createdAt:nowISO()});e.target.reset();persist();toast("Xarid omborga qo‘shildi")};
-function renderPurchases(){$("purchaseTable").innerHTML=`<table class="data-table"><thead><tr><th>Sana</th><th>Mahsulot</th><th>Miqdor</th><th>Narx</th><th>Jami</th></tr></thead><tbody>${db.purchases.slice(0,20).map(x=>`<tr><td>${x.date}</td><td>${esc(x.product)}</td><td>${x.qty}</td><td>${money(x.cost)}</td><td>${money(x.total)}</td></tr>`).join("")}</tbody></table>`}
-function csv(rows,name){const c=rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n"),b=new Blob(["\ufeff"+c],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
-$("exportInventory").onclick=()=>csv([["Turi","Kod","Nomi","Qoldiq","Tannarx","Sotuv narxi","Joy"],...db.laminates.map(x=>["Laminat",x.code,x.name,x.stock,x.costPrice,x.salePrice,x.location]),...db.edges.map(x=>["Kromka",x.code,x.name,x.stock,x.costPrice,x.salePrice,x.location])],"v19-ombor.csv");
-$("exportSales").onclick=()=>csv([["№","Mijoz","Sana","Jami","To‘langan","Qarz","Holat"],...db.orders.map(x=>[x.number,x.customer,x.date,x.total,x.paid,x.debt,x.status])],"v19-sotuv.csv");
-$("exportFinance").onclick=()=>csv([["Sana","Turi","Kategoriya","To‘lov","Izoh","Summa"],...db.finance.map(x=>[x.date,x.type,x.category,x.payment,x.note,x.amount])],"v19-moliya.csv");
-function renderAll(){db=loadDB();renderOverview();renderInventory();renderSales();renderFinance();renderCustomers();renderProduction();renderSuppliers();populateProducts();renderPurchases();setTimeout(renderCharts,50)}
-window.addEventListener("storage",renderAll);window.addEventListener("ibrat-db-change",renderAll);renderAll();
+function closeDrawer(){$("drawer").classList.remove("open");$("drawerOverlay").classList.remove("show")}
+
+document.addEventListener("click",e=>{
+  const f=e.target.closest("[data-fav]"),c=e.target.closest("[data-cart]"),t=e.target.closest("[data-telegram]");
+  if(f)toggleFav(f.dataset.fav);
+  if(c)addCart(c.dataset.cart);
+  if(t){const x=findItem(t.dataset.telegram);if(x)sendTelegram([x])}
+});
+$("cartButton").onclick=()=>openDrawer("cart");$("favoriteButton").onclick=()=>openDrawer("favorites");$("drawerClose").onclick=closeDrawer;$("drawerOverlay").onclick=closeDrawer;
+$("drawerContent").onclick=e=>{const b=e.target.closest("[data-remove]");if(!b)return;if(b.dataset.mode==="cart")cart=cart.filter(x=>x!==b.dataset.remove);else favorites=favorites.filter(x=>x!==b.dataset.remove);saveUser();openDrawer(b.dataset.mode)};
+$("menuButton").onclick=()=>$("mainNav").classList.toggle("open");
+$("themeToggle").onclick=()=>{document.documentElement.classList.toggle("v11-night");localStorage.setItem("v13Theme",document.documentElement.classList.contains("v11-night")?"dark":"light")};
+if(localStorage.getItem("v13Theme")==="dark")document.documentElement.classList.add("v11-night");
+["laminateSearch"].forEach(id=>$(id).oninput=renderLaminates);["laminateBrandFilter","laminateThicknessFilter","laminateStockFilter"].forEach(id=>$(id).onchange=renderLaminates);
+$("edgeSearch").oninput=renderEdges;["edgeThicknessFilter","edgeWidthFilter","edgeStockFilter"].forEach(id=>$(id).onchange=renderEdges);
+
+function calc(){
+  const sheets=Number($("calcSheets").value||0),cut=Number($("calcCutPrice").value||0),m=Number($("calcEdgeMeters").value||0),ep=Number($("calcEdgePrice").value||0),d=Number($("calcDrilling").value||0),extra=Number($("calcExtra").value||0),total=sheets*cut+m*ep+d+extra;
+  $("calcTotal").textContent=money(total);return total
+}
+$("calcCutPrice").value=db.settings.cutPrice||40000;$("calcEdgePrice").value=db.settings.edgePrice||0;$("calcDrilling").value=db.settings.drillPrice||0;
+["calcSheets","calcCutPrice","calcEdgeMeters","calcEdgePrice","calcDrilling","calcExtra"].forEach(id=>$(id).oninput=calc);
+$("calcTelegramButton").onclick=()=>{const username=db.settings.telegram||"ibratmebel8909";const text=`Assalomu alaykum!\nServis hisob-kitobi:\nList: ${$("calcSheets").value}\nKromka: ${$("calcEdgeMeters").value} m\nJami: ${money(calc())}`;window.open(`https://t.me/${username}?text=${encodeURIComponent(text)}`,"_blank","noopener")};
+$("contactForm").onsubmit=e=>{e.preventDefault();const username=db.settings.telegram||"ibratmebel8909";const text=`Assalomu alaykum!\nIsm: ${$("contactName").value}\nTelefon: ${$("contactPhone").value}\nYo‘nalish: ${$("contactDirection").value}\nIzoh: ${$("contactMessage").value}`;window.open(`https://t.me/${username}?text=${encodeURIComponent(text)}`,"_blank","noopener")};
+window.addEventListener("storage",()=>{db=loadDB();renderAll()});
+window.addEventListener("ibrat-db-change",e=>{db=e.detail;renderAll()});
+renderAll();
+
+
+// V20 smart laminate and edge finder
+let v20FinderType="laminates";
+const v20FinderSearch=document.getElementById("v20FinderSearch");
+const v20FinderBrand=document.getElementById("v20FinderBrand");
+const v20FinderThickness=document.getElementById("v20FinderThickness");
+const v20FinderStock=document.getElementById("v20FinderStock");
+const v20FinderGrid=document.getElementById("v20FinderGrid");
+const v20FinderCount=document.getElementById("v20FinderCount");
+function v20StockMatch(x,f){
+  const stock=Number(x.stock||0),min=Number(x.minStock||0);
+  if(!f)return true;
+  if(f==="available")return stock>0;
+  if(f==="low")return stock>0&&stock<=min;
+  return stock<=0;
+}
+function v20FinderImage(x){return x.imageUrl||x.image||"./product-placeholder.svg"}
+function v20PopulateFilters(){
+  if(!v20FinderBrand)return;
+  const list=v20FinderType==="laminates"?db.laminates:db.edges;
+  const brands=[...new Set(list.map(x=>x.brand).filter(Boolean))].sort();
+  v20FinderBrand.innerHTML='<option value="">Barcha brendlar</option>'+brands.map(x=>`<option>${esc(x)}</option>`).join("");
+  const thickness=[...new Set(list.map(x=>String(x.thickness||"")).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
+  v20FinderThickness.innerHTML='<option value="">Barcha qalinlik</option>'+thickness.map(x=>`<option value="${esc(x)}">${esc(x)} mm</option>`).join("");
+}
+function v20RenderFinder(){
+  if(!v20FinderGrid)return;
+  const list=v20FinderType==="laminates"?db.laminates:db.edges;
+  const q=(v20FinderSearch.value||"").trim().toLowerCase(),brand=v20FinderBrand.value,th=v20FinderThickness.value,stock=v20FinderStock.value;
+  const filtered=list.filter(x=>{
+    const hay=`${x.code||""} ${x.name||""} ${x.color||""} ${x.brand||""} ${x.location||""} ${(x.tags||[]).join(" ")} ${x.matchingLaminate||""} ${(x.matchingEdges||[]).join(" ")}`.toLowerCase();
+    return(!q||hay.includes(q))&&(!brand||x.brand===brand)&&(!th||String(x.thickness)===th)&&v20StockMatch(x,stock)
+  });
+  v20FinderCount.textContent=`${filtered.length} ta mahsulot`;
+  v20FinderGrid.innerHTML=filtered.map(x=>{
+    const unit=v20FinderType==="laminates"?"list":"metr",stockNum=Number(x.stock||0),stockClass=stockNum<=0?"empty":stockNum<=Number(x.minStock||0)?"low":"";
+    const dims=v20FinderType==="laminates"?(x.size||"2800×2070"):`${x.thickness||""}×${x.width||""} mm`;
+    return`<article class="v20-finder-card"><img src="${esc(v20FinderImage(x))}" alt="${esc(x.name||"Mahsulot")}"><div><h3>${esc(x.code||"")} ${esc(x.name||"")}</h3><p>${esc(x.brand||"")} · ${esc(dims)}</p><div class="v20-meta"><span>${esc(v20FinderType==="laminates"?"Laminat":"Kromka")}</span>${x.location?`<span>Joy: ${esc(x.location)}</span>`:""}</div><div class="v20-bottom"><span class="v20-price">${money(x.salePrice||x.price||0)}</span><span class="v20-stock ${stockClass}">${stockNum} ${unit}</span></div></div></article>`
+  }).join("")||'<p>Qidiruv bo‘yicha mahsulot topilmadi.</p>';
+}
+document.querySelectorAll("[data-finder-type]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("[data-finder-type]").forEach(x=>x.classList.remove("active"));b.classList.add("active");v20FinderType=b.dataset.finderType;v20PopulateFilters();v20RenderFinder()
+}));
+[v20FinderSearch,v20FinderBrand,v20FinderThickness,v20FinderStock].filter(Boolean).forEach(el=>el.addEventListener(el.tagName==="INPUT"?"input":"change",v20RenderFinder));
+document.getElementById("v20FinderClear")?.addEventListener("click",()=>{v20FinderSearch.value="";v20FinderBrand.value="";v20FinderThickness.value="";v20FinderStock.value="";v20RenderFinder()});
+setTimeout(()=>{v20PopulateFilters();v20RenderFinder()},100);
+
+
+// ============================================================
+// V21 PREMIUM: global search and quick cutting estimator
+// ============================================================
+const v21Overlay=document.getElementById("v21SearchOverlay");
+const v21SearchInput=document.getElementById("v21GlobalSearch");
+const v21SearchResults=document.getElementById("v21SearchResults");
+document.getElementById("v21GlobalSearchButton")?.addEventListener("click",()=>{
+  v21Overlay.hidden=false;
+  setTimeout(()=>v21SearchInput.focus(),50);
+  v21RenderGlobalSearch("");
+});
+document.getElementById("v21SearchClose")?.addEventListener("click",()=>v21Overlay.hidden=true);
+v21Overlay?.addEventListener("click",e=>{if(e.target===v21Overlay)v21Overlay.hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&v21Overlay&&!v21Overlay.hidden)v21Overlay.hidden=true});
+
+function v21GlobalItems(){
+  const material=[
+    ...(db.laminates||[]).map(x=>({...x,v21Type:"Laminat",v21Price:x.salePrice||0})),
+    ...(db.edges||[]).map(x=>({...x,v21Type:"Kromka",v21Price:x.salePrice||0})),
+    ...(db.products||[]).map(x=>({...x,v21Type:"Mebel",v21Price:x.price||0}))
+  ];
+  const services=[
+    {id:"service-cut",name:"Laminat kesish",code:"KESISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.laminate||"./service-laminate-hd.jpg"),tags:["kesish","list","laminat"]},
+    {id:"service-edge",name:"Kromka yopishtirish",code:"KROMKA",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.edge||"./service-edge-hd.jpg"),tags:["kromka","yopishtirish"]},
+    {id:"service-drill",name:"Bazis teshish",code:"TESHISH",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.drill||"./service-drill-hd.jpg"),tags:["bazis","teshish","cnc"]},
+    {id:"service-design",name:"3D dizayn",code:"DIZAYN",v21Type:"Xizmat",v21Price:0,imageUrl:(window.V21_HD_IMAGES?.design||"./service-design-hd.jpg"),tags:["dizayn","loyiha"]}
+  ];
+  return [...material,...services]
+}
+function v21RenderGlobalSearch(query){
+  if(!v21SearchResults)return;
+  const q=(query||"").trim().toLowerCase();
+  const items=v21GlobalItems().filter(x=>{
+    const hay=`${x.code||""} ${x.name||""} ${x.color||""} ${x.brand||""} ${x.v21Type||""} ${(x.tags||[]).join(" ")} ${x.matchingLaminate||""} ${(x.matchingEdges||[]).join(" ")}`.toLowerCase();
+    return !q||hay.includes(q)
+  }).slice(0,30);
+  v21SearchResults.innerHTML=items.map(x=>`<article class="v21-search-item"><img src="${esc(x.imageUrl||x.image||"./product-placeholder.svg")}" alt=""><div><strong>${esc(x.code||"")} ${esc(x.name||"")}</strong><small>${esc(x.v21Type)}${x.brand?` · ${esc(x.brand)}`:""}${x.stock!==undefined?` · Qoldiq: ${x.stock}`:""}</small></div><span>${x.v21Price?money(x.v21Price):"Batafsil"}</span></article>`).join("")||"<p>Mahsulot topilmadi.</p>";
+}
+v21SearchInput?.addEventListener("input",e=>v21RenderGlobalSearch(e.target.value));
+
+let v21Parts=[];
+const v21PartsList=document.getElementById("v21PartsList");
+function v21RenderParts(){
+  if(!v21PartsList)return;
+  v21PartsList.innerHTML=v21Parts.map((p,i)=>`<div class="v21-part-row"><div><strong>${p.width}×${p.height} mm — ${p.qty} dona</strong><small>${p.edgeSides?`${p.edgeSides} tomon kromka`:"Kromkasiz"}</small></div><span>${((p.width*p.height*p.qty)/1000000).toFixed(2)} m²</span><button data-v21-remove="${i}">×</button></div>`).join("")||"<p style='color:#9fb4a7'>Hali detal kiritilmagan.</p>";
+  const totalQty=v21Parts.reduce((s,p)=>s+p.qty,0);
+  const totalArea=v21Parts.reduce((s,p)=>s+p.width*p.height*p.qty,0)/1000000;
+  const sheetW=Number(document.getElementById("v21SheetWidth")?.value||2800);
+  const sheetH=Number(document.getElementById("v21SheetHeight")?.value||2070);
+  const waste=Number(document.getElementById("v21Waste")?.value||10)/100;
+  const sheetArea=(sheetW*sheetH)/1000000;
+  const sheets=totalArea?Math.ceil(totalArea*(1+waste)/sheetArea):0;
+  let edgeMm=0;
+  for(const p of v21Parts){
+    if(p.edgeSides===1)edgeMm+=Math.max(p.width,p.height)*p.qty;
+    if(p.edgeSides===2)edgeMm+=(p.width+p.height)*p.qty;
+    if(p.edgeSides===4)edgeMm+=(2*p.width+2*p.height)*p.qty;
+  }
+  document.getElementById("v21TotalParts").textContent=`${totalQty} dona`;
+  document.getElementById("v21TotalArea").textContent=`${totalArea.toFixed(2)} m²`;
+  document.getElementById("v21SheetCount").textContent=`${sheets} list`;
+  document.getElementById("v21EdgeMeters").textContent=`${(edgeMm/1000).toFixed(1)} m`;
+}
+document.getElementById("v21AddPart")?.addEventListener("click",()=>{
+  const widthInput=document.getElementById("v21PartWidth");
+  const heightInput=document.getElementById("v21PartHeight");
+  const qtyInput=document.getElementById("v21PartQty");
+  const width=Number(widthInput?.value||0);
+  const height=Number(heightInput?.value||0);
+  const qty=Number(qtyInput?.value||1);
+  const edgeSides=Number(document.getElementById("v21EdgeSides")?.value||0);
+
+  if(width<=0){
+    widthInput?.focus();
+    toast("Detal enini kiriting.");
+    return;
+  }
+  if(height<=0){
+    heightInput?.focus();
+    toast("Detal bo‘yini kiriting.");
+    return;
+  }
+  if(qty<=0){
+    qtyInput?.focus();
+    toast("Detal sonini kiriting.");
+    return;
+  }
+
+  v21Parts.push({width,height,qty,edgeSides});
+  widthInput.value="";
+  heightInput.value="";
+  qtyInput.value=1;
+  v21RenderParts();
+  toast("Detal qo‘shildi.");
+});
+v21PartsList?.addEventListener("click",e=>{
+  const b=e.target.closest("[data-v21-remove]");
+  if(!b)return;
+  v21Parts.splice(Number(b.dataset.v21Remove),1);
+  v21RenderParts();
+});
+["v21SheetWidth","v21SheetHeight","v21Waste"].forEach(id=>document.getElementById(id)?.addEventListener("input",v21RenderParts));
+document.getElementById("v21ClearParts")?.addEventListener("click",()=>{v21Parts=[];v21RenderParts()});
+try{
+  v21RenderParts();
+}catch(error){
+  console.error("V22 quick calculator init error:",error);
+}
+
+// V23 hard fallback for the homepage quick calculator.
+// This listener is used only when the main handler did not process the click.
+document.addEventListener("click",event=>{
+  const button=event.target.closest("#v21AddPart");
+  if(!button||button.dataset.v224Handled==="1")return;
+
+  const widthInput=document.getElementById("v21PartWidth");
+  const heightInput=document.getElementById("v21PartHeight");
+  const qtyInput=document.getElementById("v21PartQty");
+  const edgeInput=document.getElementById("v21EdgeSides");
+
+  const width=Number(widthInput?.value||0);
+  const height=Number(heightInput?.value||0);
+  const qty=Number(qtyInput?.value||1);
+  const edgeSides=Number(edgeInput?.value||0);
+
+  if(width<=0||height<=0||qty<=0)return;
+
+  const before=Array.isArray(v21Parts)?v21Parts.length:0;
+  setTimeout(()=>{
+    if(!Array.isArray(v21Parts)||v21Parts.length!==before)return;
+    v21Parts.push({width,height,qty,edgeSides});
+    widthInput.value="";
+    heightInput.value="";
+    qtyInput.value=1;
+    v21RenderParts();
+    toast("Detal qo‘shildi.");
+  },0);
+});
+
+// V24.1 hero statistics
+function renderV241HeroStats(){
+  const laminateEl=document.getElementById("heroLaminateCountV241");
+  const edgeEl=document.getElementById("heroEdgeCountV241");
+  if(laminateEl)laminateEl.textContent=`${db.laminates.length} tur`;
+  if(edgeEl)edgeEl.textContent=`${db.edges.length} tur`;
+}
+renderV241HeroStats();
+window.addEventListener("ibrat-db-change",renderV241HeroStats);
+window.addEventListener("storage",renderV241HeroStats);
