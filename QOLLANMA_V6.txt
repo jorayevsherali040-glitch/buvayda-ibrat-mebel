@@ -1,15 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
-<defs>
-  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#eef8f2"/>
-    <stop offset="1" stop-color="#d8eee0"/>
-  </linearGradient>
-</defs>
-<rect width="1200" height="800" rx="42" fill="url(#g)"/>
-<g fill="none" stroke="#17864b" stroke-width="24" stroke-linejoin="round">
-  <path d="M380 510V325l220-125 220 125v185"/>
-  <path d="M470 510V365h260v145"/>
-  <path d="M520 510V405h160v105"/>
-</g>
-<text x="600" y="625" text-anchor="middle" font-family="Arial,sans-serif" font-size="50" font-weight="700" fill="#17673e">MAHSULOT RASMI</text>
-</svg>
+BUVAYDA IBRAT MEBEL V6 — PROFESSIONAL SAVDO TIZIMI
+
+ASOSIY IMKONIYATLAR:
+- Yashil rangli yangi dizayn
+- Savatcha va Telegram orqali buyurtma
+- Buyurtmalar Firestore bazasiga saqlanadi
+- Sevimlilar
+- Kuchli qidiruv, kategoriya, narx va ombor filtrlari
+- Kategoriyalar sahifasi
+- Har mahsulot uchun 10 tagacha rasm
+- Video havolasi
+- Ombor qoldig‘i va kam qolgan ogohlantirishi
+- Mijoz izohlari va admin tasdiqlashi
+- Admin buyurtmalar paneli
+- Admin statistika va grafiklar
+- PDF katalogni avtomatik yaratish
+- Aqlli tavsiya tizimi (ko‘rilgan va sevimli kategoriyalar asosida)
+- Qorong‘i rejim
+- Eng ko‘p sotilganlar va top mahsulotlar
+
+MUHIM:
+“Aqlli tavsiya” tashqi pullik AI xizmatisiz, foydalanuvchining ko‘rgan va sevimliga qo‘shgan mahsulotlari asosida ishlaydi.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub → Add file → Upload files.
+3. index.html, admin.html, styles.css, app.js, admin.js,
+   firebase-config.js va firestore.rules fayllarini yuklang.
+4. Commit nomi: Buvayda Ibrat Mebel V6
+5. images papkasi va logo.png ni o‘chirmang.
+6. Deploy tugagach Ctrl+F5 bosing.
+
+FIRESTORE RULES:
+GitHub’dagi firestore.rules fayli avtomatik Firebase’ga o‘tmaydi.
+Firebase Console → Firestore Database → Rules bo‘limiga
+firestore.rules ichidagi kodni qo‘yib Publish bosing.

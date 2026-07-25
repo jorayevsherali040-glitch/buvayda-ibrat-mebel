@@ -1,36 +1,29 @@
-BUVAYDA IBRAT MEBEL V6 — PROFESSIONAL SAVDO TIZIMI
+BUVAYDA IBRAT MEBEL V7 — ERP BOSHQARUV TIZIMI
 
-ASOSIY IMKONIYATLAR:
-- Yashil rangli yangi dizayn
-- Savatcha va Telegram orqali buyurtma
-- Buyurtmalar Firestore bazasiga saqlanadi
-- Sevimlilar
-- Kuchli qidiruv, kategoriya, narx va ombor filtrlari
-- Kategoriyalar sahifasi
-- Har mahsulot uchun 10 tagacha rasm
-- Video havolasi
-- Ombor qoldig‘i va kam qolgan ogohlantirishi
-- Mijoz izohlari va admin tasdiqlashi
-- Admin buyurtmalar paneli
-- Admin statistika va grafiklar
-- PDF katalogni avtomatik yaratish
-- Aqlli tavsiya tizimi (ko‘rilgan va sevimli kategoriyalar asosida)
-- Qorong‘i rejim
-- Eng ko‘p sotilganlar va top mahsulotlar
+V7 YANGILIKLARI:
+- V6 internet-do‘kon funksiyalari saqlanadi
+- Yangi erp.html boshqaruv paneli
+- CRM: mijozlar, telefon, manzil, qarzdorlik
+- Ombor: laminat, kromka, furnitura va boshqa materiallar
+- Minimal qoldiq va “kam qoldi” ogohlantirishi
+- Ishlab chiqarish bosqichlari:
+  Yangi → Dizayn → Kesish → Kromka → Yig‘ish → Tayyor → Yetkazildi
+- Moliya: kirim, chiqim va kunlik foyda
+- 7 kunlik moliya grafigi
+- Ishlab chiqarish holati grafigi
 
-MUHIM:
-“Aqlli tavsiya” tashqi pullik AI xizmatisiz, foydalanuvchining ko‘rgan va sevimliga qo‘shgan mahsulotlari asosida ishlaydi.
-
-GITHUB’GA YUKLASH:
+YUKLASH:
 1. ZIP faylni Extract qiling.
 2. GitHub → Add file → Upload files.
-3. index.html, admin.html, styles.css, app.js, admin.js,
-   firebase-config.js va firestore.rules fayllarini yuklang.
-4. Commit nomi: Buvayda Ibrat Mebel V6
-5. images papkasi va logo.png ni o‘chirmang.
+3. Barcha fayllarni repository ustiga yuklang.
+4. images papkasi va logo.png ni o‘chirmang.
+5. Commit: Buvayda Ibrat Mebel V7
 6. Deploy tugagach Ctrl+F5 bosing.
 
-FIRESTORE RULES:
-GitHub’dagi firestore.rules fayli avtomatik Firebase’ga o‘tmaydi.
-Firebase Console → Firestore Database → Rules bo‘limiga
-firestore.rules ichidagi kodni qo‘yib Publish bosing.
+ERP MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/erp.html
+
+MUHIM FIRESTORE QADAMI:
+Firebase Console → Firestore Database → Rules.
+Yangi firestore.rules kodini joylang va Publish bosing.
+Aks holda CRM, ombor, ishlab chiqarish va moliya yozuvlari saqlanmaydi.
