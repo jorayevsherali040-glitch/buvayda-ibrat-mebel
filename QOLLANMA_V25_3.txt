@@ -1,0 +1,30 @@
+BUVAYDA IBRAT MEBEL V25.3 — IMAGE STABLE FIX
+
+MUAMMO SABABI:
+GitHub orqali yuklashda real-factory ichki papkasi yuklanmay qolgan.
+Sayt rasmlarni shu papkadan qidirgani uchun hech qaysi rasm ochilmagan.
+
+TUZATILDI:
+- Barcha haqiqiy korxona rasmlari loyiha root qismiga chiqarildi.
+- WebP o‘rniga GitHub Pages bilan barqaror JPG ishlatildi.
+- Har bir rasm uchun zaxira fallback rasm qo‘shildi.
+- real-factory papkasi olib tashlandi.
+- Kesh versiyasi V25.3 qilindi.
+
+GITHUB’GA ALBATTA YUKLANG:
+site.html
+index.html
+v25.html
+v11.css
+v13.js
+ibrat-factory-hero.jpg
+ibrat-nanxing-cut.jpg
+ibrat-turanlar-edge.jpg
+ibrat-kdt-drill.jpg
+ibrat-laminate-warehouse.jpg
+
+COMMIT:
+V25.3 IMAGE STABLE FIX
+
+Deploy tugagach Ctrl + Shift + R bosing.
+Asosiy sayt manzili: /buvayda-ibrat-mebel/site.html

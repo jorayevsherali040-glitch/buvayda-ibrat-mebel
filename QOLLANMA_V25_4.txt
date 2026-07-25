@@ -1,0 +1,30 @@
+BUVAYDA IBRAT MEBEL V25.4 — CLEAR PHOTO EDITION
+
+TUZATILDI:
+- Asosiy xizmatlardagi 4 ta past sifatli rasm almashtirildi.
+- Professional xizmat jarayonlaridagi 4 ta rasm almashtirildi.
+- NANXING, TURANLAR va KDT haqiqiy rasmlari ishlatildi.
+- Rasmlar JPG 95% sifatda tiniqlashtirildi.
+- Yorug‘lik, kontrast va kesim yaxshilandi.
+- Barcha rasmlar loyiha root qismida turadi.
+- Lazy loading va decoding async qo‘shildi.
+
+GITHUB’GA YUKLANADIGAN YANGI RASMLAR:
+service-clear-cut.jpg
+service-clear-edge.jpg
+service-clear-drill.jpg
+service-clear-design.jpg
+process-clear-cut.jpg
+process-clear-edge.jpg
+process-clear-drill.jpg
+process-clear-design.jpg
+
+ASOSIY FAYLLAR:
+site.html
+v11.css
+v13.js
+
+COMMIT:
+V25.4 CLEAR SERVICE PHOTOS
+
+Deploy tugagach Ctrl + Shift + R bosing.
