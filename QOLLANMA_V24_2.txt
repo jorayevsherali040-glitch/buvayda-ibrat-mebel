@@ -1,0 +1,21 @@
+BUVAYDA IBRAT MEBEL V24.2 — HISOB-KITOB SAHIFASI TUZATILDI
+
+MUAMMO:
+hisob.js JavaScript fayli brauzerda sahifa sifatida ochilib, kod matn ko‘rinishida chiqayotgan edi.
+
+TUZATILDI:
+- Yangi to‘liq hisob.html sahifasi yaratildi.
+- accounting.html zaxira sahifasi qo‘shildi.
+- hisob.js endi faqat module script sifatida yuklanadi.
+- Kirim-chiqim, qarzdorlik, hisobot va kalkulyator bo‘limlari tiklandi.
+- Boshqaruv sahifalariga Hisob-kitob havolasi qo‘shildi.
+- Noto‘g‘ri hisob.js havolalari hisob.html ga almashtirildi.
+
+GITHUB’GA:
+1. ZIP ichidagi barcha fayllarni yuklang.
+2. Ayniqsa hisob.html, accounting.html, hisob.css va hisob.js fayllarini almashtiring.
+3. Commit: V24.2 HISOB KITOB FIX
+4. Deploy tugagach Ctrl + Shift + R bosing.
+
+TO‘G‘RI MANZIL:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/hisob.html

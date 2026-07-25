@@ -33,6 +33,7 @@
       <a href="./v22-smart-cut.html">✦ V22 Smart Cut</a>
       <a href="./v23.html">★ V23 Markaz</a>
       <a href="./v24.html">★ V24.1 Platforma</a>
+      <a href="./hisob.html">₽ Hisob-kitob</a>
       <a href="./super-admin.html">⚙ Super Admin</a>
       <a href="./index.html">⌂ Asosiy sayt</a>
     </nav>

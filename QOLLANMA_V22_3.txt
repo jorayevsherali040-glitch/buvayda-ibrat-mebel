@@ -1,26 +1,26 @@
-BUVAYDA IBRAT MEBEL V23 — REAL PHOTO EDITION
+BUVAYDA IBRAT MEBEL V23 — RASMLAR OCHILISHI TUZATILDI
+
+SABAB:
+GitHub orqali fayllar yuklanganda “v22-assets” ichki papkasi yuklanmay qolgan.
+Sayt rasmlarni shu papkadan qidirgani uchun rasmlar ochilmagan.
 
 TUZATILDI:
-- Multfilmga o‘xshagan SVG rasmlar olib tashlandi.
-- Bosh sahifa uchun haqiqiy ishlab chiqarish sexi rasmi qo‘yildi.
-- Laminat kartasiga haqiqiy laminat listlari rasmi qo‘yildi.
-- Kromka kartasiga haqiqiy PVC kromka rulonlari rasmi qo‘yildi.
-- Teshish kartasiga haqiqiy CNC burg‘ulash rasmi qo‘yildi.
-- Dizayn kartasiga haqiqiy kompyuterda mebel loyihalash rasmi qo‘yildi.
-- Rasmlar tiniqlashtirildi, kattalashtirildi va optimallashtirildi.
-- Rasm kesilishi va joylashuvi to‘g‘rilandi.
+- Barcha V22 rasmlar loyiha asosiy papkasiga ko‘chirildi.
+- index.html va v13.js ichidagi rasm yo‘llari yangilandi.
+- Har bir rasm uchun eski mahalliy JPG fallback qo‘shildi.
+- Rasm ochilmasa, eski rasm avtomatik ko‘rinadi.
+- Kesh versiyasi V23 qilib yangilandi.
 
-GITHUB’GA ALBATTA YUKLANG:
+GITHUB’GA ALBATTA YUKLANADIGAN YANGI FAYLLAR:
+v22-premium-factory.svg
+v22-laminate-sheets.svg
+v22-edge-rolls.svg
+v22-cnc-drilling.svg
+v22-furniture-design.svg
 index.html
-v11.css
 v13.js
-hero-workshop-hd.jpg
-service-laminate-hd.jpg
-service-edge-hd.jpg
-service-drill-hd.jpg
-service-design-hd.jpg
 
 COMMIT:
-V23 REAL PHOTO EDITION
+V23 IMAGE PATH FIX
 
 Deploy tugagach Ctrl + Shift + R bosing.
