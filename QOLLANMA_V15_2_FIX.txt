@@ -1,19 +1,13 @@
-BUVAYDA IBRAT MEBEL V15
+BUVAYDA IBRAT MEBEL V15.2 FIX
 
-YANGILIKLAR:
-- Sotuvlar bo‘limiga Edit va Save qo‘shildi.
-- Sotuv raqami, mijoz, sana, umumiy summa, to‘langan summa va holatni tahrirlash mumkin.
-- Qarz avtomatik qayta hisoblanadi.
-- Ombordagi laminat va kromkalarga Edit va Save qo‘shildi.
-- Qoldiq, sotuv narxi va ombor joyini o‘zgartirish mumkin.
-- Kirim-chiqim yozuvini o‘chirishdan oldin tasdiqlash oynasi chiqadi.
-- O‘chirish tasdiqlanmasa, yozuv saqlanib qoladi.
+NIMA TUZATILDI:
+- Bosh sahifadagi ustma-ust chiqib qolgan rasm olib tashlandi.
+- Hero qismi yorqin premium ranglarga o'tkazildi.
+- Yangi rasm hero ichida chiroyli o'ng tomondagi preview sifatida joylashtirildi.
+- Sayt nomi BUVAYDA IBRAT MEBEL bo'lib qoldi.
 
-STANDART PIN:
-1212
-
-GITHUB’GA YUKLASH:
-1. ZIP faylni Extract qiling.
-2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit nomi: BUVAYDA IBRAT MEBEL V15 EDIT SAVE
-4. Deploy tugagach Ctrl + F5 bosing.
+YUKLASH:
+1) ZIPni oching
+2) Ichidagi barcha fayllarni GitHub'dagi eski fayllar ustiga yuklang
+3) Commit: V15.2 bright hero fix
+4) Deploydan keyin Ctrl+F5 qiling

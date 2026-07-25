@@ -1,31 +1,18 @@
-BUVAYDA IBRAT MEBEL V19 — STABIL VERSIYA
+BUVAYDA IBRAT MEBEL V19 — DELETE MODAL FIX
 
-TUZATILDI:
-- “Mahsulot o‘chirilsinmi?” oynasi sahifa ochilishi bilan chiqmaydi.
-- Modal faqat O‘chirish tugmasi bosilganda ochiladi.
-- ESC bilan yopiladi.
-- Oyna tashqarisi bosilganda yopiladi.
-- Bekor qilish to‘g‘ri ishlaydi.
-- Laminat qo‘shish ishlaydi.
-- Kromka qo‘shish ishlaydi.
-- Mebel qo‘shish uchun yangi to‘liq forma qo‘shildi.
-- Mebel Edit va O‘chirish ishlaydi.
-- Super Admin ichidagi Laminatlar, Kromkalar va Mebellar havolalari stabil V19 mahsulot boshqaruviga yo‘naltirildi.
-- URL hash orqali kerakli bo‘lim bevosita ochiladi.
+ASOSIY TUZATISH:
+- Sahifa ochilganda chiqib qolayotgan maxsus “Mahsulot o‘chirilsinmi?” oynasi butunlay olib tashlandi.
+- Endi tasdiqlash faqat mahsulot yonidagi O‘chirish tugmasi bosilganda brauzerning oddiy tasdiqlash oynasi orqali chiqadi.
+- Mahsulot qo‘shishga modal xalaqit bermaydi.
+- Keshni kamaytirish uchun V19 versiya raqami va no-cache sozlamalari qo‘shildi.
 
-STANDART PIN:
+PIN:
 1212
 
-V19 MAHSULOT BOSHQARUVI:
-https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/product-manager.html
-
-TEZKOR MANZILLAR:
-Laminat qo‘shish: product-manager.html#laminate-form
-Kromka qo‘shish: product-manager.html#edge-form
-Mebel qo‘shish: product-manager.html#furniture-form
-
 YUKLASH:
-1. ZIP faylni Extract qiling.
-2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V19 STABLE
-4. Deploy tugagach Ctrl + F5 bosing.
+1. ZIP faylni oching.
+2. Ichidagi BARCHA fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. product-manager.html, product-manager.js va product-manager.css fayllari albatta almashtirilganini tekshiring.
+4. Commit: V19 DELETE MODAL FIX
+5. GitHub Pages deploy yashil bo‘lgach sahifani Ctrl+Shift+R bilan yangilang.
+6. Yuqori chap tomonda “V19 Mahsulot boshqaruvi” yozuvi ko‘rinishi kerak.

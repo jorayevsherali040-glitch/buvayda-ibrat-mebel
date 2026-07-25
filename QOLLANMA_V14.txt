@@ -1,31 +1,38 @@
-BUVAYDA IBRAT MEBEL V15 — LOCAL ERP + PIN
+BUVAYDA IBRAT MEBEL V15 — KORXONA ERP + MAHSULOT KALKULYATORI
 
-STANDART PIN: 1212
+STANDART PIN:
+1212
 
-V15 MUHIM FARQI:
-- Firebase Authentication ishlatilmaydi.
-- Firebase permission xatolari bo‘lmaydi.
-- Gmail kerak emas.
-- Admin oddiy PIN kod orqali ochiladi.
-- Laminat va kromka qo‘shish darhol ishlaydi.
-- Ma’lumotlar brauzerning LocalStorage xotirasida saqlanadi.
-- Asosiy sayt va admin bir xil domen/brauzerda ma’lumotlarni ko‘radi.
-- Backup/Import sahifasi qo‘shilgan.
+YANGI KORXONA BOSHQARUV TIZIMI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/korxona.html
 
-ADMIN:
+SUPER ADMIN:
 https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/super-admin.html
 
-BACKUP:
-https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/backup.html
+V15 IMKONIYATLARI:
+- Korxona boshqaruv tizimi bitta PIN sessiyasi bilan ochiladi.
+- Dashboard: kirim, chiqim, foyda, buyurtmalar va ombor.
+- Professional mahsulot va xizmat kalkulyatori.
+- Laminatni list bo‘yicha hisoblash.
+- Kromkani metr bo‘yicha hisoblash.
+- Kesish, Bazis teshish, CNC va dizayn xizmatlarini hisoblash.
+- Bitta hisobga cheksiz mahsulot va xizmat qo‘shish.
+- Chegirma: summa yoki foiz.
+- Yetkazib berish, oldindan to‘lov va qarz hisoblash.
+- Buyurtma sifatida saqlash.
+- Sotuvni yakunlash va ombor qoldig‘ini avtomatik kamaytirish.
+- To‘langan summani kirimga avtomatik qo‘shish.
+- Telegramga tayyor hisob yuborish.
+- Chop etish yoki brauzer orqali PDF saqlash.
+- Buyurtmalar, ombor, sotuv, moliya, CRM, ishlab chiqarish va ishchilar bo‘limlari.
+- Barcha ma’lumotlar LocalStorage’da yagona bazada saqlanadi.
 
-YUKLASH:
-1. ZIPni Extract qiling.
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
 2. GitHub → Add file → Upload files.
 3. Barcha fayllarni eski fayllar ustiga yuklang.
-4. Commit: BUVAYDA IBRAT MEBEL V15 LOCAL ERP
+4. Commit: BUVAYDA IBRAT MEBEL V15 ERP CALCULATOR
 5. Deploy tugagach Ctrl + F5 bosing.
 
-ESLATMA:
-Bu versiya Firebase’siz ishlaydi. Ma’lumotlar faqat shu brauzerda saqlanadi.
-Boshqa telefon/kompyuterda bir xil ma’lumot bo‘lishi uchun Backup sahifasidan eksport/import qiling.
-Keyinchalik haqiqiy serverli sinxronizatsiya alohida V15 bosqichida qilinadi.
+MUHIM:
+Ma’lumotlar shu brauzerda saqlanadi. Backup sahifasidan muntazam zaxira nusxa oling.
