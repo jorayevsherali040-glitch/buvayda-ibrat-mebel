@@ -1,0 +1,41 @@
+BUVAYDA IBRAT MEBEL V24 — PREMIUM VISUAL PLATFORM
+
+PIN:
+1212
+
+V24 YANGILIKLARI:
+- Butunlay yangi premium realistik rasm to‘plami.
+- Yorug‘ va zamonaviy CNC mebel ishlab chiqarish sexi bosh banneri.
+- Laminat Market uchun Egger, Kronospan va AGT uslubidagi fan namunalar.
+- Kromka Market uchun kodli PVC/ABS kromka rulonlari.
+- Ombor uchun A1, A2, B1 sektorli professional ko‘rinish.
+- Tayyor mebellar uchun premium yotoqxona, oshxona, garderob va TV stend kompozitsiyasi.
+- Kesish, kromka, teshish va dizayn jarayonlari uchun alohida realistik tasvirlar.
+- Barcha yangi rasmlar WebP formatida.
+- Hover zoom, yumshoq animatsiya va premium kartalar.
+- Mobil va kompyuter uchun bir xil sifat.
+- V23 boshqaruv markazi, V22 Smart Cut, ERP, CRM, QR, Excel va PDF funksiyalari saqlandi.
+
+YANGI SAHIFA:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v24.html
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V24 PREMIUM VISUAL
+4. Deploy tugagach Ctrl + Shift + R bosing.
+
+MUHIM YANGI RASMLAR:
+v24-hero.webp
+v24-service-cut.webp
+v24-service-edge.webp
+v24-service-drill.webp
+v24-service-design.webp
+v24-laminate-market.webp
+v24-edge-market.webp
+v24-warehouse.webp
+v24-furniture.webp
+v24-cut-process.webp
+v24-edge-process.webp
+v24-drill-process.webp
+v24-design-process.webp
