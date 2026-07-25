@@ -1,33 +1,20 @@
-BUVAYDA IBRAT MEBEL V21 — PREMIUM EDITION
+BUVAYDA IBRAT MEBEL V20.1 — MENYU TUZATILDI
 
-PIN:
-1212
-
-V21 YANGILIKLARI:
-- Bosh sahifa premium darajada qayta bezatildi.
-- Bosh katta rasm va asosiy xizmat rasmlari tiniqlashtirildi.
-- 6 ta asosiy rasm qayta ishlanib optimallashtirildi.
-- Hero qismi kuchli premium matn va zamonaviy effektlar bilan yangilandi.
-- Global qidiruv qo‘shildi.
-- Global qidiruv laminat, kromka, mebel va xizmatlarni bir joydan topadi.
-- Mijozlar uchun mavjud V20 mahsulot qidiruvi saqlandi va ko‘rinishi yaxshilandi.
-- Tezkor detal kalkulyatori qo‘shildi.
-- Detal eni, bo‘yi, soni va kromka tomonlari bo‘yicha:
-  - jami detal;
-  - maydon;
-  - taxminiy list soni;
-  - taxminiy kromka metri hisoblanadi.
-- Premium statistika paneli qo‘shildi.
-- Mobil telefon uchun pastki tezkor navigatsiya qo‘shildi.
-- Rasmlarga yumshoq zoom va tiniqlik effekti qo‘shildi.
-- V20 buyurtma ERP, V19 dashboard, mahsulot boshqaruvi, QR, Excel va moliya funksiyalari saqlandi.
-
-MUHIM:
-V21 tezkor list hisoblagichi maydon asosidagi taxminiy hisobdir.
-Haqiqiy optimal kesish sxemasi uchun keyingi optimizer modulidan foydalaniladi.
+TUZATILDI:
+- Chap menyudagi alohida “Laminat qo‘shish” bandi olib tashlandi.
+- Chap menyudagi alohida “Kromka qo‘shish” bandi olib tashlandi.
+- Chap menyudagi alohida “Mebel qo‘shish” bandi olib tashlandi.
+- Endi menyuda faqat:
+  Laminatlar
+  Kromkalar
+  Mebellar
+  ko‘rinadi.
+- Har bir bo‘lim ichida “Yangi laminat”, “Yangi kromka” yoki “Yangi mebel” tugmasi qolgan.
+- Mahsulot boshqaruvi versiyasi V20.1 qilib yangilandi.
 
 YUKLASH:
-1. ZIP faylni Extract qiling.
+1. ZIP faylni oching.
 2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V21 PREMIUM
-4. Deploy tugagach Ctrl + Shift + R bosing.
+3. Ayniqsa product-manager.html, product-manager.css va product-manager.js almashtirilganini tekshiring.
+4. Commit: V20.1 PRODUCT MENU FIX
+5. Deploy tugagach Ctrl + Shift + R bosing.

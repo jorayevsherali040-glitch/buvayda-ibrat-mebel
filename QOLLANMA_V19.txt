@@ -1,31 +1,18 @@
-BUVAYDA IBRAT MEBEL V19 — PROFESSIONAL ERP
+BUVAYDA IBRAT MEBEL V19 — DELETE MODAL FIX
 
-STANDART PIN:
+ASOSIY TUZATISH:
+- Sahifa ochilganda chiqib qolayotgan maxsus “Mahsulot o‘chirilsinmi?” oynasi butunlay olib tashlandi.
+- Endi tasdiqlash faqat mahsulot yonidagi O‘chirish tugmasi bosilganda brauzerning oddiy tasdiqlash oynasi orqali chiqadi.
+- Mahsulot qo‘shishga modal xalaqit bermaydi.
+- Keshni kamaytirish uchun V19 versiya raqami va no-cache sozlamalari qo‘shildi.
+
+PIN:
 1212
 
-YANGI DASHBOARD:
-https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v19-dashboard.html
-
-V19 IMKONIYATLARI:
-- Professional real vaqt dashboard.
-- So‘nggi 7 kun savdo grafigi.
-- Ombor tarkibi grafigi.
-- Oylik moliya grafigi.
-- Top mahsulotlar.
-- Top mijozlar.
-- Kam qolgan mahsulotlar.
-- Ombor qiymati va potensial foyda.
-- Sotuv, to‘lov va qarzdorlik tahlili.
-- CRM mijozlar tahlili.
-- Ishlab chiqarish holatlari.
-- Yetkazib beruvchilar bazasi.
-- Xaridlar va omborga avtomatik kirim.
-- Xarid summasini avtomatik chiqimga yozish.
-- Ombor, sotuv va moliya CSV hisobotlari.
-- Avvalgi V18.1 laminat, kromka, mebel, QR, Excel va kalkulyator funksiyalari saqlangan.
-
 YUKLASH:
-1. ZIP faylni Extract qiling.
-2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V19 PROFESSIONAL ERP
-4. Deploy tugagach Ctrl + Shift + R bosing.
+1. ZIP faylni oching.
+2. Ichidagi BARCHA fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. product-manager.html, product-manager.js va product-manager.css fayllari albatta almashtirilganini tekshiring.
+4. Commit: V19 DELETE MODAL FIX
+5. GitHub Pages deploy yashil bo‘lgach sahifani Ctrl+Shift+R bilan yangilang.
+6. Yuqori chap tomonda “V19 Mahsulot boshqaruvi” yozuvi ko‘rinishi kerak.

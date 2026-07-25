@@ -1,16 +1,15 @@
-BUVAYDA IBRAT MEBEL V15 — YORQIN DIZAYN
+BUVAYDA IBRAT MEBEL V19 — VISUAL FIX
 
-YANGILIKLAR:
-- Sayt nomi BUVAYDA IBRAT MEBEL qilib yangilandi.
-- Asosiy sahifaga yorqin yashil, sariq va oq rangli yangi premium hero rasmi qo‘shildi.
-- Rasm telefon, planshet va kompyuterga moslashadi.
-- Oldingi V15 sotuvlar, ombor Edit/Save va kirim-chiqim tasdiqlash funksiyalari saqlanib qoldi.
+TUZATILDI:
+- Xizmat kartalaridagi rasm ichida takrorlanib qolgan yozuvlar olib tashlandi.
+- Laminat, kromka, teshish va dizayn rasmlari qayta toza kesildi.
+- Hero rasmdagi eski tajriba kartasi olib tashlandi.
+- Faqat bitta, toza “10+ yillik tajriba” kartasi qoldi.
+- Kartalar balandligi, matn va “Batafsil” tugmalari bir xil tekislandi.
+- Telefon ko‘rinishi ham yaxshilandi.
 
-STANDART PIN:
-1212
-
-GITHUB’GA YUKLASH:
-1. ZIP faylni Extract qiling.
-2. Ichidagi barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit nomi: BUVAYDA IBRAT MEBEL V15 BRIGHT DESIGN
+YUKLASH:
+1. ZIP faylni oching.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Commit: BUVAYDA IBRAT MEBEL V19 VISUAL FIX
 4. Deploy tugagach Ctrl + F5 bosing.

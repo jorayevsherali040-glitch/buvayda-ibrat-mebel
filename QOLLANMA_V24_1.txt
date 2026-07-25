@@ -1,0 +1,23 @@
+BUVAYDA IBRAT MEBEL V24.1 — STABLE PREMIUM
+
+ASOSIY O‘ZGARISHLAR:
+- Bosh sahifadagi katta asosiy rasm butunlay olib tashlandi.
+- Hero qismi premium gradient, glass effect, BM belgisi va statistik kartalarga almashtirildi.
+- Katta V24 rasmli katalog bloklari olib tashlandi.
+- WebP rasmlar butunlay olib tashlandi.
+- Xizmat jarayonlaridagi rasmlar yuqori sifatli JPG formatiga o‘tkazildi.
+- GitHub Pages uchun barqaror rasm yo‘llari ishlatildi.
+- Laminat, kromka, kunlik kesish va kromka quvvati hero ichida ko‘rinadi.
+- Mobil ko‘rinish moslashtirildi.
+- Smart Cut, ERP, CRM, QR, Excel, PDF va boshqaruv markazi saqlandi.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
+3. Ayniqsa index.html, v11.css va v13.js almashtirilganini tekshiring.
+4. Yangi JPG fayllarni ham yuklang.
+5. Commit: BUVAYDA IBRAT MEBEL V24.1 STABLE PREMIUM
+6. Deploy tugagach Ctrl + Shift + R bosing.
+
+MUHIM:
+Eski v24-*.webp fayllarini GitHub’dan o‘chirib tashlash tavsiya etiladi.

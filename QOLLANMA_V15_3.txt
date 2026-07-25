@@ -1,17 +1,13 @@
-BUVAYDA IBRAT MEBEL V19
+BUVAYDA IBRAT MEBEL V15.2 FIX
 
-YANGI KO‘RINISH:
-- Foydalanuvchi yuborgan namunaga o‘xshash oq, yashil va sariq premium dizayn.
-- Yuqori aloqa paneli.
-- Yangi katta bosh sahifa.
-- Ishlab chiqarish sexi rasmi.
-- 6 ta tezkor xizmat paneli.
-- “Nega bizni tanlashadi?” statistikasi.
-- 4 ta asosiy xizmat kartasi.
-- Oldingi V15 funksiyalari saqlangan.
+NIMA TUZATILDI:
+- Bosh sahifadagi ustma-ust chiqib qolgan rasm olib tashlandi.
+- Hero qismi yorqin premium ranglarga o'tkazildi.
+- Yangi rasm hero ichida chiroyli o'ng tomondagi preview sifatida joylashtirildi.
+- Sayt nomi BUVAYDA IBRAT MEBEL bo'lib qoldi.
 
 YUKLASH:
-1. ZIP faylni Extract qiling.
-2. Barcha fayllarni GitHub’dagi eski fayllar ustiga yuklang.
-3. Commit: BUVAYDA IBRAT MEBEL V19 DESIGN
-4. Deploy tugagach Ctrl + F5 bosing.
+1) ZIPni oching
+2) Ichidagi barcha fayllarni GitHub'dagi eski fayllar ustiga yuklang
+3) Commit: V15.2 bright hero fix
+4) Deploydan keyin Ctrl+F5 qiling

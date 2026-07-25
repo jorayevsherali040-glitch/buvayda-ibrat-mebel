@@ -1,32 +1,29 @@
-BUVAYDA IBRAT MEBEL V8 — C VARIANT PREMIUM SAYT
+BUVAYDA IBRAT MEBEL V7 — ERP BOSHQARUV TIZIMI
 
-V8 asosiy yangiliklari:
-- Bosh sahifa to‘liq yangilandi
-- Buvayda Ibrat Mebel uchun maxsus premium dizayn
-- Yashil, oq va tabiiy ranglar
-- Premium hero va dinamik mahsulot rasmi
-- Kategoriyalar
-- Top mahsulotlar slayderi
-- Kuchli qidiruv va filtr
-- Savatcha yon paneli
-- Sevimlilar yon paneli
-- Telegram buyurtma
-- Firestore buyurtmalar
-- Mijoz izohlari
-- Dark mode
-- PDF katalog
-- Mobil telefonga to‘liq mos
-- V7 Admin va ERP saqlanadi
+V7 YANGILIKLARI:
+- V6 internet-do‘kon funksiyalari saqlanadi
+- Yangi erp.html boshqaruv paneli
+- CRM: mijozlar, telefon, manzil, qarzdorlik
+- Ombor: laminat, kromka, furnitura va boshqa materiallar
+- Minimal qoldiq va “kam qoldi” ogohlantirishi
+- Ishlab chiqarish bosqichlari:
+  Yangi → Dizayn → Kesish → Kromka → Yig‘ish → Tayyor → Yetkazildi
+- Moliya: kirim, chiqim va kunlik foyda
+- 7 kunlik moliya grafigi
+- Ishlab chiqarish holati grafigi
 
 YUKLASH:
 1. ZIP faylni Extract qiling.
 2. GitHub → Add file → Upload files.
-3. Barcha fayllarni eski fayllar ustiga yuklang.
+3. Barcha fayllarni repository ustiga yuklang.
 4. images papkasi va logo.png ni o‘chirmang.
-5. Commit: BUVAYDA IBRAT MEBEL V8
-6. Deploy tugagach Ctrl + F5 bosing.
+5. Commit: Buvayda Ibrat Mebel V7
+6. Deploy tugagach Ctrl+F5 bosing.
 
-MANZILLAR:
-Sayt: /index.html
-Admin: /admin.html
-ERP: /erp.html
+ERP MANZILI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/erp.html
+
+MUHIM FIRESTORE QADAMI:
+Firebase Console → Firestore Database → Rules.
+Yangi firestore.rules kodini joylang va Publish bosing.
+Aks holda CRM, ombor, ishlab chiqarish va moliya yozuvlari saqlanmaydi.

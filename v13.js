@@ -279,3 +279,14 @@ document.addEventListener("click",event=>{
     toast("Detal qo‘shildi.");
   },0);
 });
+
+// V24.1 hero statistics
+function renderV241HeroStats(){
+  const laminateEl=document.getElementById("heroLaminateCountV241");
+  const edgeEl=document.getElementById("heroEdgeCountV241");
+  if(laminateEl)laminateEl.textContent=`${db.laminates.length} tur`;
+  if(edgeEl)edgeEl.textContent=`${db.edges.length} tur`;
+}
+renderV241HeroStats();
+window.addEventListener("ibrat-db-change",renderV241HeroStats);
+window.addEventListener("storage",renderV241HeroStats);
