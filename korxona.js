@@ -1,269 +1,237 @@
-import {loadDB,saveDB,uid,nowISO,today,money} from "./local-db.js";
-const $=id=>document.getElementById(id);
-let db=loadDB();
-let lines=[];
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BUVAYDA IBRAT MEBEL V15 — Korxona boshqaruvi</title>
+  <link rel="stylesheet" href="./korxona.css">
+</head>
+<body>
+  <aside class="erp-sidebar" id="erpSidebar">
+    <a class="erp-brand" href="./super-admin.html">
+      <img src="./logo.png" alt="">
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V15 Korxona ERP</small></span>
+    </a>
 
-if(sessionStorage.getItem("v13PinVerified")!=="1"){
-  const target=location.hash==="#calculator"?"calculator":"dashboard";
-  sessionStorage.setItem("v14AfterLogin",target);
-  location.href="./super-admin.html";
-}
+    <nav>
+      <p>ASOSIY</p>
+      <button class="active" data-page="dashboard">▦ Dashboard</button>
+      <button data-page="calculator">▣ Mahsulot kalkulyatori</button>
 
-const pageTitles={dashboard:"Dashboard",calculator:"Mahsulot kalkulyatori",orders:"Buyurtmalar",inventory:"Ombor",sales:"Sotuvlar",finance:"Kirim-chiqim",customers:"Mijozlar CRM",production:"Ishlab chiqarish",workers:"Ishchilar"};
-function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
-function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
-function number(v){return Number(v||0)}
-function nextNumber(){return `IB-${new Date().getFullYear()}-${String(db.orders.length+1).padStart(4,"0")}`}
-function save(){saveDB(db);renderAll()}
-function go(page){
-  document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
-  document.querySelectorAll(".erp-page").forEach(x=>x.classList.remove("active"));
-  $("page"+page[0].toUpperCase()+page.slice(1)).classList.add("active");
-  $("pageTitle").textContent=pageTitles[page];
-  $("erpSidebar").classList.remove("open");
-}
+      <p>SAVDO VA OMBOR</p>
+      <button data-page="orders">▤ Buyurtmalar</button>
+      <button data-page="inventory">▥ Ombor</button>
+      <button data-page="sales">₽ Sotuvlar</button>
 
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));
-document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>go(b.dataset.goto));
-$("menuToggle").onclick=()=>$("erpSidebar").classList.toggle("open");
-$("themeToggle").onclick=()=>document.documentElement.classList.toggle("dark");
-$("logoutButton").onclick=()=>{sessionStorage.removeItem("v13PinVerified");location.href="./super-admin.html"};
-$("todayText").textContent=new Date().toLocaleDateString("uz-UZ",{day:"2-digit",month:"long",year:"numeric"});
+      <p>BOSHQARUV</p>
+      <button data-page="finance">◫ Kirim-chiqim</button>
+      <button data-page="customers">◎ Mijozlar CRM</button>
+      <button data-page="production">⚒ Ishlab chiqarish</button>
+      <button data-page="workers">♟ Ishchilar</button>
 
-function renderDashboard(){
-  const tf=db.finance.filter(x=>x.date===today()),income=tf.filter(x=>x.type==="income").reduce((s,x)=>s+number(x.amount),0),expense=tf.filter(x=>x.type==="expense").reduce((s,x)=>s+number(x.amount),0);
-  $("dashIncome").textContent=money(income);$("dashExpense").textContent=money(expense);$("dashProfit").textContent=money(income-expense);
-  $("dashOrders").textContent=db.orders.filter(x=>!["Yetkazildi","Bekor qilindi"].includes(x.status)).length;
-  $("dashSheets").textContent=db.laminates.reduce((s,x)=>s+number(x.stock),0).toLocaleString("uz-UZ")+" list";
-  $("dashMeters").textContent=db.edges.reduce((s,x)=>s+number(x.stock),0).toLocaleString("uz-UZ")+" m";
-  const low=[...db.laminates.map(x=>({...x,unit:"list"})),...db.edges.map(x=>({...x,unit:"m"}))].filter(x=>number(x.stock)<=number(x.minStock||0));
-  $("dashboardAlerts").innerHTML=low.length?low.slice(0,8).map(x=>`<div class="list-row"><div><strong>${esc(x.code||"")} ${esc(x.name||"")}</strong><p>Kam qoldiq</p></div><span class="badge low">${x.stock||0} ${x.unit}</span></div>`).join(""):"<p>Kam qolgan mahsulot yo‘q.</p>";
-  $("recentOrders").innerHTML=db.orders.slice(0,6).map(x=>`<div class="list-row"><div><strong>${esc(x.number)} — ${esc(x.customer||"Mijoz")}</strong><p>${esc(x.status)} · ${x.date}</p></div><b>${money(x.total)}</b></div>`).join("")||"<p>Buyurtma yo‘q.</p>";
-  $("recentFinance").innerHTML=db.finance.slice(0,6).map(x=>`<div class="list-row"><div><strong>${esc(x.category)}</strong><p>${esc(x.note||"")} · ${x.date}</p></div><b style="color:${x.type==="income"?"#087943":"#bd3a2e"}">${x.type==="income"?"+":"-"}${money(x.amount)}</b></div>`).join("")||"<p>Harakat yo‘q.</p>";
-}
+      <p>QO‘SHIMCHA</p>
+      <a href="./product-manager.html">▤ Mahsulot boshqaruvi</a>
+      <a href="./v19-dashboard.html">▦ V19 Dashboard</a>
+      <a href="./v20-orders.html">▤ V20 Buyurtmalar</a>
+      <a href="./index.html#tezkor-hisob">✦ V22 HD Premium sayt</a>
+      <a href="./v22-smart-cut.html">✦ V22 Smart Cut</a>
+      <a href="./hisob.html">₽ Hisob-kitob</a>
+      <a href="./v25.html">★ V25 Production ERP</a>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+      <a href="./index.html">⌂ Asosiy sayt</a>
+      <a href="./backup.html">⇩ Zaxira nusxa</a>
+    </nav>
+  </aside>
 
-function populateProducts(){
-  const type=$("lineType").value;
-  let items=[],unit="dona";
-  if(type==="laminate"){items=db.laminates;unit="list"}
-  else if(type==="edge"){items=db.edges;unit="metr"}
-  const sel=$("lineProduct");
-  sel.innerHTML='<option value="">Tanlang</option>'+items.map(x=>`<option value="${x.id}">${esc(x.code||"")} ${esc(x.name||"")}</option>`).join("");
-  sel.hidden=!items.length;
-  const presets={cutting:["Laminat kesish","list",db.settings.cutPrice||40000],drilling:["Bazis teshish","xizmat",db.settings.drillPrice||0],cnc:["CNC xizmati","xizmat",db.settings.cncPrice||0],design:["Dizayn xizmati","xizmat",0],custom:["","dona",0]};
-  if(presets[type]){$("lineName").value=presets[type][0];$("lineName").dataset.unit=presets[type][1];$("linePrice").value=presets[type][2]}
-  else{$("lineName").value="";$("lineName").dataset.unit=unit;$("linePrice").value=0}
-}
-$("lineType").onchange=populateProducts;
-$("lineProduct").onchange=()=>{
-  const type=$("lineType").value,list=type==="laminate"?db.laminates:db.edges,x=list.find(v=>v.id===$("lineProduct").value);
-  if(x){$("lineName").value=`${x.code||""} ${x.name||""}`.trim();$("linePrice").value=x.salePrice||0;$("lineName").dataset.unit=type==="laminate"?"list":"metr";$("lineName").dataset.productId=x.id}
-};
-function renderLines(){
-  $("calculationLines").innerHTML=lines.length?lines.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${esc(x.unit)}</td><td><input data-line-qty="${x.id}" type="number" min="0" step="0.01" value="${x.qty}"></td><td><input data-line-price="${x.id}" type="number" min="0" value="${x.price}"></td><td><b>${money(x.qty*x.price)}</b></td><td><button data-line-delete="${x.id}">×</button></td></tr>`).join(""):'<tr><td colspan="7" style="text-align:center;color:#6d7b72">Mahsulot yoki xizmat qo‘shing.</td></tr>';
-  calculateTotals()
-}
-$("addLine").onclick=()=>{
-  const name=$("lineName").value.trim();if(!name){toast("Mahsulot yoki xizmat nomini kiriting.");return}
-  lines.push({id:uid("line"),type:$("lineType").value,productId:$("lineName").dataset.productId||"",name,unit:$("lineName").dataset.unit||"dona",qty:number($("lineQty").value)||1,price:number($("linePrice").value)});
-  $("lineQty").value=1;renderLines()
-};
-$("calculationLines").oninput=e=>{
-  if(e.target.dataset.lineQty){const x=lines.find(v=>v.id===e.target.dataset.lineQty);x.qty=number(e.target.value)}
-  if(e.target.dataset.linePrice){const x=lines.find(v=>v.id===e.target.dataset.linePrice);x.price=number(e.target.value)}
-  renderLines()
-};
-$("calculationLines").onclick=e=>{const b=e.target.closest("[data-line-delete]");if(b){lines=lines.filter(x=>x.id!==b.dataset.lineDelete);renderLines()}};
-["calcDiscount","discountType","calcDelivery","calcPaid"].forEach(id=>$(id).oninput=calculateTotals);
-function totals(){
-  const subtotal=lines.reduce((s,x)=>s+x.qty*x.price,0),raw=number($("calcDiscount").value),discount=$("discountType").value==="percent"?subtotal*raw/100:raw,delivery=number($("calcDelivery").value),grand=Math.max(0,subtotal-discount+delivery),paid=number($("calcPaid").value),debt=Math.max(0,grand-paid);
-  return{subtotal,discount,delivery,grand,paid,debt}
-}
-function calculateTotals(){
-  const t=totals();$("calcSubtotal").textContent=money(t.subtotal);$("calcDiscountValue").textContent=money(t.discount);$("calcDeliveryValue").textContent=money(t.delivery);$("calcGrandTotal").textContent=money(t.grand);$("calcPaidValue").textContent=money(t.paid);$("calcDebt").textContent=money(t.debt)
-}
-function resetCalc(){
-  lines=[];$("calcCustomer").value="";$("calcPhone").value="";$("calcNumber").value=nextNumber();$("calcDate").value=today();$("calcDiscount").value=0;$("calcDelivery").value=0;$("calcPaid").value=0;$("calcNote").value="";populateProducts();renderLines()
-}
-$("newCalculation").onclick=resetCalc;
-$("printCalculation").onclick=()=>window.print();
-function calculationData(status="Yangi"){
-  const t=totals();return{id:uid("ord"),number:$("calcNumber").value,date:$("calcDate").value,customer:$("calcCustomer").value.trim(),phone:$("calcPhone").value.trim(),lines:JSON.parse(JSON.stringify(lines)),subtotal:t.subtotal,discount:t.discount,delivery:t.delivery,total:t.grand,paid:t.paid,debt:t.debt,note:$("calcNote").value.trim(),status,createdAt:nowISO()}
-}
-$("saveAsOrder").onclick=()=>{if(!lines.length){toast("Hisobga mahsulot qo‘shing.");return}db.orders.unshift(calculationData("Yangi"));save();toast("Buyurtma saqlandi");resetCalc()};
-$("saveAsSale").onclick=()=>{
-  if(!lines.length){toast("Hisobga mahsulot qo‘shing.");return}
-  const sale=calculationData("Yetkazildi");db.orders.unshift(sale);db.sales=db.sales||[];db.sales.unshift({...sale,id:uid("sale")});
-  for(const line of lines){if(line.type==="laminate"){const x=db.laminates.find(v=>v.id===line.productId);if(x)x.stock=Math.max(0,number(x.stock)-line.qty)}if(line.type==="edge"){const x=db.edges.find(v=>v.id===line.productId);if(x)x.stock=Math.max(0,number(x.stock)-line.qty)}}
-  if(sale.paid>0)db.finance.unshift({id:uid("fin"),type:"income",amount:sale.paid,category:"Sotuv",payment:"Naqd",note:`${sale.number} ${sale.customer}`,date:today(),createdAt:nowISO()});
-  save();toast("Sotuv yakunlandi va ombor yangilandi");resetCalc()
-};
-$("sendTelegram").onclick=()=>{
-  const t=totals(),text=`BUVAYDA IBRAT MEBEL\nHisob № ${$("calcNumber").value}\nMijoz: ${$("calcCustomer").value}\n\n${lines.map((x,i)=>`${i+1}. ${x.name}: ${x.qty} ${x.unit} × ${money(x.price)} = ${money(x.qty*x.price)}`).join("\n")}\n\nJami: ${money(t.grand)}\nTo‘langan: ${money(t.paid)}\nQarz: ${money(t.debt)}`;
-  window.open(`https://t.me/${db.settings.telegram||"ibratmebel8909"}?text=${encodeURIComponent(text)}`,"_blank")
-};
-
-function renderOrders(){
-  const q=$("orderSearch").value.toLowerCase(),st=$("orderStatusFilter").value,list=db.orders.filter(x=>(!q||`${x.number} ${x.customer} ${x.phone}`.toLowerCase().includes(q))&&(!st||x.status===st));
-  $("ordersTable").innerHTML=`<table class="data-table"><thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Jami</th><th>To‘langan</th><th>Qarz</th><th>Holat</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td><b>${esc(x.number)}</b></td><td>${esc(x.customer||"-")}<br><small>${esc(x.phone||"")}</small></td><td>${x.date}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.debt)}</td><td><select data-order-status="${x.id}">${["Yangi","Kesilmoqda","Kromka urilmoqda","Teshilmoqda","Tayyor","Yetkazildi","Bekor qilindi"].map(s=>`<option ${x.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td><button data-order-delete="${x.id}">O‘chirish</button></td></tr>`).join("")}</tbody></table>`
-}
-$("orderSearch").oninput=renderOrders;$("orderStatusFilter").onchange=renderOrders;$("orderFromCalculator").onclick=()=>go("calculator");
-$("ordersTable").onchange=e=>{if(e.target.dataset.orderStatus){db.orders.find(x=>x.id===e.target.dataset.orderStatus).status=e.target.value;save()}};
-$("ordersTable").onclick=e=>{const b=e.target.closest("[data-order-delete]");if(b&&confirm("Buyurtma o‘chirilsinmi?")){db.orders=db.orders.filter(x=>x.id!==b.dataset.orderDelete);save()}};
-
-function renderInventory(){
-  $("invLamTypes").textContent=db.laminates.length;
-  $("invSheets").textContent=db.laminates.reduce((s,x)=>s+number(x.stock),0);
-  $("invEdgeTypes").textContent=db.edges.length;
-  $("invMeters").textContent=db.edges.reduce((s,x)=>s+number(x.stock),0);
-
-  $("inventoryLaminates").innerHTML=db.laminates.map(x=>`
-    <div class="inventory-edit-row">
-      <div class="inventory-main">
-        <strong>${esc(x.code||"")} ${esc(x.name||"")}</strong>
-        <small>${esc(x.brand||"")} · ${esc(x.location||"")}</small>
+  <main class="erp-main">
+    <header class="erp-topbar">
+      <div>
+        <button id="menuToggle" class="menu-toggle">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL</p><h1 id="pageTitle">Dashboard</h1></div>
       </div>
-      <label>Qoldiq<input type="number" min="0" step="0.01" value="${number(x.stock)}" data-inv-l-stock="${x.id}"></label>
-      <label>Narx<input type="number" min="0" step="1" value="${number(x.salePrice)}" data-inv-l-price="${x.id}"></label>
-      <label>Joy<input value="${esc(x.location||"")}" data-inv-l-location="${x.id}"></label>
-      <button class="save-btn" data-save-laminate="${x.id}">Save</button>
-    </div>`).join("")||"<p>Laminat yo‘q.</p>";
-
-  $("inventoryEdges").innerHTML=db.edges.map(x=>`
-    <div class="inventory-edit-row">
-      <div class="inventory-main">
-        <strong>${esc(x.code||"")} ${esc(x.name||"")}</strong>
-        <small>${x.thickness||""}×${x.width||""} mm · ${esc(x.location||"")}</small>
+      <div class="top-actions">
+        <span id="todayText"></span>
+        <button id="themeToggle">🌙</button>
+        <button id="logoutButton">Chiqish</button>
       </div>
-      <label>Qoldiq<input type="number" min="0" step="0.01" value="${number(x.stock)}" data-inv-e-stock="${x.id}"></label>
-      <label>Narx<input type="number" min="0" step="1" value="${number(x.salePrice)}" data-inv-e-price="${x.id}"></label>
-      <label>Joy<input value="${esc(x.location||"")}" data-inv-e-location="${x.id}"></label>
-      <button class="save-btn" data-save-edge="${x.id}">Save</button>
-    </div>`).join("")||"<p>Kromka yo‘q.</p>";
-}
+    </header>
 
-$("inventoryLaminates").onclick=e=>{
-  const b=e.target.closest("[data-save-laminate]");
-  if(!b)return;
-  const id=b.dataset.saveLaminate;
-  const x=db.laminates.find(v=>v.id===id);
-  if(!x)return;
-  x.stock=number(document.querySelector(`[data-inv-l-stock="${id}"]`).value);
-  x.salePrice=number(document.querySelector(`[data-inv-l-price="${id}"]`).value);
-  x.location=document.querySelector(`[data-inv-l-location="${id}"]`).value.trim();
-  save();
-  toast("Laminat saqlandi");
-};
-$("inventoryEdges").onclick=e=>{
-  const b=e.target.closest("[data-save-edge]");
-  if(!b)return;
-  const id=b.dataset.saveEdge;
-  const x=db.edges.find(v=>v.id===id);
-  if(!x)return;
-  x.stock=number(document.querySelector(`[data-inv-e-stock="${id}"]`).value);
-  x.salePrice=number(document.querySelector(`[data-inv-e-price="${id}"]`).value);
-  x.location=document.querySelector(`[data-inv-e-location="${id}"]`).value.trim();
-  save();
-  toast("Kromka saqlandi");
-};
+    <section class="erp-page active" id="pageDashboard">
+      <div class="stats-grid">
+        <article><span>Bugungi kirim</span><strong id="dashIncome">0 so‘m</strong></article>
+        <article><span>Bugungi chiqim</span><strong id="dashExpense">0 so‘m</strong></article>
+        <article><span>Sof natija</span><strong id="dashProfit">0 so‘m</strong></article>
+        <article><span>Faol buyurtmalar</span><strong id="dashOrders">0</strong></article>
+        <article><span>Laminat qoldig‘i</span><strong id="dashSheets">0 list</strong></article>
+        <article><span>Kromka qoldig‘i</span><strong id="dashMeters">0 m</strong></article>
+      </div>
 
-function renderSales(){
-  db.sales=db.sales||[];
-  $("salesTable").innerHTML=`<table class="data-table">
-    <thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Summa</th><th>To‘langan</th><th>Qarz</th><th>Holat</th><th></th></tr></thead>
-    <tbody>${db.sales.map(x=>`
-      <tr>
-        <td><input data-sale-number="${x.id}" value="${esc(x.number||"")}"></td>
-        <td><input data-sale-customer="${x.id}" value="${esc(x.customer||"")}"></td>
-        <td><input data-sale-date="${x.id}" type="date" value="${x.date||today()}"></td>
-        <td><input data-sale-total="${x.id}" type="number" min="0" value="${number(x.total)}"></td>
-        <td><input data-sale-paid="${x.id}" type="number" min="0" value="${number(x.paid)}"></td>
-        <td><b data-sale-debt-view="${x.id}">${money(number(x.total)-number(x.paid))}</b></td>
-        <td>
-          <select data-sale-status="${x.id}">
-            ${["Yangi","Jarayonda","Tayyor","Yetkazildi","Bekor qilindi"].map(s=>`<option ${x.status===s?"selected":""}>${s}</option>`).join("")}
-          </select>
-        </td>
-        <td><button class="save-btn" data-save-sale="${x.id}">Save</button></td>
-      </tr>`).join("")}
-    </tbody>
-  </table>`;
-}
+      <div class="erp-grid two">
+        <article class="erp-panel">
+          <div class="panel-head"><h2>Tezkor amallar</h2></div>
+          <div class="quick-actions">
+            <button data-goto="calculator">Yangi hisob-kitob</button>
+            <button data-goto="orders">Buyurtma kiritish</button>
+            <button data-goto="finance">Kirim yoki chiqim</button>
+            <button data-goto="customers">Mijoz qo‘shish</button>
+          </div>
+        </article>
+        <article class="erp-panel">
+          <div class="panel-head"><h2>Ombor ogohlantirishlari</h2></div>
+          <div id="dashboardAlerts"></div>
+        </article>
+      </div>
 
-$("salesTable").oninput=e=>{
-  const id=e.target.dataset.saleTotal||e.target.dataset.salePaid;
-  if(!id)return;
-  const total=number(document.querySelector(`[data-sale-total="${id}"]`).value);
-  const paid=number(document.querySelector(`[data-sale-paid="${id}"]`).value);
-  const view=document.querySelector(`[data-sale-debt-view="${id}"]`);
-  if(view)view.textContent=money(Math.max(0,total-paid));
-};
-$("salesTable").onclick=e=>{
-  const b=e.target.closest("[data-save-sale]");
-  if(!b)return;
-  const id=b.dataset.saveSale;
-  const x=db.sales.find(v=>v.id===id);
-  if(!x)return;
-  x.number=document.querySelector(`[data-sale-number="${id}"]`).value.trim();
-  x.customer=document.querySelector(`[data-sale-customer="${id}"]`).value.trim();
-  x.date=document.querySelector(`[data-sale-date="${id}"]`).value;
-  x.total=number(document.querySelector(`[data-sale-total="${id}"]`).value);
-  x.paid=number(document.querySelector(`[data-sale-paid="${id}"]`).value);
-  x.debt=Math.max(0,x.total-x.paid);
-  x.status=document.querySelector(`[data-sale-status="${id}"]`).value;
-  const order=db.orders.find(o=>o.number===x.number);
-  if(order){
-    order.customer=x.customer;
-    order.date=x.date;
-    order.total=x.total;
-    order.paid=x.paid;
-    order.debt=x.debt;
-    order.status=x.status;
-  }
-  save();
-  toast("Sotuv saqlandi");
-};
+      <div class="erp-grid two">
+        <article class="erp-panel">
+          <div class="panel-head"><h2>So‘nggi buyurtmalar</h2></div>
+          <div id="recentOrders"></div>
+        </article>
+        <article class="erp-panel">
+          <div class="panel-head"><h2>So‘nggi moliyaviy harakatlar</h2></div>
+          <div id="recentFinance"></div>
+        </article>
+      </div>
+    </section>
 
-$("financeForm").onsubmit=e=>{e.preventDefault();db.finance.unshift({id:uid("fin"),type:$("financeType").value,amount:number($("financeAmount").value),category:$("financeCategory").value,payment:$("financePayment").value,note:$("financeNote").value.trim(),date:today(),createdAt:nowISO()});e.target.reset();save();toast("Moliyaviy harakat saqlandi")};
-function renderFinance(){
-  const q=$("financeSearch").value.toLowerCase(),list=db.finance.filter(x=>!q||`${x.category} ${x.note} ${x.payment}`.toLowerCase().includes(q));
-  $("financeTable").innerHTML=`<table class="data-table"><thead><tr><th>Sana</th><th>Turi</th><th>Kategoriya</th><th>To‘lov</th><th>Izoh</th><th>Summa</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td>${x.date}</td><td><span class="badge ${x.type==="expense"?"red":""}">${x.type==="income"?"Kirim":"Chiqim"}</span></td><td>${esc(x.category)}</td><td>${esc(x.payment||"")}</td><td>${esc(x.note||"")}</td><td>${x.type==="income"?"+":"-"}${money(x.amount)}</td><td><button data-fin-delete="${x.id}">×</button></td></tr>`).join("")}</tbody></table>`
-}
-$("financeSearch").oninput=renderFinance;
-$("financeTable").onclick=e=>{
-  const b=e.target.closest("[data-fin-delete]");
-  if(!b)return;
-  const item=db.finance.find(x=>x.id===b.dataset.finDelete);
-  const label=item?`${item.category} — ${money(item.amount)}`:"ushbu yozuv";
-  if(!confirm(`${label} o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.`))return;
-  db.finance=db.finance.filter(x=>x.id!==b.dataset.finDelete);
-  save();
-  toast("Kirim-chiqim yozuvi o‘chirildi");
-};
+    <section class="erp-page" id="pageCalculator">
+      <div class="page-intro">
+        <div><p>PROFESSIONAL HISOB-KITOB</p><h2>Mahsulot va xizmat kalkulyatori</h2><span>Laminat, kromka, kesish, teshish va boshqa xizmatlarni bitta hisobda jamlang.</span></div>
+        <div class="intro-actions"><button id="newCalculation">Yangi hisob</button><button id="printCalculation">Chop etish / PDF</button></div>
+      </div>
 
-$("customerForm").onsubmit=e=>{e.preventDefault();db.customers.unshift({id:uid("cus"),name:$("customerName").value.trim(),phone:$("customerPhone").value.trim(),telegram:$("customerTelegram").value.trim(),discount:number($("customerDiscount").value),note:$("customerNote").value.trim(),createdAt:nowISO()});e.target.reset();save();toast("Mijoz saqlandi")};
-function renderCustomers(){
-  const q=$("customerSearch").value.toLowerCase(),list=db.customers.filter(x=>!q||`${x.name} ${x.phone}`.toLowerCase().includes(q));
-  $("customersTable").innerHTML=`<table class="data-table"><thead><tr><th>Mijoz</th><th>Telefon</th><th>Telegram</th><th>Chegirma</th><th>Buyurtmalar</th><th>Qarz</th><th></th></tr></thead><tbody>${list.map(x=>{const orders=db.orders.filter(o=>o.phone&&o.phone===x.phone);return`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.phone)}</td><td>${esc(x.telegram)}</td><td>${x.discount||0}%</td><td>${orders.length}</td><td>${money(orders.reduce((s,o)=>s+number(o.debt),0))}</td><td><button data-cus-delete="${x.id}">×</button></td></tr>`}).join("")}</tbody></table>`
-}
-$("customerSearch").oninput=renderCustomers;$("customersTable").onclick=e=>{const b=e.target.closest("[data-cus-delete]");if(b){db.customers=db.customers.filter(x=>x.id!==b.dataset.cusDelete);save()}};
+      <div class="calculator-layout">
+        <div class="erp-panel">
+          <div class="client-grid">
+            <label>Mijoz nomi<input id="calcCustomer" placeholder="Masalan: Akmal usta"></label>
+            <label>Telefon<input id="calcPhone" placeholder="+998..."></label>
+            <label>Buyurtma raqami<input id="calcNumber" readonly></label>
+            <label>Sana<input id="calcDate" type="date"></label>
+          </div>
 
-function renderProduction(){
-  const statuses=["Yangi","Kesilmoqda","Kromka urilmoqda","Teshilmoqda","Tayyor","Yetkazildi"];
-  $("productionBoard").innerHTML=statuses.map(s=>`<section class="kanban-column"><h3>${s} (${db.orders.filter(x=>x.status===s).length})</h3>${db.orders.filter(x=>x.status===s).map(x=>`<article class="kanban-card"><strong>${esc(x.number)} — ${esc(x.customer||"Mijoz")}</strong><p>${money(x.total)}</p><select data-prod-status="${x.id}">${statuses.map(t=>`<option ${t===x.status?"selected":""}>${t}</option>`).join("")}</select></article>`).join("")}</section>`).join("")
-}
-$("productionBoard").onchange=e=>{if(e.target.dataset.prodStatus){db.orders.find(x=>x.id===e.target.dataset.prodStatus).status=e.target.value;save()}};
+          <div class="add-line-bar">
+            <select id="lineType">
+              <option value="laminate">Laminat</option>
+              <option value="edge">Kromka</option>
+              <option value="cutting">Kesish xizmati</option>
+              <option value="drilling">Bazis teshish</option>
+              <option value="cnc">CNC xizmati</option>
+              <option value="design">Dizayn</option>
+              <option value="custom">Boshqa mahsulot/xizmat</option>
+            </select>
+            <select id="lineProduct"></select>
+            <input id="lineName" placeholder="Nomi">
+            <input id="lineQty" type="number" min="0" step="0.01" value="1" placeholder="Miqdor">
+            <input id="linePrice" type="number" min="0" value="0" placeholder="Narx">
+            <button id="addLine">＋ Qo‘shish</button>
+          </div>
 
-$("workerForm").onsubmit=e=>{e.preventDefault();db.workers.unshift({id:uid("wrk"),name:$("workerName").value.trim(),role:$("workerRole").value,phone:$("workerPhone").value.trim(),rate:number($("workerRate").value),createdAt:nowISO()});e.target.reset();save();toast("Ishchi saqlandi")};
-function renderWorkers(){
-  $("workersTable").innerHTML=`<table class="data-table"><thead><tr><th>Ism</th><th>Lavozim</th><th>Telefon</th><th>Kunlik stavka</th><th></th></tr></thead><tbody>${db.workers.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.role)}</td><td>${esc(x.phone)}</td><td>${money(x.rate)}</td><td><button data-worker-delete="${x.id}">×</button></td></tr>`).join("")}</tbody></table>`
-}
-$("workersTable").onclick=e=>{const b=e.target.closest("[data-worker-delete]");if(b){db.workers=db.workers.filter(x=>x.id!==b.dataset.workerDelete);save()}};
+          <div class="table-wrap">
+            <table class="calc-table">
+              <thead><tr><th>#</th><th>Mahsulot/xizmat</th><th>Birlik</th><th>Miqdor</th><th>Narx</th><th>Jami</th><th></th></tr></thead>
+              <tbody id="calculationLines"></tbody>
+            </table>
+          </div>
 
-function renderAll(){
-  db=loadDB();renderDashboard();renderOrders();renderInventory();renderSales();renderFinance();renderCustomers();renderProduction();renderWorkers()
-}
-window.addEventListener("storage",renderAll);
-resetCalc();renderAll();
+          <div class="calc-bottom">
+            <div class="calc-options">
+              <label>Chegirma<input id="calcDiscount" type="number" min="0" value="0"><select id="discountType"><option value="amount">so‘m</option><option value="percent">%</option></select></label>
+              <label>Yetkazib berish<input id="calcDelivery" type="number" min="0" value="0"></label>
+              <label>Oldindan to‘lov<input id="calcPaid" type="number" min="0" value="0"></label>
+              <label>Izoh<textarea id="calcNote" placeholder="Qo‘shimcha ma’lumot..."></textarea></label>
+            </div>
+            <div class="calc-summary">
+              <div><span>Mahsulotlar jami</span><b id="calcSubtotal">0 so‘m</b></div>
+              <div><span>Chegirma</span><b id="calcDiscountValue">0 so‘m</b></div>
+              <div><span>Yetkazib berish</span><b id="calcDeliveryValue">0 so‘m</b></div>
+              <div class="grand"><span>Umumiy summa</span><strong id="calcGrandTotal">0 so‘m</strong></div>
+              <div><span>To‘langan</span><b id="calcPaidValue">0 so‘m</b></div>
+              <div class="debt"><span>Qolgan qarz</span><strong id="calcDebt">0 so‘m</strong></div>
+            </div>
+          </div>
 
-if(location.hash==="#calculator")go("calculator");
+          <div class="calc-actions">
+            <button id="saveAsOrder">Buyurtma sifatida saqlash</button>
+            <button id="saveAsSale">Sotuvni yakunlash</button>
+            <button id="sendTelegram">Telegramga yuborish</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageOrders">
+      <div class="page-intro"><div><p>BUYURTMALAR</p><h2>Buyurtmalarni boshqarish</h2></div><button id="orderFromCalculator">Kalkulyatorda yaratish</button></div>
+      <div class="erp-panel">
+        <div class="toolbar"><input id="orderSearch" placeholder="Mijoz yoki buyurtma raqami..."><select id="orderStatusFilter"><option value="">Barcha holat</option><option>Yangi</option><option>Kesilmoqda</option><option>Kromka urilmoqda</option><option>Teshilmoqda</option><option>Tayyor</option><option>Yetkazildi</option></select></div>
+        <div id="ordersTable"></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageInventory">
+      <div class="page-intro"><div><p>OMBOR</p><h2>Laminat va kromka qoldig‘i</h2></div><a href="./super-admin.html">Mahsulot qo‘shish</a></div>
+      <div class="stats-grid compact"><article><span>Laminat turi</span><strong id="invLamTypes">0</strong></article><article><span>Jami list</span><strong id="invSheets">0</strong></article><article><span>Kromka turi</span><strong id="invEdgeTypes">0</strong></article><article><span>Jami metr</span><strong id="invMeters">0</strong></article></div>
+      <div class="erp-grid two"><article class="erp-panel"><h2>Laminatlar</h2><div id="inventoryLaminates"></div></article><article class="erp-panel"><h2>Kromkalar</h2><div id="inventoryEdges"></div></article></div>
+    </section>
+
+    <section class="erp-page" id="pageSales">
+      <div class="page-intro"><div><p>SOTUVLAR</p><h2>Sotuvlar tarixi</h2></div></div>
+      <div class="erp-panel"><div id="salesTable"></div></div>
+    </section>
+
+    <section class="erp-page" id="pageFinance">
+      <div class="page-intro"><div><p>MOLIYA</p><h2>Kirim va chiqim</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="financeForm">
+          <h2>Yangi harakat</h2>
+          <label>Turi<select id="financeType"><option value="income">Kirim</option><option value="expense">Chiqim</option></select></label>
+          <label>Summa<input id="financeAmount" type="number" min="0" required></label>
+          <label>Kategoriya<select id="financeCategory"><option>Sotuv</option><option>Xomashyo</option><option>Ish haqi</option><option>Transport</option><option>Kommunal</option><option>Boshqa</option></select></label>
+          <label>To‘lov turi<select id="financePayment"><option>Naqd</option><option>Bank</option><option>Click</option><option>Payme</option><option>Uzum</option></select></label>
+          <label>Izoh<textarea id="financeNote"></textarea></label>
+          <button type="submit">Saqlash</button>
+        </form>
+        <div class="erp-panel"><div class="toolbar"><input id="financeSearch" placeholder="Izoh yoki kategoriya..."></div><div id="financeTable"></div></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageCustomers">
+      <div class="page-intro"><div><p>CRM</p><h2>Mijozlar bazasi</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="customerForm">
+          <h2>Yangi mijoz</h2>
+          <label>Ismi<input id="customerName" required></label>
+          <label>Telefon<input id="customerPhone"></label>
+          <label>Telegram<input id="customerTelegram"></label>
+          <label>Chegirma (%)<input id="customerDiscount" type="number" min="0" max="100" value="0"></label>
+          <label>Izoh<textarea id="customerNote"></textarea></label>
+          <button type="submit">Mijozni saqlash</button>
+        </form>
+        <div class="erp-panel"><div class="toolbar"><input id="customerSearch" placeholder="Ism yoki telefon..."></div><div id="customersTable"></div></div>
+      </div>
+    </section>
+
+    <section class="erp-page" id="pageProduction">
+      <div class="page-intro"><div><p>ISHLAB CHIQARISH</p><h2>Buyurtma holatlari</h2></div></div>
+      <div class="kanban" id="productionBoard"></div>
+    </section>
+
+    <section class="erp-page" id="pageWorkers">
+      <div class="page-intro"><div><p>ISHCHILAR</p><h2>Ishchilar va kunlik ishlar</h2></div></div>
+      <div class="erp-grid finance-grid">
+        <form class="erp-panel form-panel" id="workerForm">
+          <h2>Yangi ishchi</h2>
+          <label>Ismi<input id="workerName" required></label>
+          <label>Lavozimi<select id="workerRole"><option>Kesuvchi</option><option>Kromkachi</option><option>Bazis operatori</option><option>Omborchi</option><option>Menejer</option><option>Boshqa</option></select></label>
+          <label>Telefon<input id="workerPhone"></label>
+          <label>Kunlik stavka<input id="workerRate" type="number" min="0"></label>
+          <button type="submit">Ishchini saqlash</button>
+        </form>
+        <div class="erp-panel"><div id="workersTable"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="erp-toast" id="toast"></div>
+  <script type="module" src="./korxona.js"></script>
+</body>
+</html>

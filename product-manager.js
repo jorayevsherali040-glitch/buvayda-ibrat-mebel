@@ -31,9 +31,8 @@
       <a href="./v20-orders.html">▤ V20 Buyurtmalar</a>
       <a href="./index.html#tezkor-hisob">✦ V22 HD Premium sayt</a>
       <a href="./v22-smart-cut.html">✦ V22 Smart Cut</a>
-      <a href="./v23.html">★ V23 Markaz</a>
-      <a href="./v24.html">★ V24.1 Platforma</a>
       <a href="./hisob.html">₽ Hisob-kitob</a>
+      <a href="./v25.html">★ V25 Production ERP</a>
       <a href="./super-admin.html">⚙ Super Admin</a>
       <a href="./index.html">⌂ Asosiy sayt</a>
     </nav>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V25 — Production ERP</title>
+  <link rel="stylesheet" href="./v25.css?v=25">
+</head>
+<body>
+  <aside class="v25-sidebar" id="sidebar">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark">BM</span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>V25 Production ERP</small></span>
+    </a>
+    <nav>
+      <p>ASOSIY</p>
+      <button class="active" data-page="dashboard">▦ Umumiy ko‘rinish</button>
+      <button data-page="production">⚒ Ishlab chiqarish</button>
+      <button data-page="calendar">▦ Ishlab chiqarish taqvimi</button>
+      <button data-page="workers">♟ Ishchilar paneli</button>
+      <button data-page="quality">✓ Sifat nazorati</button>
+      <button data-page="customers">◎ Mijoz kuzatuvi</button>
+
+      <p>MODULLAR</p>
+      <a href="./product-manager.html">▤ Mahsulotlar</a>
+      <a href="./v20-orders.html">▧ Buyurtmalar</a>
+      <a href="./v22-smart-cut.html">✦ Smart Cut</a>
+      <a href="./hisob.html">₽ Hisob-kitob</a>
+      <a href="./index.html">⌂ Asosiy sayt</a>
+      <a href="./super-admin.html">⚙ Super Admin</a>
+    </nav>
+  </aside>
+
+  <main class="v25-main">
+    <header class="topbar">
+      <div>
+        <button id="menuBtn">☰</button>
+        <div><p>BUVAYDA IBRAT MEBEL V25</p><h1 id="pageTitle">Umumiy ko‘rinish</h1></div>
+      </div>
+      <div class="top-actions">
+        <span id="clock"></span>
+        <button id="themeBtn">🌙</button>
+        <button id="logoutBtn">Chiqish</button>
+      </div>
+    </header>
+
+    <section class="v25-page active" id="pageDashboard">
+      <div class="hero">
+        <div>
+          <p>PRODUCTION ERP</p>
+          <h2>Buyurtmadan yetkazib berishgacha to‘liq nazorat</h2>
+          <span>Mas’ul usta, boshlangan vaqt, tugagan vaqt, izoh, rasm va sifat tekshiruvi bitta tizimda.</span>
+        </div>
+        <div class="hero-actions">
+          <a href="./v20-orders.html#new-order">＋ Yangi buyurtma</a>
+          <button data-go="production">Ishlab chiqarishni ochish</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <article><span>Faol buyurtmalar</span><strong id="statActive">0</strong></article>
+        <article><span>Bugun kesishda</span><strong id="statCut">0</strong></article>
+        <article><span>Kromkada</span><strong id="statEdge">0</strong></article>
+        <article><span>Teshishda</span><strong id="statDrill">0</strong></article>
+        <article><span>Tayyor</span><strong id="statReady">0</strong></article>
+        <article><span>Kechikayotgan</span><strong id="statLate">0</strong></article>
+      </div>
+
+      <div class="grid two">
+        <article class="panel">
+          <div class="panel-head"><h2>Faol jarayonlar</h2><button data-go="production">Barchasi →</button></div>
+          <div id="activeProcesses"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h2>Bugungi ishlab chiqarish</h2></div>
+          <canvas id="productionChart" height="220"></canvas>
+        </article>
+      </div>
+
+      <div class="grid two">
+        <article class="panel"><div class="panel-head"><h2>Kam qolgan materiallar</h2><a href="./product-manager.html">Ombor →</a></div><div id="lowMaterials"></div></article>
+        <article class="panel"><div class="panel-head"><h2>Yaqin muddatli buyurtmalar</h2></div><div id="deadlineOrders"></div></article>
+      </div>
+    </section>
+
+    <section class="v25-page" id="pageProduction">
+      <div class="page-intro">
+        <div><p>ISHLAB CHIQARISH</p><h2>Buyurtma jarayoni</h2></div>
+        <div class="toolbar">
+          <input id="productionSearch" placeholder="Buyurtma, mijoz yoki telefon...">
+          <select id="productionWorkerFilter"><option value="">Barcha ustalar</option></select>
+        </div>
+      </div>
+      <div class="kanban" id="productionBoard"></div>
+    </section>
+
+    <section class="v25-page" id="pageCalendar">
+      <div class="page-intro"><div><p>TAQVIM</p><h2>30 kunlik ishlab chiqarish yuklamasi</h2></div></div>
+      <div class="panel">
+        <div class="calendar-legend"><span><i class="low"></i> Yengil</span><span><i class="medium"></i> O‘rta</span><span><i class="high"></i> Yuqori</span></div>
+        <div class="calendar-grid" id="productionCalendar"></div>
+      </div>
+      <div class="panel calendar-detail"><h2>Tanlangan kun</h2><div id="calendarDetails"><p>Kunni tanlang.</p></div></div>
+    </section>
+
+    <section class="v25-page" id="pageWorkers">
+      <div class="page-intro"><div><p>ISHCHILAR</p><h2>Ustalar va topshiriqlar</h2></div><button id="addWorkerBtn">＋ Ishchi qo‘shish</button></div>
+      <div class="worker-grid" id="workerCards"></div>
+      <div class="panel worker-log-panel">
+        <div class="panel-head"><h2>Bugungi ish yozuvlari</h2></div>
+        <div id="workerLogs"></div>
+      </div>
+    </section>
+
+    <section class="v25-page" id="pageQuality">
+      <div class="page-intro"><div><p>SIFAT NAZORATI</p><h2>Tayyor mahsulotlarni tekshirish</h2></div></div>
+      <div class="quality-grid" id="qualityGrid"></div>
+    </section>
+
+    <section class="v25-page" id="pageCustomers">
+      <div class="page-intro"><div><p>MIJOZ KUZATUVI</p><h2>Buyurtma holatini mijozga ko‘rsatish</h2></div></div>
+      <div class="panel customer-search">
+        <input id="customerTrackSearch" placeholder="Buyurtma raqami yoki telefon...">
+      </div>
+      <div id="customerTrackResult"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="processModal" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="processModalClose">×</button>
+      <p>BUYURTMA JARAYONI</p>
+      <h2 id="processTitle">Buyurtma</h2>
+      <input type="hidden" id="processOrderId">
+
+      <div class="form-grid">
+        <label>Holati<select id="processStatus"></select></label>
+        <label>Mas’ul usta<select id="processWorker"></select></label>
+        <label>Boshlangan vaqt<input id="processStartedAt" type="datetime-local"></label>
+        <label>Tugagan vaqt<input id="processFinishedAt" type="datetime-local"></label>
+      </div>
+
+      <label>Izoh<textarea id="processNote" rows="4"></textarea></label>
+      <label class="photo-upload">Jarayon rasmi<input id="processPhoto" type="file" accept="image/*"></label>
+      <div id="processPhotoPreview"></div>
+
+      <div class="modal-actions">
+        <button id="saveProcess">Saqlash</button>
+        <button id="sendTelegram" class="secondary">Telegram xabari</button>
+      </div>
+      <div class="history" id="processHistory"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="workerModal" hidden>
+    <form class="modal-card small" id="workerForm">
+      <button type="button" class="modal-close" id="workerModalClose">×</button>
+      <p>YANGI ISHCHI</p>
+      <h2>Ishchi qo‘shish</h2>
+      <label>Ismi<input id="workerName" required></label>
+      <label>Telefon<input id="workerPhone"></label>
+      <label>Lavozimi<select id="workerRole"><option>Kesish ustasi</option><option>Kromka ustasi</option><option>Teshish ustasi</option><option>Yig‘uvchi</option><option>Dizayner</option><option>Sifat nazorati</option><option>Boshqa</option></select></label>
+      <label>Kunlik maosh<input id="workerDailyRate" type="number" min="0" value="0"></label>
+      <button type="submit">Saqlash</button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./v25.js?v=25"></script>
+</body>
+</html>

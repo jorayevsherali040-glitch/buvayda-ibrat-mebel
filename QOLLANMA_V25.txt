@@ -1,0 +1,34 @@
+BUVAYDA IBRAT MEBEL V25 — PRODUCTION ERP
+
+PIN:
+1212
+
+YANGI YAGONA BOSHQARUV MARKAZI:
+https://jorayevsherali040-glitch.github.io/buvayda-ibrat-mebel/v25.html
+
+MUHIM:
+- Eski V23 va V24 boshqaruv markazlari olib tashlandi.
+- Endi faqat V25 Production ERP boshqaruv markazi qolgan.
+- Mahsulotlar, buyurtmalar, Smart Cut va hisob-kitob alohida ish modullari sifatida saqlandi.
+
+V25 IMKONIYATLARI:
+- Yangi buyurtmadan yetkazib berishgacha ishlab chiqarish bosqichlari.
+- Drag & Drop orqali buyurtma holatini o‘zgartirish.
+- Mas’ul usta biriktirish.
+- Boshlangan va tugagan vaqtni saqlash.
+- Jarayon izohi va rasm biriktirish.
+- Jarayon tarixi.
+- Ishlab chiqarish taqvimi va kunlik yuklama.
+- Ishchilar paneli.
+- Sifat nazorati.
+- Mijoz uchun buyurtma kuzatuvi.
+- Telegram orqali holat xabarini tayyorlash.
+- Kam qolgan materiallar va kechikayotgan buyurtmalar.
+- Mobil va Dark Mode.
+
+GITHUB’GA YUKLASH:
+1. ZIP faylni Extract qiling.
+2. GitHub’dagi eski fayllar ustiga barcha fayllarni yuklang.
+3. Eski v23.html, v24.html, v23.css va v23.js fayllarini GitHub’dan o‘chiring.
+4. Commit: BUVAYDA IBRAT MEBEL V25 PRODUCTION ERP
+5. Deploy tugagach Ctrl + Shift + R bosing.

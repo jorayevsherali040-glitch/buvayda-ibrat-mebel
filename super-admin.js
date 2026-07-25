@@ -17,7 +17,9 @@ function showApp(){
   $("appView").hidden=false;
   sessionStorage.setItem("v13PinVerified","1");
   const v23Destination=sessionStorage.getItem("v23AfterLogin");
-  if(v23Destination){sessionStorage.removeItem("v23AfterLogin");location.href="./v23.html";return;}
+  if(v23Destination){sessionStorage.removeItem("v23AfterLogin");location.href="./v25.html";return;}
+  const v25Destination=sessionStorage.getItem("v25AfterLogin");
+  if(v25Destination){sessionStorage.removeItem("v25AfterLogin");location.href="./v25.html";return;}
   const v22Destination=sessionStorage.getItem("v22AfterLogin");
   if(v22Destination){sessionStorage.removeItem("v22AfterLogin");location.href="./v22-smart-cut.html";return;}
   const v20Destination=sessionStorage.getItem("v20AfterLogin");
