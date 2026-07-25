@@ -1,31 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1300" viewBox="0 0 2200 1300">
-<defs>
- <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f5f2ea"/><stop offset="1" stop-color="#ddd9cf"/></linearGradient>
- <linearGradient id="floor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8d2c6"/><stop offset="1" stop-color="#b8b0a4"/></linearGradient>
- <linearGradient id="machine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fafbfa"/><stop offset="1" stop-color="#c5cfca"/></linearGradient>
- <filter id="sh"><feDropShadow dx="0" dy="26" stdDeviation="24" flood-opacity=".25"/></filter>
-</defs>
-<rect width="2200" height="780" fill="url(#wall)"/><polygon points="0,780 2200,780 2200,1300 0,1300" fill="url(#floor)"/>
-<g opacity=".5" stroke="#c6c1b7" stroke-width="18"><line x1="0" y1="170" x2="2200" y2="170"/><line x1="0" y1="380" x2="2200" y2="380"/></g>
-<g fill="#fff" opacity=".95"><rect x="150" y="90" width="330" height="48" rx="24"/><rect x="720" y="90" width="330" height="48" rx="24"/><rect x="1290" y="90" width="330" height="48" rx="24"/><rect x="1740" y="90" width="250" height="48" rx="24"/></g>
-<g filter="url(#sh)" transform="translate(640 330)">
- <rect x="0" y="80" width="1060" height="500" rx="34" fill="url(#machine)" stroke="#aab7b0" stroke-width="10"/>
- <rect x="70" y="175" width="760" height="230" rx="18" fill="#bac6c0"/>
- <rect x="120" y="220" width="660" height="140" rx="12" fill="#d9c4a4"/>
- <rect x="230" y="0" width="520" height="170" rx="22" fill="#087943"/>
- <rect x="445" y="140" width="88" height="250" rx="20" fill="#17261e"/>
- <circle cx="489" cy="390" r="55" fill="#f5b900"/>
- <rect x="840" y="20" width="170" height="135" rx="18" fill="#17261e"/><rect x="865" y="47" width="120" height="74" rx="8" fill="#7cdca5"/>
-</g>
-<g transform="translate(90 820)" filter="url(#sh)">
- <g transform="translate(0 240)"><polygon points="0,80 530,80 660,10 130,10" fill="#f5f3ec"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
- <g transform="translate(25 170)"><polygon points="0,80 530,80 660,10 130,10" fill="#c5b08d"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
- <g transform="translate(50 100)"><polygon points="0,80 530,80 660,10 130,10" fill="#90989a"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
- <g transform="translate(75 30)"><polygon points="0,80 530,80 660,10 130,10" fill="#e0d2ba"/><polygon points="0,80 530,80 530,125 0,125" fill="#8a6846"/></g>
-</g>
-<g transform="translate(1710 760)" filter="url(#sh)">
- <circle cx="190" cy="190" r="175" fill="#d3b68e"/><circle cx="190" cy="190" r="102" fill="#eeeae1"/><circle cx="190" cy="190" r="55" fill="#9e7f58"/>
- <circle cx="380" cy="250" r="130" fill="#ece8df"/><circle cx="380" cy="250" r="78" fill="#d6d0c5"/><circle cx="380" cy="250" r="42" fill="#a8a095"/>
-</g>
-<rect x="85" y="70" width="700" height="105" rx="52" fill="#087943"/><text x="435" y="137" text-anchor="middle" font-family="Arial" font-size="44" font-weight="700" fill="#fff">BUVAYDA IBRAT MEBEL • PREMIUM SERVIS</text>
-</svg>
+:root{
+  --erp-green:#087943;
+  --erp-green-dark:#075f38;
+  --erp-bg:#f3f7f4;
+  --erp-card:#fff;
+  --erp-border:#dfe8e2;
+  --erp-text:#132019;
+  --erp-muted:#65736b;
+}
+*{box-sizing:border-box}
+.erp-page{margin:0;background:var(--erp-bg);color:var(--erp-text);font-family:Arial,sans-serif}
+.erp-shell{max-width:1600px;margin:auto;padding:24px}
+.erp-login{max-width:470px;margin:7vh auto;background:#fff;padding:34px;border-radius:22px;box-shadow:0 24px 70px rgba(7,95,56,.15)}
+.erp-login img{width:90px;height:90px;object-fit:contain}.erp-login form{display:grid;gap:12px;margin:24px 0}.erp-login input{padding:15px;border:1px solid var(--erp-border);border-radius:12px}
+.erp-header{display:flex;justify-content:space-between;gap:20px;align-items:center;background:#fff;border-radius:20px;padding:24px;margin-bottom:18px}
+.erp-header h1{margin:4px 0}.danger-button{background:#c0392b;color:#fff}
+.erp-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:18px}.erp-kpis article{background:#0e1712;color:#fff;border-radius:16px;padding:18px}.erp-kpis span{display:block;color:#b8c5bd;font-size:13px}.erp-kpis strong{display:block;font-size:26px;margin-top:10px}
+.erp-tabs{display:flex;gap:8px;overflow:auto;background:#fff;border-radius:16px;padding:10px;margin-bottom:18px}.erp-tabs button{border:0;background:#edf4ef;padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer;white-space:nowrap}.erp-tabs button.active{background:var(--erp-green);color:#fff}
+.erp-view{display:none}.erp-view.active{display:block}
+.erp-grid{display:grid;gap:18px;margin-bottom:18px}.erp-grid.two{grid-template-columns:1fr 1fr}.erp-grid.form-list{grid-template-columns:390px 1fr}
+.erp-card{background:var(--erp-card);border:1px solid var(--erp-border);border-radius:18px;padding:20px}.erp-card h2{margin-top:0}
+.erp-form{display:flex;flex-direction:column;gap:9px;align-self:start;position:sticky;top:16px}.erp-form label{font-weight:800;font-size:13px}.erp-form input,.erp-form select,.erp-form textarea,.erp-list-head input,.erp-list-head select{width:100%;padding:12px;border:1px solid var(--erp-border);border-radius:10px;background:#fff}.erp-form textarea{min-height:90px;resize:vertical}
+.erp-list-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.erp-list-head input,.erp-list-head select{max-width:280px}
+.erp-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;border:1px solid var(--erp-border);border-radius:13px;padding:14px;margin-bottom:9px}.erp-row h3{margin:0 0 6px}.erp-row p{margin:3px 0;color:var(--erp-muted)}.erp-row-actions{display:flex;gap:7px;align-items:center}.erp-row-actions button{border:0;border-radius:8px;padding:9px 11px;cursor:pointer;font-weight:800}.edit-action{background:#dff3e6;color:#075f38}.delete-action{background:#fde5e2;color:#a3261a}
+.status-pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#e7f6ed;color:#075f38;font-size:11px;font-weight:900}.low-stock{background:#fff0d9;color:#9a5700}.debt-pill{background:#fee7e7;color:#a72a2a}
+.erp-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:#102018;color:#fff;padding:12px 18px;border-radius:30px;font-weight:800;transition:.25s;pointer-events:none}.erp-toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1200px){.erp-kpis{grid-template-columns:repeat(3,1fr)}.erp-grid.form-list{grid-template-columns:340px 1fr}}
+@media(max-width:800px){.erp-shell{padding:10px}.erp-header{align-items:flex-start;flex-direction:column}.erp-kpis{grid-template-columns:repeat(2,1fr)}.erp-grid.two,.erp-grid.form-list{grid-template-columns:1fr}.erp-form{position:static}.erp-list-head{align-items:stretch;flex-direction:column}.erp-list-head input,.erp-list-head select{max-width:none}.erp-row{grid-template-columns:1fr}.erp-row-actions{justify-content:flex-end}}

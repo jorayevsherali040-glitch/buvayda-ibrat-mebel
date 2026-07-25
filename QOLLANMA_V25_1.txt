@@ -1,0 +1,25 @@
+BUVAYDA IBRAT MEBEL V25.1 — STABLE ROOT FIX
+
+TUZATILDI:
+- Root index.html endi ishonchli V25.1 bosh menyu.
+- Asosiy mijozlar sayti site.html ga ko‘chirildi.
+- V25 Production ERP alohida va to‘g‘ri ishlaydi.
+- Hisob-kitob sahifasiga ichki critical CSS qo‘shildi.
+- CSS yuklanmay qolsa ham logo va login shakli normal ko‘rinadi.
+- .nojekyll qo‘shildi.
+- 404.html qo‘shildi.
+- Eski V23/V24 redirect kodlari olib tashlandi.
+- Faqat V25 boshqaruv markazi saqlandi.
+
+TO‘G‘RI MANZILLAR:
+Bosh menyu: /buvayda-ibrat-mebel/
+V25 ERP: /buvayda-ibrat-mebel/v25.html
+Asosiy sayt: /buvayda-ibrat-mebel/site.html
+Hisob-kitob: /buvayda-ibrat-mebel/hisob.html
+
+GITHUB:
+1. ZIP ichidagi barcha fayllarni repository root qismiga yuklang.
+2. Eski fayllarni almashtirishga rozilik bering.
+3. Commit: V25.1 STABLE ROOT FIX
+4. Settings → Pages → Deploy from a branch → main → /(root)
+5. Deploy tugagach Ctrl + Shift + R bosing.

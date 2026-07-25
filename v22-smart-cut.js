@@ -1,78 +1,124 @@
 import {loadDB,saveDB,uid,nowISO,today,money} from "./local-db.js";
 const $=id=>document.getElementById(id);
-let db=loadDB(),lines=[],chart=null;
-if(sessionStorage.getItem("v13PinVerified")!=="1"){sessionStorage.setItem("v20AfterLogin","1");location.href="./super-admin.html"}
-
-const pages={dashboard:"Buyurtmalar boshqaruvi","new-order":"Yangi buyurtma",orders:"Buyurtmalar",production:"Ishlab chiqarish",movements:"Ombor harakati",profit:"Buyurtma foydasi",workers:"Ishchilar hisoboti"};
+let db=loadDB(),parts=[],sheets=[],edgeChart=null,periodChart=null,topChart=null,scannerStream=null,scannerTimer=null;
+if(sessionStorage.getItem("v13PinVerified")!=="1"){sessionStorage.setItem("v22AfterLogin","1");location.href="./super-admin.html"}
+const pageTitles={optimizer:"AI Smart Cut","edge-calc":"Kromka kalkulyatori",material:"Material Finder",warehouse:"Ombor Heat Map",scanner:"QR Scanner 2.0",recommendations:"AI tavsiyalar",crm:"CRM+",analytics:"Premium Dashboard",catalog:"PDF katalog"};
 const num=v=>Number(v||0),esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+const colors=["#64b5f6","#81c784","#ffb74d","#ba68c8","#4db6ac","#e57373","#7986cb","#aed581","#ffd54f","#4fc3f7","#f06292","#9575cd"];
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2200)}
 function persist(){db=saveDB(db);renderAll()}
-function statuses(){return db.orderSettings?.statuses||["Kutmoqda","Kesilmoqda","Kromka urilmoqda","Teshilmoqda","Yig‘ilmoqda","Tayyor","Yetkazildi"]}
-function go(page){document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));document.querySelectorAll(".o-page").forEach(x=>x.classList.remove("active"));$("page"+page.split("-").map(v=>v[0].toUpperCase()+v.slice(1)).join("")).classList.add("active");$("pageTitle").textContent=pages[page];$("sidebar").classList.remove("open");if(page==="dashboard")setTimeout(renderChart,50)}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
-$("menuBtn").onclick=()=>$("sidebar").classList.toggle("open");$("themeBtn").onclick=()=>document.documentElement.classList.toggle("dark");$("logoutBtn").onclick=()=>{sessionStorage.removeItem("v13PinVerified");location.href="./super-admin.html"};$("todayLabel").textContent=new Date().toLocaleDateString("uz-UZ",{day:"2-digit",month:"long",year:"numeric"});
+function go(page){document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));document.querySelectorAll(".sc-page").forEach(x=>x.classList.remove("active"));$("page"+page.split("-").map(v=>v[0].toUpperCase()+v.slice(1)).join("")).classList.add("active");$("pageTitle").textContent=pageTitles[page];$("scSidebar").classList.remove("open");if(page==="edge-calc")renderEdgeBreakdown();if(page==="analytics")renderAnalytics();if(page==="catalog")renderCatalog()}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));$("menuBtn").onclick=()=>$("scSidebar").classList.toggle("open");$("themeBtn").onclick=()=>document.documentElement.classList.toggle("dark");$("logoutBtn").onclick=()=>{sessionStorage.removeItem("v13PinVerified");location.href="./super-admin.html"};setInterval(()=>$("clock").textContent=new Date().toLocaleTimeString("uz-UZ"),1000);
 
-function nextNumber(){const n=db.orderSettings?.nextNumber||1;return`BIM-${new Date().getFullYear()}-${String(n).padStart(5,"0")}`}
-function resetOrder(){
-  $("orderForm").reset();$("orderId").value="";$("orderNumber").value=nextNumber();$("orderDate").value=today();$("orderStatus").innerHTML=statuses().map(s=>`<option>${s}</option>`).join("");lines=[];renderLines();populateProducts()
+function productImage(x){return x.imageUrl||x.image||"./product-placeholder.svg"}
+function populateSelectors(){
+  $("materialSelect").innerHTML='<option value="">Standart laminat</option>'+db.laminates.map(x=>`<option value="${x.id}">${esc(x.code)} ${esc(x.name)}</option>`).join("");
+  $("partEdgeCode").innerHTML='<option value="">Kromka kodi</option>'+db.edges.map(x=>`<option value="${esc(x.code)}">${esc(x.code)} — ${esc(x.name)}</option>`).join("")
 }
-$("resetOrder").onclick=resetOrder;
-function populateProducts(){
-  const type=$("lineType").value;let list=[],unit="dona";
-  if(type==="laminates"){list=db.laminates;unit="list"}else if(type==="edges"){list=db.edges;unit="metr"}else if(type==="products"){list=db.products;unit="dona"}
-  $("lineProduct").innerHTML='<option value="">Tanlang</option>'+list.map(x=>`<option value="${x.id}">${esc(x.code||"")} ${esc(x.name)}</option>`).join("");$("lineProduct").hidden=!list.length;$("lineName").dataset.unit=unit;
-  if(type==="service"){$("lineName").value="Kesish / kromka / teshish xizmati";$("lineName").dataset.unit="xizmat"}else if(type==="custom"){$("lineName").value="";$("lineName").dataset.unit="dona"}else $("lineName").value=""
+function renderParts(){
+  $("partsTable").innerHTML=`<table class="data-table"><thead><tr><th>#</th><th>Nomi</th><th>O‘lcham</th><th>Dona</th><th>Kromka</th><th></th></tr></thead><tbody>${parts.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.name)}</td><td>${p.w}×${p.h}</td><td>${p.qty}</td><td>${esc(p.edgeCode||"-")} · ${p.edgeSides} tomon</td><td><button data-remove="${i}">×</button></td></tr>`).join("")||'<tr><td colspan="6">Detal kiritilmagan.</td></tr>'}</tbody></table>`;
+  $("resultParts").textContent=parts.reduce((s,p)=>s+p.qty,0)
 }
-$("lineType").onchange=populateProducts;$("lineProduct").onchange=()=>{const type=$("lineType").value,x=(db[type]||[]).find(v=>v.id===$("lineProduct").value);if(!x)return;$("lineName").value=`${x.code||""} ${x.name}`.trim();$("linePrice").value=x.salePrice??x.price??0;$("lineCost").value=x.costPrice??0;$("lineName").dataset.productId=x.id};
-$("addLine").onclick=()=>{const name=$("lineName").value.trim();if(!name)return toast("Mahsulot yoki xizmat nomini kiriting.");lines.push({id:uid("line"),type:$("lineType").value,productId:$("lineName").dataset.productId||"",name,unit:$("lineName").dataset.unit||"dona",qty:num($("lineQty").value)||1,price:num($("linePrice").value),cost:num($("lineCost").value)});$("lineQty").value=1;renderLines()};
-function totals(){const sales=lines.reduce((s,x)=>s+x.qty*x.price,0),cost=lines.reduce((s,x)=>s+x.qty*x.cost,0),paid=num($("orderPaid").value);return{sales,cost,profit:sales-cost,paid,debt:Math.max(0,sales-paid)}}
-function renderLines(){
-  $("orderLines").innerHTML=lines.length?lines.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${esc(x.unit)}</td><td><input data-q="${x.id}" type="number" min="0" step="0.01" value="${x.qty}"></td><td><input data-p="${x.id}" type="number" min="0" value="${x.price}"></td><td><input data-c="${x.id}" type="number" min="0" value="${x.cost}"></td><td><b>${money(x.qty*x.price)}</b></td><td><button data-d="${x.id}">×</button></td></tr>`).join(""):'<tr><td colspan="8" style="text-align:center;color:#6c7b72">Mahsulot yoki xizmat qo‘shing.</td></tr>';renderSummary()
+$("addPart").onclick=()=>{const w=num($("partW").value),h=num($("partH").value),qty=Math.max(1,num($("partQty").value));if(!w||!h)return toast("Detal o‘lchamini kiriting.");parts.push({id:uid("part"),name:$("partName").value.trim()||`Detal ${parts.length+1}`,w,h,qty,edgeCode:$("partEdgeCode").value,edgeSides:num($("partEdgeSides").value)});$("partName").value="";$("partW").value="";$("partH").value="";$("partQty").value=1;renderParts()};
+$("partsTable").onclick=e=>{const b=e.target.closest("[data-remove]");if(b){parts.splice(Number(b.dataset.remove),1);renderParts()}};
+$("clearParts").onclick=()=>{parts=[];sheets=[];renderParts();renderResult();drawSheet(0)};
+$("loadExample").onclick=()=>{parts=[{id:uid("p"),name:"Yon panel",w:600,h:450,qty:8,edgeCode:"04.19",edgeSides:2},{id:uid("p"),name:"Tokcha",w:720,h:350,qty:12,edgeCode:"04.19",edgeSides:1},{id:uid("p"),name:"Fasad",w:820,h:400,qty:4,edgeCode:"08.19",edgeSides:4},{id:uid("p"),name:"Stoleshnitsa",w:1200,h:500,qty:2,edgeCode:"2x45",edgeSides:1}];renderParts();toast("Namuna yuklandi")};
+
+function expandParts(){const arr=[];parts.forEach((p,pi)=>{for(let i=0;i<p.qty;i++)arr.push({...p,partIndex:pi,copy:i+1,area:p.w*p.h})});return arr.sort((a,b)=>Math.max(b.w,b.h)-Math.max(a.w,a.h)||b.area-a.area)}
+function newSheet(sw,sh,margin){return{w:sw,h:sh,placed:[],spaces:[{x:margin,y:margin,w:sw-2*margin,h:sh-2*margin}]}}
+function fitInSpace(item,space,rotate,kerf){
+  const options=[{w:item.w,h:item.h,rotated:false}];
+  if(rotate&&item.w!==item.h)options.push({w:item.h,h:item.w,rotated:true});
+  return options.filter(o=>o.w<=space.w&&o.h<=space.h).sort((a,b)=>(space.w-a.w)*(space.h-a.h)-(space.w-b.w)*(space.h-b.h))[0]||null
 }
-$("orderLines").oninput=e=>{const id=e.target.dataset.q||e.target.dataset.p||e.target.dataset.c;if(!id)return;const x=lines.find(v=>v.id===id);if(e.target.dataset.q)x.qty=num(e.target.value);if(e.target.dataset.p)x.price=num(e.target.value);if(e.target.dataset.c)x.cost=num(e.target.value);renderLines()};
-$("orderLines").onclick=e=>{const b=e.target.closest("[data-d]");if(b){lines=lines.filter(x=>x.id!==b.dataset.d);renderLines()}};
-$("orderPaid").oninput=renderSummary;
-function renderSummary(){const t=totals();$("sumSales").textContent=money(t.sales);$("sumCost").textContent=money(t.cost);$("sumProfit").textContent=money(t.profit);$("sumPaid").textContent=money(t.paid);$("sumDebt").textContent=money(t.debt)}
-function orderData(){const t=totals();return{id:$("orderId").value||uid("ord"),number:$("orderNumber").value,date:$("orderDate").value,deadline:$("orderDeadline").value,status:$("orderStatus").value,customer:$("orderCustomer").value.trim(),phone:$("orderPhone").value.trim(),telegram:$("orderTelegram").value.trim(),address:$("orderAddress").value.trim(),designer:$("orderDesigner").value.trim(),worker:$("orderWorker").value.trim(),lines:JSON.parse(JSON.stringify(lines)),total:t.sales,cost:t.cost,profit:t.profit,paid:t.paid,debt:t.debt,note:$("orderNote").value.trim(),updatedAt:nowISO()}}
-function saveOrder(deduct=false){
-  if(!$("orderForm").reportValidity()||!lines.length)return toast("Buyurtma va mahsulotlarni to‘liq kiriting.");
-  const item=orderData(),i=db.orders.findIndex(x=>x.id===item.id),isNew=i<0;if(isNew){db.orders.unshift({...item,createdAt:nowISO()});db.orderSettings.nextNumber=(db.orderSettings.nextNumber||1)+1}else db.orders[i]={...db.orders[i],...item};
-  if(deduct&&!item.stockDeducted){
-    for(const line of item.lines){
-      if(!["laminates","edges","products"].includes(line.type))continue;const product=db[line.type].find(x=>x.id===line.productId);if(!product)continue;
-      product.stock=Math.max(0,num(product.stock)-num(line.qty));db.inventoryMovements.unshift({id:uid("mov"),type:"out",productType:line.type,productId:product.id,product:line.name,qty:line.qty,unit:line.unit,orderId:item.id,orderNumber:item.number,note:"Buyurtmaga ishlatildi",date:today(),createdAt:nowISO()})
-    }
-    const saved=db.orders.find(x=>x.id===item.id);if(saved)saved.stockDeducted=true
+function placeItem(sheet,item,allowRotate,kerf){
+  let best=null;
+  sheet.spaces.forEach((s,idx)=>{const fit=fitInSpace(item,s,allowRotate,kerf);if(!fit)return;const score=Math.min(s.w-fit.w,s.h-fit.h)*100000+(s.w*s.h-fit.w*fit.h);if(!best||score<best.score)best={space:s,idx,fit,score}});
+  if(!best)return false;
+  const {space,idx,fit}=best;sheet.spaces.splice(idx,1);
+  sheet.placed.push({...item,x:space.x,y:space.y,pw:fit.w,ph:fit.h,rotated:fit.rotated});
+  const rw=space.w-fit.w-kerf,bh=space.h-fit.h-kerf;
+  if(rw>20)sheet.spaces.push({x:space.x+fit.w+kerf,y:space.y,w:rw,h:fit.h});
+  if(bh>20)sheet.spaces.push({x:space.x,y:space.y+fit.h+kerf,w:space.w,h:bh});
+  return true
+}
+function optimize(){
+  if(!parts.length)return toast("Avval detallarni kiriting.");
+  const sw=num($("sheetW").value),sh=num($("sheetH").value),kerf=num($("kerf").value),margin=num($("margin").value),rotate=$("allowRotate").value==="yes";
+  const items=expandParts();sheets=[];
+  for(const item of items){
+    let placed=false;
+    for(const sheet of sheets){if(placeItem(sheet,item,rotate,kerf)){placed=true;break}}
+    if(!placed){const sheet=newSheet(sw,sh,margin);if(!placeItem(sheet,item,rotate,kerf))return toast(`${item.name} listga sig‘maydi.`);sheets.push(sheet)}
   }
-  if(item.paid>0&&isNew)db.finance.unshift({id:uid("fin"),type:"income",amount:item.paid,category:"Buyurtma to‘lovi",payment:"Naqd",note:`${item.number} ${item.customer}`,date:today(),createdAt:nowISO()});
-  persist();toast(deduct?"Buyurtma saqlandi va ombor yangilandi":"Buyurtma saqlandi");resetOrder();go("orders")
+  $("sheetPicker").innerHTML=sheets.map((_,i)=>`<option value="${i}">List ${i+1}</option>`).join("");
+  renderResult();drawSheet(0);renderEdgeBreakdown();toast(`${sheets.length} ta listga joylashtirildi`)
 }
-$("orderForm").onsubmit=e=>{e.preventDefault();saveOrder(false)};$("saveAndDeduct").onclick=()=>saveOrder(true);
+$("optimizeBtn").onclick=optimize;$("sheetPicker").onchange=e=>drawSheet(num(e.target.value));
+function edgeTotals(){
+  const totals={};for(const p of parts){let mm=0;if(p.edgeSides===1)mm=Math.max(p.w,p.h);if(p.edgeSides===2)mm=p.w+p.h;if(p.edgeSides===4)mm=2*p.w+2*p.h;if(mm&&p.edgeCode)totals[p.edgeCode]=(totals[p.edgeCode]||0)+mm*p.qty}
+  return totals
+}
+function renderResult(){
+  const used=parts.reduce((s,p)=>s+p.w*p.h*p.qty,0),sw=num($("sheetW").value),sh=num($("sheetH").value),total=sheets.length*sw*sh,waste=total?Math.max(0,(total-used)/total*100):0,edge=Object.values(edgeTotals()).reduce((s,v)=>s+v,0)/1000;
+  $("resultSheets").textContent=sheets.length;$("resultUsed").textContent=(used/1e6).toFixed(2)+" m²";$("resultWaste").textContent=waste.toFixed(1)+"%";$("resultEdge").textContent=edge.toFixed(1)+" m"
+}
+function drawSheet(index){
+  const c=$("cutCanvas"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);const sheet=sheets[index];if(!sheet){ctx.fillStyle="#6c7b72";ctx.font="24px Arial";ctx.fillText("Optimallashtirish natijasi shu yerda ko‘rinadi.",80,100);$("cutLegend").innerHTML="";return}
+  const pad=45,scale=Math.min((c.width-2*pad)/sheet.w,(c.height-2*pad)/sheet.h),ox=(c.width-sheet.w*scale)/2,oy=(c.height-sheet.h*scale)/2;ctx.fillStyle="#f4f6f5";ctx.strokeStyle="#26372d";ctx.lineWidth=3;ctx.fillRect(ox,oy,sheet.w*scale,sheet.h*scale);ctx.strokeRect(ox,oy,sheet.w*scale,sheet.h*scale);
+  sheet.placed.forEach((p,i)=>{const col=colors[p.partIndex%colors.length];ctx.fillStyle=col;ctx.globalAlpha=.83;ctx.fillRect(ox+p.x*scale,oy+p.y*scale,p.pw*scale,p.ph*scale);ctx.globalAlpha=1;ctx.strokeStyle="#233229";ctx.lineWidth=1.2;ctx.strokeRect(ox+p.x*scale,oy+p.y*scale,p.pw*scale,p.ph*scale);ctx.fillStyle="#122019";ctx.font=`${Math.max(10,Math.min(18,p.pw*scale/7))}px Arial`;ctx.fillText(`${p.name} ${p.w}×${p.h}`,ox+p.x*scale+5,oy+p.y*scale+20)});
+  $("cutLegend").innerHTML=parts.map((p,i)=>`<span><i style="background:${colors[i%colors.length]}"></i>${esc(p.name)} ${p.w}×${p.h}</span>`).join("")
+}
+$("printCutMap").onclick=()=>window.print();
+$("saveCutProject").onclick=()=>{db.cutProjects=db.cutProjects||[];db.cutProjects.unshift({id:uid("cut"),date:today(),materialId:$("materialSelect").value,parts:JSON.parse(JSON.stringify(parts)),sheets:JSON.parse(JSON.stringify(sheets)),createdAt:nowISO()});persist();toast("Kesish loyihasi saqlandi")};
 
-function renderDashboard(){
-  const t=today(),todayOrders=db.orders.filter(x=>x.date===t),active=db.orders.filter(x=>!["Tayyor","Yetkazildi","Bekor qilindi"].includes(x.status)),ready=db.orders.filter(x=>x.status==="Tayyor");
-  $("dToday").textContent=todayOrders.length;$("dActive").textContent=active.length;$("dReady").textContent=ready.length;$("dDebt").textContent=money(db.orders.reduce((s,x)=>s+num(x.debt),0));$("dProfit").textContent=money(db.orders.reduce((s,x)=>s+num(x.profit),0));
-  $("recentOrders").innerHTML=db.orders.slice(0,8).map(x=>`<div class="list-row"><div><strong>${esc(x.number)} — ${esc(x.customer||"Mijoz")}</strong><p>${esc(x.status)} · ${x.deadline||x.date}</p></div><span class="badge">${money(x.total)}</span></div>`).join("")||"<p>Buyurtma yo‘q.</p>"
+function renderEdgeBreakdown(){
+  const totals=edgeTotals(),entries=Object.entries(totals);$("edgeBreakdown").innerHTML=entries.length?`<table class="data-table"><thead><tr><th>Kromka kodi</th><th>Jami metr</th><th>Ombor qoldig‘i</th><th>Holat</th></tr></thead><tbody>${entries.map(([code,mm])=>{const e=db.edges.find(x=>x.code===code),need=mm/1000,stock=num(e?.stock),status=stock>=need?"Yetarli":"Yetmaydi";return`<tr><td>${esc(code)}</td><td>${need.toFixed(1)} m</td><td>${stock.toFixed(1)} m</td><td><span class="${stock>=need?"":"danger"}">${status}</span></td></tr>`}).join("")}</tbody></table>`:"<p>Kromka kodi kiritilgan detallar yo‘q.</p>";
+  if(window.Chart){if(edgeChart)edgeChart.destroy();edgeChart=new Chart($("edgeChart"),{type:"doughnut",data:{labels:entries.map(x=>x[0]),datasets:[{data:entries.map(x=>x[1]/1000)}]},options:{plugins:{legend:{position:"bottom"}}}})}
 }
-function renderChart(){if(!window.Chart)return;if(chart)chart.destroy();const s=statuses();chart=new Chart($("orderChart"),{type:"doughnut",data:{labels:s,datasets:[{data:s.map(st=>db.orders.filter(x=>x.status===st).length)}]},options:{plugins:{legend:{position:"bottom"}}}})}
-function renderOrders(){
-  $("orderFilter").innerHTML='<option value="">Barcha holat</option>'+statuses().map(s=>`<option>${s}</option>`).join("");const q=$("orderSearch").value.toLowerCase(),f=$("orderFilter").value,list=db.orders.filter(x=>(!q||`${x.number} ${x.customer} ${x.phone}`.toLowerCase().includes(q))&&(!f||x.status===f));
-  $("ordersTable").innerHTML=`<div class="table-wrap"><table class="data-table"><thead><tr><th>№</th><th>Mijoz</th><th>Sana</th><th>Tugash</th><th>Jami</th><th>Qarz</th><th>Holat</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.number)}</td><td>${esc(x.customer||"-")}<br><small>${esc(x.phone||"")}</small></td><td>${x.date||""}</td><td>${x.deadline||""}</td><td>${money(x.total)}</td><td>${money(x.debt)}</td><td><select data-status="${x.id}">${statuses().map(s=>`<option ${s===x.status?"selected":""}>${s}</option>`).join("")}</select></td><td><button data-edit="${x.id}">Edit</button></td></tr>`).join("")}</tbody></table></div>`
-}
-$("orderSearch").oninput=renderOrders;$("orderFilter").onchange=renderOrders;$("ordersTable").onchange=e=>{if(e.target.dataset.status){db.orders.find(x=>x.id===e.target.dataset.status).status=e.target.value;persist()}};
-$("ordersTable").onclick=e=>{const b=e.target.closest("[data-edit]");if(!b)return;const x=db.orders.find(v=>v.id===b.dataset.edit);$("orderId").value=x.id;$("orderNumber").value=x.number;$("orderDate").value=x.date||today();$("orderDeadline").value=x.deadline||"";$("orderStatus").innerHTML=statuses().map(s=>`<option ${s===x.status?"selected":""}>${s}</option>`).join("");$("orderCustomer").value=x.customer||"";$("orderPhone").value=x.phone||"";$("orderTelegram").value=x.telegram||"";$("orderAddress").value=x.address||"";$("orderDesigner").value=x.designer||"";$("orderWorker").value=x.worker||"";$("orderPaid").value=x.paid||0;$("orderNote").value=x.note||"";lines=JSON.parse(JSON.stringify(x.lines||[]));renderLines();go("new-order")};
-function renderProduction(){const s=statuses();$("productionBoard").innerHTML=s.map(st=>`<section class="kanban-col"><h3>${st} (${db.orders.filter(x=>x.status===st).length})</h3>${db.orders.filter(x=>x.status===st).map(x=>`<article class="kanban-card" draggable="true" data-order-drag="${x.id}"><strong>${esc(x.number)} — ${esc(x.customer||"Mijoz")}</strong><p>${money(x.total)} · ${x.deadline||""}</p><select data-prod="${x.id}">${s.map(a=>`<option ${a===x.status?"selected":""}>${a}</option>`).join("")}</select></article>`).join("")}</section>`).join("")}
-$("productionBoard").onchange=e=>{if(e.target.dataset.prod){db.orders.find(x=>x.id===e.target.dataset.prod).status=e.target.value;persist()}};
-function renderMovements(){const q=$("movementSearch").value.toLowerCase(),f=$("movementType").value,list=db.inventoryMovements.filter(x=>(!q||`${x.product} ${x.orderNumber} ${x.note}`.toLowerCase().includes(q))&&(!f||x.type===f));$("movementTable").innerHTML=`<table class="data-table"><thead><tr><th>Sana</th><th>Turi</th><th>Mahsulot</th><th>Miqdor</th><th>Buyurtma</th><th>Izoh</th></tr></thead><tbody>${list.map(x=>`<tr><td>${x.date}</td><td><span class="badge ${x.type==="out"?"red":""}">${x.type==="in"?"Kirim":"Chiqim"}</span></td><td>${esc(x.product)}</td><td>${x.qty} ${esc(x.unit||"")}</td><td>${esc(x.orderNumber||"-")}</td><td>${esc(x.note||"")}</td></tr>`).join("")}</tbody></table>`}
-$("movementSearch").oninput=renderMovements;$("movementType").onchange=renderMovements;
-function renderProfit(){const sales=db.orders.reduce((s,x)=>s+num(x.total),0),cost=db.orders.reduce((s,x)=>s+num(x.cost),0),profit=sales-cost;$("pSales").textContent=money(sales);$("pCost").textContent=money(cost);$("pProfit").textContent=money(profit);$("pMargin").textContent=(sales?profit/sales*100:0).toFixed(1)+"%";$("profitTable").innerHTML=`<table class="data-table"><thead><tr><th>№</th><th>Mijoz</th><th>Sotuv</th><th>Tannarx</th><th>Foyda</th><th>Marja</th></tr></thead><tbody>${db.orders.map(x=>`<tr><td>${esc(x.number)}</td><td>${esc(x.customer||"-")}</td><td>${money(x.total)}</td><td>${money(x.cost)}</td><td>${money(x.profit)}</td><td>${(x.total?x.profit/x.total*100:0).toFixed(1)}%</td></tr>`).join("")}</tbody></table>`}
-$("workerLogForm").onsubmit=e=>{e.preventDefault();db.workerLogs.unshift({id:uid("log"),workerId:$("logWorker").value,date:$("logDate").value,sheets:num($("logSheets").value),edgeMeters:num($("logEdge").value),drilled:num($("logDrill").value),note:$("logNote").value.trim(),createdAt:nowISO()});e.target.reset();$("logDate").value=today();persist();toast("Ish yozuvi saqlandi")};
-function renderWorkers(){$("logWorker").innerHTML=db.workers.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.role||"")}</option>`).join("");$("workerLogTable").innerHTML=`<table class="data-table"><thead><tr><th>Sana</th><th>Ishchi</th><th>List</th><th>Kromka</th><th>Teshik</th><th>Izoh</th></tr></thead><tbody>${db.workerLogs.map(x=>{const w=db.workers.find(a=>a.id===x.workerId);return`<tr><td>${x.date}</td><td>${esc(w?.name||"")}</td><td>${x.sheets}</td><td>${x.edgeMeters} m</td><td>${x.drilled}</td><td>${esc(x.note||"")}</td></tr>`}).join("")}</tbody></table>`}
-function renderAll(){db=loadDB();renderDashboard();renderOrders();renderProduction();renderMovements();renderProfit();renderWorkers();setTimeout(renderChart,50)}
-window.addEventListener("storage",renderAll);window.addEventListener("ibrat-db-change",renderAll);resetOrder();$("logDate").value=today();renderAll();
 
-// V22 drag & drop order status
-let draggedOrderId="";
-document.addEventListener("dragstart",e=>{const card=e.target.closest("[data-order-drag]");if(card)draggedOrderId=card.dataset.orderDrag});
-document.addEventListener("dragover",e=>{if(e.target.closest(".kanban-col"))e.preventDefault()});
-document.addEventListener("drop",e=>{const col=e.target.closest(".kanban-col");if(!col||!draggedOrderId)return;e.preventDefault();const heading=col.querySelector("h3")?.textContent||"";const status=heading.replace(/\s*\(\d+\)\s*$/,"").trim();const order=db.orders.find(x=>x.id===draggedOrderId);if(order&&status){order.status=status;persist();toast(`Buyurtma: ${status}`)}draggedOrderId=""});
+function textureOf(x){const h=`${x.name||""} ${x.color||""} ${(x.tags||[]).join(" ")}`.toLowerCase();for(const t of ["oq","yong‘oq","beton","yog‘och","eman","kashmir"])if(h.includes(t))return t;return""}
+function populateFilters(){const all=[...db.laminates,...db.edges];$("filterBrand").innerHTML='<option value="">Barcha brend</option>'+[...new Set(all.map(x=>x.brand).filter(Boolean))].sort().map(x=>`<option>${esc(x)}</option>`).join("")}
+function renderMaterials(){
+  const q=$("materialSearch").value.toLowerCase(),type=$("filterType").value,brand=$("filterBrand").value,texture=$("filterTexture").value.toLowerCase(),min=num($("filterMinPrice").value),max=num($("filterMaxPrice").value),available=$("filterAvailable").checked;
+  const lists=[];if(!type||type==="laminates")lists.push(...db.laminates.map(x=>({...x,_type:"Laminat"})));if(!type||type==="edges")lists.push(...db.edges.map(x=>({...x,_type:"Kromka"})));
+  const filtered=lists.filter(x=>{const hay=`${x.code} ${x.name} ${x.color||""} ${x.brand||""} ${(x.tags||[]).join(" ")}`.toLowerCase(),price=num(x.salePrice);return(!q||hay.includes(q))&&(!brand||x.brand===brand)&&(!texture||textureOf(x).includes(texture))&&(!min||price>=min)&&(!max||price<=max)&&(!available||num(x.stock)>0)});
+  $("materialGrid").innerHTML=filtered.map(x=>`<article class="material-card"><img src="${esc(productImage(x))}" alt=""><div><h3>${esc(x.code||"")} ${esc(x.name)}</h3><p>${esc(x.brand||"")} · ${money(x.salePrice)}</p><div class="tags"><span>${esc(x._type)}</span><span>Qoldiq: ${x.stock}</span>${x.location?`<span>${esc(x.location)}</span>`:""}</div><p><b>Mos:</b> ${esc((x.matchingEdges||x.matchingLaminate||[]).toString()||"Belgilanmagan")}</p></div></article>`).join("")||"<p>Mahsulot topilmadi.</p>"
+}
+["materialSearch","filterType","filterBrand","filterTexture","filterMinPrice","filterMaxPrice","filterAvailable"].forEach(id=>$(id).addEventListener(id==="materialSearch"?"input":"change",renderMaterials));
+
+function warehouseLocations(){const set=new Set(["A1","A2","A3","A4","A5","A6","B1","B2","B3","B4","B5","B6","C1","C2","C3","C4","C5","C6"]);[...db.laminates,...db.edges].forEach(x=>{if(x.location)set.add(x.location.toUpperCase().replace("-",""))});return [...set].sort()}
+function renderWarehouse(){
+  $("warehouseGrid").innerHTML=warehouseLocations().map(loc=>{const items=[...db.laminates,...db.edges].filter(x=>(x.location||"").toUpperCase().replace("-","")===loc),stock=items.reduce((s,x)=>s+num(x.stock),0),cls=!items.length?"empty":items.some(x=>num(x.stock)<=num(x.minStock||0))?"low":"full";return`<button class="warehouse-cell ${cls}" data-location="${esc(loc)}"><strong>${esc(loc)}</strong><small>${items.length} tur mahsulot</small><small>${stock.toFixed(0)} birlik</small></button>`}).join("")
+}
+$("warehouseGrid").onclick=e=>{const b=e.target.closest("[data-location]");if(!b)return;const loc=b.dataset.location,items=[...db.laminates.map(x=>({...x,type:"Laminat"})),...db.edges.map(x=>({...x,type:"Kromka"}))].filter(x=>(x.location||"").toUpperCase().replace("-","")===loc);$("warehouseInfo").innerHTML=`<h2>${esc(loc)}</h2>${items.map(x=>`<div class="list-row"><strong>${esc(x.code)} ${esc(x.name)}</strong><p>${esc(x.type)} · Qoldiq ${x.stock}</p></div>`).join("")||"<p>Bu joy bo‘sh.</p>"}`};
+
+function showScanner(data){let p;try{p=JSON.parse(data)}catch{p={code:data}};let x=(p.type&&db[p.type]?.find(v=>v.id===p.id))||db.laminates.find(v=>v.code===p.code)||db.edges.find(v=>v.code===p.code);if(!x)return $("scannerResult").innerHTML="<p>Mahsulot topilmadi.</p>";$("scannerResult").innerHTML=`<div class="material-card"><img src="${esc(productImage(x))}"><div><h3>${esc(x.code)} ${esc(x.name)}</h3><p>Narx: ${money(x.salePrice)}</p><p>Qoldiq: ${x.stock}</p><p>Ombor: ${esc(x.location||"-")}</p><p>Mos kromka: ${esc((x.matchingEdges||x.matchingLaminate||[]).toString()||"-")}</p></div></div>`}
+$("startScanner").onclick=async()=>{if(!("BarcodeDetector"in window))return $("scannerStatus").textContent="Bu brauzer QR skanerni qo‘llamaydi.";try{scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});$("scannerVideo").srcObject=scannerStream;const d=new BarcodeDetector({formats:["qr_code"]});scannerTimer=setInterval(async()=>{const c=await d.detect($("scannerVideo"));if(c.length){showScanner(c[0].rawValue);stopScanner()}},500);$("scannerStatus").textContent="QR kodni kameraga tuting..."}catch{$("scannerStatus").textContent="Kamera ochilmadi."}};
+function stopScanner(){if(scannerTimer)clearInterval(scannerTimer);scannerTimer=null;if(scannerStream)scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;$("scannerVideo").srcObject=null}$("stopScanner").onclick=stopScanner;
+
+function renderRecommendations(){
+  const cards=[];[...db.laminates.map(x=>({...x,type:"Laminat",unit:"list"})),...db.edges.map(x=>({...x,type:"Kromka",unit:"m"}))].forEach(x=>{if(num(x.stock)<=0)cards.push({cls:"warning",title:`${x.code} tugagan`,text:`${x.name} omborda qolmagan. Xarid rejasiga qo‘shing.`});else if(num(x.stock)<=num(x.minStock||0))cards.push({cls:"warning",title:`${x.code} kam qoldi`,text:`Qoldiq ${x.stock} ${x.unit}. Minimal daraja ${x.minStock||0}.`})});
+  const productMap={};for(const o of db.orders||[])for(const l of o.lines||[]){productMap[l.name]=(productMap[l.name]||0)+num(l.qty)}Object.entries(productMap).sort((a,b)=>b[1]-a[1]).slice(0,3).forEach(([name,qty])=>cards.push({cls:"good",title:`${name} — top mahsulot`,text:`Jami ${qty} birlik buyurtmalarda ishlatilgan.`}));
+  if(!cards.length)cards.push({cls:"info",title:"Ombor holati yaxshi",text:"Kam qolgan mahsulotlar aniqlanmadi."});
+  $("recommendGrid").innerHTML=cards.map(c=>`<article class="recommend-card ${c.cls}"><strong>${esc(c.title)}</strong><p>${esc(c.text)}</p></article>`).join("")
+}
+function renderCrm(){
+  const q=$("crmSearch").value.toLowerCase();const names=new Map();db.customers.forEach(c=>names.set(c.phone||c.name,c));db.orders.forEach(o=>{const k=o.phone||o.customer;if(!names.has(k))names.set(k,{name:o.customer,phone:o.phone,telegram:o.telegram})});
+  $("crmGrid").innerHTML=[...names.values()].filter(c=>!q||`${c.name} ${c.phone}`.toLowerCase().includes(q)).map(c=>{const os=db.orders.filter(o=>(c.phone&&o.phone===c.phone)||(!c.phone&&o.customer===c.name)).slice(0,8),total=os.reduce((s,o)=>s+num(o.total),0),debt=os.reduce((s,o)=>s+num(o.debt),0);return`<article class="crm-card"><h3>${esc(c.name||"Mijoz")}</h3><p>☎ ${esc(c.phone||"-")} · Telegram: ${esc(c.telegram||"-")}</p><div class="crm-stats"><span>${os.length} buyurtma</span><span>${money(total)}</span><span>Qarz ${money(debt)}</span></div><p>Bonus: ${num(c.bonus||0)} · Chegirma: ${num(c.discount||0)}%</p><p>${os.map(o=>`${o.number} — ${money(o.total)}`).join("<br>")||"Buyurtma yo‘q"}</p></article>`}).join("")
+}$("crmSearch").oninput=renderCrm;
+
+function periodSales(days){const d=new Date();d.setDate(d.getDate()-days+1);const from=d.toISOString().slice(0,10);return db.orders.filter(x=>(x.date||"")>=from).reduce((s,x)=>s+num(x.total),0)}
+function renderAnalytics(){
+  $("aToday").textContent=money(db.orders.filter(x=>x.date===today()).reduce((s,x)=>s+num(x.total),0));$("aWeek").textContent=money(periodSales(7));$("aMonth").textContent=money(periodSales(30));$("aYear").textContent=money(periodSales(365));
+  if(!window.Chart)return;const labels=[],vals=[];for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);labels.push(ds.slice(5));vals.push(db.orders.filter(x=>x.date===ds).reduce((s,x)=>s+num(x.total),0))}
+  if(periodChart)periodChart.destroy();periodChart=new Chart($("periodChart"),{type:"line",data:{labels,datasets:[{label:"30 kun savdo",data:vals,tension:.35,borderWidth:2}]},options:{scales:{y:{beginAtZero:true}}}});
+  const map={};for(const o of db.orders)for(const l of o.lines||[])map[l.name]=(map[l.name]||0)+num(l.qty);const top=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);if(topChart)topChart.destroy();topChart=new Chart($("topChart"),{type:"bar",data:{labels:top.map(x=>x[0]),datasets:[{label:"Top mahsulot/xizmat",data:top.map(x=>x[1])}]},options:{indexAxis:"y",scales:{x:{beginAtZero:true}}}})
+}
+
+function catalogItems(){const type=$("catalogType").value,stockOnly=$("catalogStockOnly").checked;let list=[];if(type==="all"||type==="laminates")list.push(...db.laminates.map(x=>({...x,type:"Laminat",price:x.salePrice})));if(type==="all"||type==="edges")list.push(...db.edges.map(x=>({...x,type:"Kromka",price:x.salePrice})));if(type==="products")list.push(...db.products.map(x=>({...x,type:"Mebel",price:x.price})));return list.filter(x=>!stockOnly||num(x.stock)>0)}
+function renderCatalog(){$("catalogPreview").innerHTML=catalogItems().map(x=>`<article class="catalog-card"><img src="${esc(productImage(x))}"><div><h3>${esc(x.code||"")} ${esc(x.name)}</h3><p>${esc(x.type)} · ${esc(x.brand||x.category||"")}</p><p><b>${money(x.price)}</b> · Qoldiq ${x.stock}</p></div></article>`).join("")||"<p>Mahsulot yo‘q.</p>"}
+$("catalogType").onchange=renderCatalog;$("catalogStockOnly").onchange=renderCatalog;$("generateCatalog").onclick=()=>{renderCatalog();setTimeout(()=>window.print(),100)};
+
+function renderAll(){db=loadDB();populateSelectors();populateFilters();renderParts();renderMaterials();renderWarehouse();renderRecommendations();renderCrm();renderCatalog();drawSheet(0)}
+window.addEventListener("storage",renderAll);window.addEventListener("ibrat-db-change",renderAll);renderAll();

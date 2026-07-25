@@ -1,238 +1,61 @@
-import { db } from "./firebase-config.js";
-import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, where, limit } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-const $ = id => document.getElementById(id);
-let products = [];
-let publicLaminates = [];
-let publicEdges = [];
-let activeTradeTab = "laminates";
-let favorites = JSON.parse(localStorage.getItem("ibratFavorites") || "[]");
-let cart = JSON.parse(localStorage.getItem("ibratCart") || "[]");
-let viewed = JSON.parse(localStorage.getItem("ibratViewed") || "[]");
-let currentProduct = null;
-let gallery = [];
-let galleryIndex = 0;
-let visibleCount = 8;
-let reviewsUnsubscribe = null;
-let drawerMode = "cart";
+const $=id=>document.getElementById(id);
+let customers=[],inventory=[],production=[],finance=[];
+let financeChart=null,productionChart=null;
 
-function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function imageUrl(name=""){const clean=String(name).replace(/^images\//,"");return clean?`./images/${encodeURIComponent(clean).replaceAll("%2F","/")}`:"./logo.png"}
-function images(p={}){if(Array.isArray(p.images)&&p.images.length)return p.images.slice(0,10);if(p.imageName)return[p.imageName];return[]}
-function mainImage(p){const list=images(p);return list.length?imageUrl(list[0]):(p.image||"./logo.png")}
-function numberPrice(value=""){const n=Number(String(value).replace(/[^\d]/g,""));return Number.isFinite(n)?n:0}
-function discount(p){const old=numberPrice(p.oldPrice),now=numberPrice(p.price);return old>now&&now>0?Math.round((old-now)/old*100):0}
-function activeProducts(){return products.filter(p=>p.status!=="hidden")}
-function toast(message){const t=$("siteToast");t.textContent=message;t.classList.add("show");clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),2500)}
-function saveState(){localStorage.setItem("ibratFavorites",JSON.stringify(favorites));localStorage.setItem("ibratCart",JSON.stringify(cart));localStorage.setItem("ibratViewed",JSON.stringify(viewed));$("favoritesCount").textContent=favorites.length;$("cartCount").textContent=cart.length}
-function cleanState(){const ids=new Set(products.map(p=>p.id));favorites=favorites.filter(id=>ids.has(id));cart=cart.filter(id=>ids.has(id));viewed=viewed.filter(id=>ids.has(id));saveState()}
-function markViewed(id){viewed=[id,...viewed.filter(x=>x!==id)].slice(0,20);saveState()}
-function sorted(list){
-  const mode=$("catalogSort").value;
-  const copy=[...list];
-  if(mode==="newest")return copy.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  if(mode==="popular")return copy.sort((a,b)=>Number(b.salesCount||0)-Number(a.salesCount||0));
-  if(mode==="price-low")return copy.sort((a,b)=>numberPrice(a.price)-numberPrice(b.price));
-  if(mode==="price-high")return copy.sort((a,b)=>numberPrice(b.price)-numberPrice(a.price));
-  return copy.sort((a,b)=>Number(Boolean(b.featured))-Number(Boolean(a.featured))||Number(a.sortOrder||0)-Number(b.sortOrder||0));
-}
-function filterProducts(){
-  const search=$("catalogSearch").value.trim().toLowerCase();
-  const category=$("catalogCategory").value;
-  const stock=$("stockFilter").value;
-  return activeProducts().filter(p=>{
-    const text=`${p.name} ${p.category} ${p.description} ${p.material||""} ${(p.colors||[]).join(" ")}`.toLowerCase();
-    const sold=p.soldOut||Number(p.stock)===0;
-    return(!search||text.includes(search))&&(!category||p.category===category)&&(!stock||(stock==="available"&&!sold)||(stock==="low"&&!sold&&Number(p.stock)<=3)||(stock==="sold"&&sold));
-  });
-}
-function productCard(p){
-  const sold=p.soldOut||Number(p.stock)===0;
-  const fav=favorites.includes(p.id);
-  const off=discount(p);
-  return `<article class="premium-product-card">
-    <div class="premium-product-image">
-      <img loading="lazy" src="${esc(mainImage(p))}" alt="${esc(p.name)}">
-      <div class="product-badges">${p.isNew?'<span>YANGI</span>':""}${p.featured?'<span class="dark-badge">TOP</span>':""}${off?`<span class="sale-badge">-${off}%</span>`:""}</div>
-      <button class="favorite-heart ${fav?"active":""}" data-favorite="${p.id}" type="button">♥</button>
-      ${images(p).length>1?`<span class="photo-count">${images(p).length} rasm</span>`:""}
-    </div>
-    <div class="premium-product-info">
-      <div class="product-category-line"><span>${esc(p.category||"Boshqa")}</span>${p.sku?`<small>#${esc(p.sku)}</small>`:""}</div>
-      <h3>${esc(p.name)}</h3>
-      <p>${esc(p.description||"Sifatli va zamonaviy mebel.")}</p>
-      <div class="premium-price"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}</div>
-      <div class="availability ${sold?"sold":Number(p.stock)<=3?"low":""}">${sold?"Sotuvda yo‘q":Number(p.stock)<=3?`Faqat ${Number(p.stock)} ta qoldi`:"Omborda mavjud"}</div>
-      <div class="card-buttons"><button data-detail="${p.id}" type="button">Batafsil</button><button class="green-card-button" data-cart="${p.id}" type="button" ${sold?"disabled":""}>Savatchaga</button></div>
-    </div>
-  </article>`;
-}
-function renderCategories(){
-  const counts={};
-  activeProducts().forEach(p=>counts[p.category||"Boshqa"]=(counts[p.category||"Boshqa"]||0)+1);
-  const cats=Object.keys(counts).sort();
-  $("catalogCategory").innerHTML='<option value="">Barcha kategoriyalar</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-  $("categoryGrid").innerHTML=cats.length?cats.slice(0,8).map(c=>{
-    const sample=activeProducts().find(p=>p.category===c);
-    return `<button class="premium-category-card" data-category="${esc(c)}" type="button"><img src="${esc(sample?mainImage(sample):"./logo.png")}" alt="${esc(c)}"><span><strong>${esc(c)}</strong><small>${counts[c]} ta mahsulot</small></span><b>→</b></button>`;
-  }).join(""):'<div class="premium-empty">Kategoriya topilmadi.</div>';
-}
-function renderCatalog(){
-  const all=sorted(filterProducts());
-  const shown=all.slice(0,visibleCount);
-  $("catalogCount").textContent=`${all.length} ta mahsulot`;
-  $("catalogGrid").innerHTML=shown.length?shown.map(productCard).join(""):'<div class="premium-empty">Mos mahsulot topilmadi.</div>';
-  $("loadMoreButton").hidden=shown.length>=all.length;
-  renderActiveFilters();
-}
-function renderActiveFilters(){
-  const tags=[];
-  if($("catalogSearch").value)tags.push(`Qidiruv: ${$("catalogSearch").value}`);
-  if($("catalogCategory").value)tags.push($("catalogCategory").value);
-  if($("stockFilter").value)tags.push($("stockFilter").selectedOptions[0].text);
-  $("activeFilters").innerHTML=tags.map(t=>`<span>${esc(t)}</span>`).join("");
-}
-function renderFeatured(){
-  const list=sorted(activeProducts()).filter(p=>p.featured).slice(0,10);
-  $("featuredSlider").innerHTML=list.length?list.map(productCard).join(""):'<div class="premium-empty">Top mahsulotlar hali belgilanmagan.</div>';
-  const hero=list[0]||activeProducts()[0];
-  if(hero){$("heroProductImage").src=mainImage(hero);$("heroProductName").textContent=hero.name;$("heroProductButton").dataset.detail=hero.id}
-}
-function renderRecommendations(){
-  const categoryScore={};
-  [...favorites,...viewed].forEach(id=>{const p=products.find(x=>x.id===id);if(p?.category)categoryScore[p.category]=(categoryScore[p.category]||0)+1});
-  const list=activeProducts().filter(p=>!favorites.includes(p.id)).map(p=>({p,score:(categoryScore[p.category]||0)*5+Number(p.featured?3:0)+Number(p.salesCount||0)/10})).sort((a,b)=>b.score-a.score).slice(0,8).map(x=>x.p);
-  $("recommendationSlider").innerHTML=list.length?list.map(productCard).join(""):'<div class="premium-empty">Mahsulotlarni ko‘rganingizdan so‘ng tavsiyalar paydo bo‘ladi.</div>';
-}
-function showDrawer(mode){
-  drawerMode=mode;
-  $("drawerTitle").textContent=mode==="cart"?"Savatcha":"Sevimlilar";
-  const ids=mode==="cart"?cart:favorites;
-  const list=ids.map(id=>products.find(p=>p.id===id)).filter(Boolean);
-  $("drawerContent").innerHTML=list.length?list.map(p=>`<article class="drawer-item"><img src="${esc(mainImage(p))}" alt=""><div><strong>${esc(p.name)}</strong><span>${esc(p.price)}</span></div><button data-drawer-remove="${p.id}" type="button">×</button></article>`).join(""):'<div class="premium-empty">Hozircha bo‘sh.</div>';
-  if(mode==="cart"&&list.length){const total=list.reduce((s,p)=>s+numberPrice(p.price),0);$("drawerFooter").innerHTML=`<div class="drawer-total"><span>Jami</span><strong>${total.toLocaleString("uz-UZ")} so‘m</strong></div><button class="drawer-checkout" id="drawerCheckout" type="button">Buyurtma berish</button>`;$("drawerCheckout").onclick=checkout}else{$("drawerFooter").innerHTML=""}
-  $("sideDrawer").classList.add("open");$("drawerOverlay").classList.add("show");$("sideDrawer").setAttribute("aria-hidden","false");
-}
-function closeDrawer(){$("sideDrawer").classList.remove("open");$("drawerOverlay").classList.remove("show");$("sideDrawer").setAttribute("aria-hidden","true")}
-async function checkout(){
-  const list=cart.map(id=>products.find(p=>p.id===id)).filter(Boolean);if(!list.length)return;
-  const name=prompt("Ismingiz:");if(!name)return;const phone=prompt("Telefon raqamingiz:");if(!phone)return;
-  const total=list.reduce((s,p)=>s+numberPrice(p.price),0);
-  try{await addDoc(collection(db,"orders"),{customerName:name,phone,items:list.map(p=>({id:p.id,name:p.name,price:p.price,image:mainImage(p)})),total,status:"new",createdAt:serverTimestamp()});const message=`Assalomu alaykum!\n\n${list.map((p,i)=>`${i+1}. ${p.name} — ${p.price}`).join("\n")}\n\nJami: ${total.toLocaleString("uz-UZ")} so‘m\nIsm: ${name}\nTelefon: ${phone}`;window.open(`https://t.me/ibratmebel8909?text=${encodeURIComponent(message)}`,"_blank","noopener");cart=[];saveState();closeDrawer();toast("Buyurtma saqlandi")}catch(e){console.error(e);toast("Buyurtma yuborilmadi")}
-}
-function renderGallery(index=0){galleryIndex=(index+gallery.length)%gallery.length;const main=$("modalMainImage");if(main)main.src=imageUrl(gallery[galleryIndex]);document.querySelectorAll("[data-thumb]").forEach((b,i)=>b.classList.toggle("active",i===galleryIndex))}
-function loadReviews(productId){
-  reviewsUnsubscribe?.();
-  const q=query(collection(db,"reviews"),where("productId","==",productId),where("status","==","approved"),orderBy("createdAt","desc"),limit(20));
-  reviewsUnsubscribe=onSnapshot(q,s=>{const rows=s.docs.map(d=>d.data());$("reviewsList").innerHTML=rows.length?rows.map(r=>`<article class="review-item"><div><strong>${esc(r.name)}</strong><span>${"★".repeat(Number(r.rating||0))}</span></div><p>${esc(r.text)}</p></article>`).join(""):'<p class="premium-empty">Hozircha izoh yo‘q.</p>';const avg=rows.length?rows.reduce((a,r)=>a+Number(r.rating||0),0)/rows.length:0;$("reviewsAverage").textContent=`${avg.toFixed(1)} ★`},console.error);
-}
-function openProduct(p){
-  currentProduct=p;markViewed(p.id);renderRecommendations();gallery=images(p);if(!gallery.length)gallery=[""];
-  const off=discount(p);
-  $("productModalContent").innerHTML=`<div class="premium-modal-grid"><div class="modal-gallery"><img id="modalMainImage" class="modal-main-image" src="${esc(imageUrl(gallery[0]))}" alt="${esc(p.name)}"><div class="modal-thumbs">${gallery.map((n,i)=>`<button data-thumb="${i}" class="${i===0?"active":""}" type="button"><img src="${esc(imageUrl(n))}" alt=""></button>`).join("")}</div></div><div class="modal-details"><span class="modal-category">${esc(p.category||"Boshqa")}</span><h2>${esc(p.name)}</h2><p>${esc(p.description||"")}</p><div class="modal-price"><strong>${esc(p.price)}</strong>${p.oldPrice?`<del>${esc(p.oldPrice)}</del>`:""}${off?`<span>-${off}%</span>`:""}</div>${p.material?`<p><b>Material:</b> ${esc(p.material)}</p>`:""}${p.colors?.length?`<div class="option-block"><b>Ranglar</b><div>${p.colors.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`:""}${p.sizes?.length?`<div class="option-block"><b>O‘lchamlar</b><div>${p.sizes.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`:""}<div class="modal-actions">${p.video?`<a href="${esc(p.video)}" target="_blank">Videoni ko‘rish</a>`:""}<button data-cart="${p.id}" type="button">Savatchaga qo‘shish</button></div></div></div>`;
-  loadReviews(p.id);$("productModal").showModal();
-}
-document.addEventListener("click",e=>{
-  const fav=e.target.closest("[data-favorite]"),cartBtn=e.target.closest("[data-cart]"),detail=e.target.closest("[data-detail]"),category=e.target.closest("[data-category]");
-  if(fav){const id=fav.dataset.favorite;favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];saveState();renderCatalog();renderFeatured();renderRecommendations();toast(favorites.includes(id)?"Sevimlilarga qo‘shildi":"Sevimlilardan olib tashlandi")}
-  if(cartBtn){const id=cartBtn.dataset.cart;if(!cart.includes(id))cart.push(id);saveState();cartBtn.textContent="Qo‘shildi ✓";toast("Savatchaga qo‘shildi")}
-  if(detail){const p=products.find(x=>x.id===detail.dataset.detail);if(p)openProduct(p)}
-  if(category){$("catalogCategory").value=category.dataset.category;visibleCount=8;renderCatalog();document.querySelector("#katalog").scrollIntoView({behavior:"smooth"})}
+const labels={new:"Yangi",design:"Dizayn",cutting:"Kesish",edge:"Kromka",assembly:"Yig‘ish",ready:"Tayyor",delivered:"Yetkazildi"};
+function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
+function money(n){return Number(n||0).toLocaleString("uz-UZ")+" so‘m"}
+function toast(m){const t=$("erpToast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2500)}
+function todayStart(){const d=new Date();d.setHours(0,0,0,0);return d}
+
+$("erpLoginForm").onsubmit=async e=>{e.preventDefault();$("erpLoginMessage").textContent="Tekshirilmoqda...";try{await signInWithEmailAndPassword(auth,$("erpEmail").value.trim(),$("erpPassword").value);$("erpLoginMessage").textContent=""}catch(err){console.error(err);$("erpLoginMessage").textContent="Email yoki parol noto‘g‘ri."}};
+$("erpLogout").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{$("erpLogin").hidden=!!u;$("erpApp").hidden=!u;$("erpUser").textContent=u?u.email:""});
+
+document.querySelectorAll("[data-erp-tab]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-erp-tab]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");document.querySelectorAll(".erp-view").forEach(v=>v.classList.remove("active"));
+  $(`erpView${b.dataset.erpTab[0].toUpperCase()+b.dataset.erpTab.slice(1)}`).classList.add("active");
+  if(b.dataset.erpTab==="dashboard")setTimeout(renderCharts,40);
 });
-$("menuButton").onclick=()=>$("mainNav").classList.toggle("open");
-$("mainNav").querySelectorAll("a").forEach(a=>a.onclick=()=>$("mainNav").classList.remove("open"));
-$("favoritesButton").onclick=()=>showDrawer("favorites");
-$("cartButton").onclick=()=>showDrawer("cart");
-$("drawerClose").onclick=closeDrawer;$("drawerOverlay").onclick=closeDrawer;
-$("drawerContent").onclick=e=>{const b=e.target.closest("[data-drawer-remove]");if(!b)return;if(drawerMode==="cart")cart=cart.filter(x=>x!==b.dataset.drawerRemove);else favorites=favorites.filter(x=>x!==b.dataset.drawerRemove);saveState();showDrawer(drawerMode);renderCatalog();renderFeatured()};
-$("modalClose").onclick=()=>{$("productModal").close();reviewsUnsubscribe?.()};
-$("productModalContent").onclick=e=>{const t=e.target.closest("[data-thumb]");if(t)renderGallery(Number(t.dataset.thumb));const main=e.target.closest(".modal-main-image");if(main){$("imageZoomView").src=main.src;$("imageZoomDialog").showModal()}};
-$("imageZoomClose").onclick=()=>$("imageZoomDialog").close();
-$("reviewForm").onsubmit=async e=>{e.preventDefault();if(!currentProduct)return;try{await addDoc(collection(db,"reviews"),{productId:currentProduct.id,productName:currentProduct.name,name:$("reviewName").value.trim(),rating:Number($("reviewRating").value),text:$("reviewText").value.trim(),status:"pending",createdAt:serverTimestamp()});$("reviewForm").reset();toast("Izoh yuborildi. Tasdiqlangach ko‘rinadi.")}catch(err){console.error(err);toast("Izoh yuborilmadi")}};
-["catalogSearch"].forEach(id=>$(id).oninput=()=>{visibleCount=8;renderCatalog()});
-["catalogCategory","catalogSort","stockFilter"].forEach(id=>$(id).onchange=()=>{visibleCount=8;renderCatalog()});
-$("loadMoreButton").onclick=()=>{visibleCount+=8;renderCatalog()};
-$("featuredPrev").onclick=()=>$("featuredSlider").scrollBy({left:-360,behavior:"smooth"});$("featuredNext").onclick=()=>$("featuredSlider").scrollBy({left:360,behavior:"smooth"});
-$("themeToggle").onclick=()=>{const dark=document.documentElement.classList.toggle("premium-dark");localStorage.setItem("ibratTheme",dark?"dark":"light");$("themeToggle").textContent=dark?"☀":"☾"};
-if(localStorage.getItem("ibratTheme")==="dark"){document.documentElement.classList.add("premium-dark");$("themeToggle").textContent="☀"}
-$("downloadPdfButton").onclick=()=>{const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(18);doc.text("BUVAYDA IBRAT MEBEL KATALOGI",14,18);doc.setFontSize(10);let y=30;sorted(filterProducts()).forEach((p,i)=>{if(y>280){doc.addPage();y=20}doc.text(`${i+1}. ${p.name}`,14,y);doc.text(`${p.category||"Boshqa"} | ${p.price}`,14,y+6);y+=18});doc.save("ibrat-mebel-katalog.pdf")};
-$("buyurtma").onsubmit=e=>{e.preventDefault();const text=encodeURIComponent(`Assalomu alaykum!\nIsm: ${$("customerName").value.trim()}\nTelefon: ${$("customerPhone").value.trim()}\nXizmat: ${$("customerService").value}\nIzoh: ${$("customerMessage").value.trim()}`);window.open(`https://t.me/ibratmebel8909?text=${text}`,"_blank","noopener")};
 
-onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),s=>{products=s.docs.map(d=>({id:d.id,...d.data()}));cleanState();renderCategories();renderFeatured();renderCatalog();renderRecommendations()},e=>{$("catalogGrid").innerHTML='<div class="premium-empty">Mahsulotlarni yuklashda xatolik.</div>';console.error(e)});
-
-
-function publicStockClass(x){return Number(x.stock)<=Number(x.minStock||0)?"low":""}
-function renderPublicTrade(){
-  const search=$("tradeSearch")?.value.trim().toLowerCase()||"";
-  const availability=$("tradeAvailability")?.value||"";
-  const filterItems=(items)=>items.filter(x=>{
-    const out=Number(x.stock)<=0;
-    const low=!out&&Number(x.stock)<=Number(x.minStock||0);
-    return(!search||`${x.code||""} ${x.name||""} ${x.brand||""}`.toLowerCase().includes(search))
-      &&(!availability||(availability==="available"&&!out)||(availability==="low"&&low));
-  });
-
-  const laminates=filterItems(publicLaminates);
-  const edges=filterItems(publicEdges);
-
-  $("laminatePublicGrid").innerHTML=laminates.length?laminates.map(x=>`
-    <article class="trade-card">
-      <span class="trade-card-code">${esc(x.code||"KODSIZ")}</span>
-      <h3>${esc(x.name||"Laminat")}</h3>
-      <p>${esc(x.brand||"Brend ko‘rsatilmagan")} · ${esc(x.thickness||"")} mm</p>
-      <p>O‘lchami: ${esc(x.size||"Ko‘rsatilmagan")}</p>
-      <div class="trade-card-price">
-        <div><small>1 list narxi</small><strong>${numberPrice(x.salePrice).toLocaleString("uz-UZ")} so‘m</strong></div>
-        <span class="trade-card-stock ${publicStockClass(x)}">${Number(x.stock||0)} list</span>
-      </div>
-      <div class="trade-card-actions">
-        <button data-trade-order="laminate" data-trade-id="${x.id}" type="button">Buyurtma</button>
-        <a href="tel:+998958027755">Qo‘ng‘iroq</a>
-      </div>
-    </article>`).join(""):'<div class="premium-empty">Laminatlar hali kiritilmagan.</div>';
-
-  $("edgePublicGrid").innerHTML=edges.length?edges.map(x=>`
-    <article class="trade-card">
-      <span class="trade-card-code">${esc(x.code||"KODSIZ")}</span>
-      <h3>${esc(x.name||"Kromka")}</h3>
-      <p>${esc(x.brand||"Brend ko‘rsatilmagan")}</p>
-      <p>O‘lchami: ${esc(x.thickness||"")} × ${esc(x.width||"")} mm</p>
-      <div class="trade-card-price">
-        <div><small>1 metr narxi</small><strong>${numberPrice(x.salePrice).toLocaleString("uz-UZ")} so‘m</strong></div>
-        <span class="trade-card-stock ${publicStockClass(x)}">${Number(x.stock||0)} metr</span>
-      </div>
-      <div class="trade-card-actions">
-        <button data-trade-order="edge" data-trade-id="${x.id}" type="button">Buyurtma</button>
-        <a href="tel:+998958027755">Qo‘ng‘iroq</a>
-      </div>
-    </article>`).join(""):'<div class="premium-empty">Kromkalar hali kiritilmagan.</div>';
+function updateKpis(){
+  $("kpiCustomers").textContent=customers.length;$("kpiInventory").textContent=inventory.length;
+  $("kpiProduction").textContent=production.filter(p=>!["ready","delivered"].includes(p.status)).length;
+  const start=todayStart();const todays=finance.filter(f=>f.createdAt?.toDate?.()>=start);
+  const income=todays.filter(f=>f.type==="income").reduce((s,f)=>s+Number(f.amount||0),0);
+  const expense=todays.filter(f=>f.type==="expense").reduce((s,f)=>s+Number(f.amount||0),0);
+  $("kpiIncome").textContent=money(income);$("kpiExpense").textContent=money(expense);$("kpiProfit").textContent=money(income-expense);
 }
-document.addEventListener("click",e=>{
-  const tab=e.target.closest("[data-trade-tab]");
-  if(tab){
-    activeTradeTab=tab.dataset.tradeTab;
-    document.querySelectorAll("[data-trade-tab]").forEach(b=>b.classList.toggle("active",b===tab));
-    $("laminatePublicGrid").hidden=activeTradeTab!=="laminates";
-    $("edgePublicGrid").hidden=activeTradeTab!=="edges";
-  }
-  const order=e.target.closest("[data-trade-order]");
-  if(order){
-    const item=order.dataset.tradeOrder==="laminate"
-      ?publicLaminates.find(x=>x.id===order.dataset.tradeId)
-      :publicEdges.find(x=>x.id===order.dataset.tradeId);
-    if(!item)return;
-    const unit=order.dataset.tradeOrder==="laminate"?"list":"metr";
-    const text=`Assalomu alaykum!\n\n${order.dataset.tradeOrder==="laminate"?"Laminat":"Kromka"} buyurtma qilmoqchiman:\nKod: ${item.code||""}\nNomi: ${item.name||""}\nNarxi: ${Number(item.salePrice||0).toLocaleString("uz-UZ")} so‘m / ${unit}\nQoldiq: ${item.stock||0} ${unit}`;
-    window.open(`https://t.me/ibratmebel8909?text=${encodeURIComponent(text)}`,"_blank","noopener");
-  }
-});
-$("tradeSearch")?.addEventListener("input",renderPublicTrade);
-$("tradeAvailability")?.addEventListener("change",renderPublicTrade);
+function populateCustomers(){
+  $("prodCustomer").innerHTML='<option value="">Mijoz tanlang</option>'+customers.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.phone)}</option>`).join("");
+}
+function clearCustomer(){["customerId","crmName","crmPhone","crmAddress","crmNote"].forEach(id=>$(id).value="");$("crmDebt").value=0;$("cancelCustomerEdit").hidden=true}
+$("customerForm").onsubmit=async e=>{e.preventDefault();const data={name:$("crmName").value.trim(),phone:$("crmPhone").value.trim(),address:$("crmAddress").value.trim(),debt:Number($("crmDebt").value||0),note:$("crmNote").value.trim(),updatedAt:serverTimestamp()};const id=$("customerId").value;if(id)await updateDoc(doc(db,"customers",id),data);else await addDoc(collection(db,"customers"),{...data,createdAt:serverTimestamp()});clearCustomer();toast("Mijoz saqlandi")};$("cancelCustomerEdit").onclick=clearCustomer;
+function renderCustomers(){const q=$("customerSearch").value.toLowerCase();const l=customers.filter(c=>!q||`${c.name} ${c.phone} ${c.address}`.toLowerCase().includes(q));$("customersList").innerHTML=l.length?l.map(c=>`<div class="erp-row"><div><h3>${esc(c.name)}</h3><p>${esc(c.phone)} · ${esc(c.address||"Manzil yo‘q")}</p>${Number(c.debt)>0?`<span class="status-pill debt-pill">Qarz: ${money(c.debt)}</span>`:""}</div><div class="erp-row-actions"><button class="edit-action" data-edit-customer="${c.id}">Tahrir</button><button class="delete-action" data-delete-customer="${c.id}">O‘chirish</button></div></div>`).join(""):"<p>Mijozlar yo‘q.</p>"}
+$("customerSearch").oninput=renderCustomers;$("customersList").onclick=async e=>{const ed=e.target.closest("[data-edit-customer]"),del=e.target.closest("[data-delete-customer]");if(ed){const c=customers.find(x=>x.id===ed.dataset.editCustomer);$("customerId").value=c.id;$("crmName").value=c.name||"";$("crmPhone").value=c.phone||"";$("crmAddress").value=c.address||"";$("crmDebt").value=c.debt||0;$("crmNote").value=c.note||"";$("cancelCustomerEdit").hidden=false}if(del&&confirm("Mijoz o‘chirilsinmi?"))await deleteDoc(doc(db,"customers",del.dataset.deleteCustomer))};
 
-onSnapshot(query(collection(db,"laminates"),orderBy("createdAt","desc")),s=>{
-  publicLaminates=s.docs.map(d=>({id:d.id,...d.data()}));renderPublicTrade();
-},console.error);
+function clearInventory(){["inventoryId","invName"].forEach(id=>$(id).value="");$("invQuantity").value="";$("invMin").value=5;$("invCost").value=0;$("cancelInventoryEdit").hidden=true}
+$("inventoryForm").onsubmit=async e=>{e.preventDefault();const data={name:$("invName").value.trim(),category:$("invCategory").value,quantity:Number($("invQuantity").value||0),unit:$("invUnit").value,minQuantity:Number($("invMin").value||0),cost:Number($("invCost").value||0),updatedAt:serverTimestamp()};const id=$("inventoryId").value;if(id)await updateDoc(doc(db,"inventory",id),data);else await addDoc(collection(db,"inventory"),{...data,createdAt:serverTimestamp()});clearInventory();toast("Ombor yangilandi")};$("cancelInventoryEdit").onclick=clearInventory;
+function renderInventory(){const q=$("inventorySearch").value.toLowerCase();const l=inventory.filter(i=>!q||`${i.name} ${i.category}`.toLowerCase().includes(q));$("inventoryList").innerHTML=l.length?l.map(i=>`<div class="erp-row"><div><h3>${esc(i.name)}</h3><p>${esc(i.category)} · ${i.quantity} ${esc(i.unit)}</p><span class="status-pill ${Number(i.quantity)<=Number(i.minQuantity)?"low-stock":""}">${Number(i.quantity)<=Number(i.minQuantity)?"Kam qoldi":"Yetarli"}</span></div><div class="erp-row-actions"><button class="edit-action" data-edit-inventory="${i.id}">Tahrir</button><button class="delete-action" data-delete-inventory="${i.id}">O‘chirish</button></div></div>`).join(""):"<p>Ombor bo‘sh.</p>";$("lowStockList").innerHTML=inventory.filter(i=>Number(i.quantity)<=Number(i.minQuantity)).slice(0,8).map(i=>`<div class="erp-row"><div><h3>${esc(i.name)}</h3><p>${i.quantity} ${esc(i.unit)}</p></div><span class="status-pill low-stock">Kam</span></div>`).join("")||"<p>Kam qolgan material yo‘q.</p>"}
+$("inventorySearch").oninput=renderInventory;$("inventoryList").onclick=async e=>{const ed=e.target.closest("[data-edit-inventory]"),del=e.target.closest("[data-delete-inventory]");if(ed){const i=inventory.find(x=>x.id===ed.dataset.editInventory);$("inventoryId").value=i.id;$("invName").value=i.name||"";$("invCategory").value=i.category||"Boshqa";$("invQuantity").value=i.quantity||0;$("invUnit").value=i.unit||"dona";$("invMin").value=i.minQuantity||0;$("invCost").value=i.cost||0;$("cancelInventoryEdit").hidden=false}if(del&&confirm("Ombor mahsuloti o‘chirilsinmi?"))await deleteDoc(doc(db,"inventory",del.dataset.deleteInventory))};
 
-onSnapshot(query(collection(db,"edges"),orderBy("createdAt","desc")),s=>{
-  publicEdges=s.docs.map(d=>({id:d.id,...d.data()}));renderPublicTrade();
-},console.error);
+function clearProduction(){["productionId","prodTitle","prodWorker","prodDeadline","prodNote"].forEach(id=>$(id).value="");$("prodCustomer").value="";$("prodStatus").value="new";$("cancelProductionEdit").hidden=true}
+$("productionForm").onsubmit=async e=>{e.preventDefault();const customer=customers.find(c=>c.id===$("prodCustomer").value);const data={title:$("prodTitle").value.trim(),customerId:$("prodCustomer").value,customerName:customer?.name||"",worker:$("prodWorker").value.trim(),status:$("prodStatus").value,deadline:$("prodDeadline").value,note:$("prodNote").value.trim(),updatedAt:serverTimestamp()};const id=$("productionId").value;if(id)await updateDoc(doc(db,"production",id),data);else await addDoc(collection(db,"production"),{...data,createdAt:serverTimestamp()});clearProduction();toast("Ish vazifasi saqlandi")};$("cancelProductionEdit").onclick=clearProduction;
+function renderProduction(){const f=$("productionFilter").value;const l=production.filter(p=>!f||p.status===f);const html=l.length?l.map(p=>`<div class="erp-row"><div><h3>${esc(p.title)}</h3><p>${esc(p.customerName||"Mijoz yo‘q")} · ${esc(p.worker||"Usta belgilanmagan")}</p><span class="status-pill">${labels[p.status]||p.status}</span>${p.deadline?` <span class="status-pill">${esc(p.deadline)}</span>`:""}</div><div class="erp-row-actions"><button class="edit-action" data-edit-production="${p.id}">Tahrir</button><button class="delete-action" data-delete-production="${p.id}">O‘chirish</button></div></div>`).join(""):"<p>Vazifalar yo‘q.</p>";$("productionList").innerHTML=html;$("recentProduction").innerHTML=production.slice(0,7).map(p=>`<div class="erp-row"><div><h3>${esc(p.title)}</h3><p>${esc(p.customerName||"")}</p></div><span class="status-pill">${labels[p.status]||p.status}</span></div>`).join("")||"<p>Vazifalar yo‘q.</p>"}
+$("productionFilter").onchange=renderProduction;$("productionList").onclick=async e=>{const ed=e.target.closest("[data-edit-production]"),del=e.target.closest("[data-delete-production]");if(ed){const p=production.find(x=>x.id===ed.dataset.editProduction);$("productionId").value=p.id;$("prodTitle").value=p.title||"";$("prodCustomer").value=p.customerId||"";$("prodWorker").value=p.worker||"";$("prodStatus").value=p.status||"new";$("prodDeadline").value=p.deadline||"";$("prodNote").value=p.note||"";$("cancelProductionEdit").hidden=false}if(del&&confirm("Vazifa o‘chirilsinmi?"))await deleteDoc(doc(db,"production",del.dataset.deleteProduction))};
+
+$("financeForm").onsubmit=async e=>{e.preventDefault();await addDoc(collection(db,"finance"),{type:$("finType").value,amount:Number($("finAmount").value||0),category:$("finCategory").value.trim(),note:$("finNote").value.trim(),createdAt:serverTimestamp()});$("financeForm").reset();toast("Moliya operatsiyasi saqlandi")};
+function renderFinance(){const q=$("financeSearch").value.toLowerCase();const l=finance.filter(f=>!q||`${f.category} ${f.note} ${f.type}`.toLowerCase().includes(q));$("financeList").innerHTML=l.length?l.map(f=>`<div class="erp-row"><div><h3>${esc(f.category||"Operatsiya")}</h3><p>${esc(f.note||"")}</p></div><div><strong style="color:${f.type==="income"?"#087943":"#c0392b"}">${f.type==="income"?"+":"-"} ${money(f.amount)}</strong><div class="erp-row-actions"><button class="delete-action" data-delete-finance="${f.id}">O‘chirish</button></div></div></div>`).join(""):"<p>Operatsiyalar yo‘q.</p>"}
+$("financeSearch").oninput=renderFinance;$("financeList").onclick=async e=>{const del=e.target.closest("[data-delete-finance]");if(del&&confirm("Operatsiya o‘chirilsinmi?"))await deleteDoc(doc(db,"finance",del.dataset.deleteFinance))};
+
+function renderCharts(){if(!window.Chart)return;const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));d.setHours(0,0,0,0);return d});const income=[],expense=[];days.forEach(d=>{const next=new Date(d);next.setDate(next.getDate()+1);const l=finance.filter(f=>{const x=f.createdAt?.toDate?.();return x>=d&&x<next});income.push(l.filter(f=>f.type==="income").reduce((s,f)=>s+Number(f.amount||0),0));expense.push(l.filter(f=>f.type==="expense").reduce((s,f)=>s+Number(f.amount||0),0))});financeChart?.destroy();financeChart=new Chart($("financeChart"),{type:"bar",data:{labels:days.map(d=>d.toLocaleDateString("uz-UZ",{weekday:"short"})),datasets:[{label:"Kirim",data:income},{label:"Chiqim",data:expense}]},options:{responsive:true}});const counts={};production.forEach(p=>counts[labels[p.status]||p.status]=(counts[labels[p.status]||p.status]||0)+1);productionChart?.destroy();productionChart=new Chart($("productionChart"),{type:"doughnut",data:{labels:Object.keys(counts),datasets:[{data:Object.values(counts)}]},options:{responsive:true}})}
+
+onSnapshot(query(collection(db,"customers"),orderBy("createdAt","desc")),s=>{customers=s.docs.map(d=>({id:d.id,...d.data()}));renderCustomers();populateCustomers();updateKpis()},console.error);
+onSnapshot(query(collection(db,"inventory"),orderBy("createdAt","desc")),s=>{inventory=s.docs.map(d=>({id:d.id,...d.data()}));renderInventory();updateKpis()},console.error);
+onSnapshot(query(collection(db,"production"),orderBy("createdAt","desc")),s=>{production=s.docs.map(d=>({id:d.id,...d.data()}));renderProduction();updateKpis();renderCharts()},console.error);
+onSnapshot(query(collection(db,"finance"),orderBy("createdAt","desc")),s=>{finance=s.docs.map(d=>({id:d.id,...d.data()}));renderFinance();updateKpis();renderCharts()},console.error);
