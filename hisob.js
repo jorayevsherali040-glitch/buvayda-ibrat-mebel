@@ -1,2 +1,147 @@
-import {auth,db} from "./firebase-config.js";import{signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";import{collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,serverTimestamp,query,orderBy}from"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";const $=id=>document.getElementById(id);let operations=[],debts=[],monthlyChart=null,categoryChart=null;const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");const money=n=>Number(n||0).toLocaleString("uz-UZ")+" so‘m";const today=()=>new Date().toISOString().slice(0,10);const month=d=>d.toISOString().slice(0,7);const toast=m=>{const t=$("accountingToast");t.textContent=m;t.classList.add("show");clearTimeout(t._);t._=setTimeout(()=>t.classList.remove("show"),2500)};$("operationDate").value=today();$("accountingLoginForm").onsubmit=async e=>{e.preventDefault();try{await signInWithEmailAndPassword(auth,$("accountingEmail").value.trim(),$("accountingPassword").value);$("accountingLoginMessage").textContent=""}catch(err){$("accountingLoginMessage").textContent="Email yoki parol noto‘g‘ri."}};$("accountingLogout").onclick=()=>signOut(auth);onAuthStateChanged(auth,u=>{$("accountingLogin").hidden=!!u;$("accountingApp").hidden=!u;$("accountingUser").textContent=u?u.email:""});document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".accounting-view").forEach(v=>v.classList.remove("active"));$({operations:"viewOperations",debts:"viewDebts",reports:"viewReports",calculator:"viewCalculator"}[b.dataset.tab]).classList.add("active");if(b.dataset.tab==="reports")setTimeout(renderCharts,30)});$("operationForm").onsubmit=async e=>{e.preventDefault();await addDoc(collection(db,"finance"),{type:$("operationType").value,amount:Number($("operationAmount").value||0),category:$("operationCategory").value,paymentMethod:$("paymentMethod").value,date:$("operationDate").value,note:$("operationNote").value.trim(),createdAt:serverTimestamp()});$("operationAmount").value="";$("operationNote").value="";$("operationDate").value=today();toast("Operatsiya saqlandi")};function filtered(){const q=$("operationSearch").value.toLowerCase(),f=$("filterFrom").value,t=$("filterTo").value,ty=$("filterType").value;return operations.filter(o=>(!q||`${o.category} ${o.note} ${o.paymentMethod}`.toLowerCase().includes(q))&&(!f||o.date>=f)&&(!t||o.date<=t)&&(!ty||o.type===ty))}function renderOps(){const l=filtered();$("operationsList").innerHTML=l.length?l.map(o=>`<article class="account-row"><div><h3>${esc(o.category)}</h3><p>${esc(o.note||"Izoh yo‘q")} · ${esc(o.paymentMethod||"")}</p><span class="status-pill">${esc(o.date||"")}</span></div><div><div class="account-amount ${o.type}">${o.type==="income"?"+":"-"} ${money(o.amount)}</div><div class="row-actions"><button class="delete-action" data-del-op="${o.id}">O‘chirish</button></div></div></article>`).join(""):"<p>Operatsiyalar yo‘q.</p>"}[$("operationSearch"),$("filterFrom"),$("filterTo")].forEach(x=>x.oninput=renderOps);$("filterType").onchange=renderOps;$("operationsList").onclick=async e=>{const b=e.target.closest("[data-del-op]");if(b&&confirm("O‘chirilsinmi?"))await deleteDoc(doc(db,"finance",b.dataset.delOp))};function clearDebt(){["debtId","debtName","debtPhone","debtAmount","debtDueDate","debtNote"].forEach(id=>$(id).value="");$("debtDirection").value="receivable";$("cancelDebtEdit").hidden=true}$("debtForm").onsubmit=async e=>{e.preventDefault();const data={name:$("debtName").value.trim(),phone:$("debtPhone").value.trim(),direction:$("debtDirection").value,amount:Number($("debtAmount").value||0),dueDate:$("debtDueDate").value,note:$("debtNote").value.trim(),status:"open",updatedAt:serverTimestamp()},id=$("debtId").value;if(id)await updateDoc(doc(db,"debts",id),data);else await addDoc(collection(db,"debts"),{...data,createdAt:serverTimestamp()});clearDebt();toast("Qarzdorlik saqlandi")};$("cancelDebtEdit").onclick=clearDebt;function renderDebts(){const q=$("debtSearch").value.toLowerCase(),l=debts.filter(d=>!q||`${d.name} ${d.phone} ${d.note}`.toLowerCase().includes(q));$("debtsList").innerHTML=l.length?l.map(d=>`<article class="debt-row"><div><h3>${esc(d.name)}</h3><p>${esc(d.phone||"")} ${d.note?"· "+esc(d.note):""}</p><span class="status-pill ${d.direction==="payable"?"payable":""}">${d.direction==="receivable"?"Bizga qarzdor":"Biz qarzdormiz"}</span></div><div><div class="account-amount ${d.direction==="receivable"?"income":"expense"}">${money(d.amount)}</div><div class="row-actions">${d.status!=="paid"?`<button class="paid-action" data-paid="${d.id}">To‘landi</button>`:"<span class='status-pill'>Yopilgan</span>"}<button class="edit-action" data-edit="${d.id}">Tahrir</button><button class="delete-action" data-del="${d.id}">O‘chirish</button></div></div></article>`).join(""):"<p>Qarzdorlik yo‘q.</p>"}$("debtSearch").oninput=renderDebts;$("debtsList").onclick=async e=>{const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-del]"),paid=e.target.closest("[data-paid]");if(edit){const d=debts.find(x=>x.id===edit.dataset.edit);$("debtId").value=d.id;$("debtName").value=d.name||"";$("debtPhone").value=d.phone||"";$("debtDirection").value=d.direction||"receivable";$("debtAmount").value=d.amount||0;$("debtDueDate").value=d.dueDate||"";$("debtNote").value=d.note||"";$("cancelDebtEdit").hidden=false}if(del&&confirm("O‘chirilsinmi?"))await deleteDoc(doc(db,"debts",del.dataset.del));if(paid){const d=debts.find(x=>x.id===paid.dataset.paid);await updateDoc(doc(db,"debts",d.id),{status:"paid",paidAt:serverTimestamp()});await addDoc(collection(db,"finance"),{type:d.direction==="receivable"?"income":"expense",amount:Number(d.amount||0),category:"Qarzdorlik to‘lovi",paymentMethod:"Naqd",date:today(),note:`${d.name} qarzdorligi yopildi`,createdAt:serverTimestamp()});toast("Qarz yopildi")}};function kpis(){const td=today(),mk=month(new Date()),to=operations.filter(o=>o.date===td),mo=operations.filter(o=>(o.date||"").startsWith(mk)),sum=(a,t)=>a.filter(o=>o.type===t).reduce((s,o)=>s+Number(o.amount||0),0),ti=sum(to,"income"),te=sum(to,"expense"),mi=sum(mo,"income"),me=sum(mo,"expense"),debt=debts.filter(d=>d.status!=="paid"&&d.direction==="receivable").reduce((s,d)=>s+Number(d.amount||0),0);$("todayIncome").textContent=money(ti);$("todayExpense").textContent=money(te);$("todayProfit").textContent=money(ti-te);$("monthIncome").textContent=money(mi);$("monthExpense").textContent=money(me);$("totalDebt").textContent=money(debt)}function renderCharts(){if(!window.Chart)return;const ms=[...Array(6)].map((_,i)=>{const d=new Date();d.setMonth(d.getMonth()-(5-i));return d}),inc=ms.map(m=>operations.filter(o=>o.type==="income"&&(o.date||"").startsWith(month(m))).reduce((s,o)=>s+Number(o.amount||0),0)),exp=ms.map(m=>operations.filter(o=>o.type==="expense"&&(o.date||"").startsWith(month(m))).reduce((s,o)=>s+Number(o.amount||0),0));monthlyChart?.destroy();monthlyChart=new Chart($("monthlyChart"),{type:"bar",data:{labels:ms.map(m=>m.toLocaleDateString("uz-UZ",{month:"short"})),datasets:[{label:"Kirim",data:inc},{label:"Chiqim",data:exp}]}});const cats={};operations.filter(o=>o.type==="expense").forEach(o=>cats[o.category]=(cats[o.category]||0)+Number(o.amount||0));categoryChart?.destroy();categoryChart=new Chart($("categoryExpenseChart"),{type:"doughnut",data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats)}]}});$("reportTable").innerHTML=`<table class="report-table"><tr><th>Oy</th><th>Kirim</th><th>Chiqim</th><th>Foyda</th></tr>${ms.map((m,i)=>`<tr><td>${m.toLocaleDateString("uz-UZ",{month:"long",year:"numeric"})}</td><td>${money(inc[i])}</td><td>${money(exp[i])}</td><td>${money(inc[i]-exp[i])}</td></tr>`).join("")}</table>`}$("exportCsv").onclick=()=>{const rows=[["Sana","Turi","Kategoriya","To'lov","Summa","Izoh"],...operations.map(o=>[o.date,o.type,o.category,o.paymentMethod,o.amount,o.note||""])],blob=new Blob(["﻿"+rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("
-")],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="buvayda-ibrat-mebel-hisobot.csv";a.click();URL.revokeObjectURL(url)};function profit(){const s=Number($("salePrice").value||0),c=Number($("materialCost").value||0)+Number($("laborCost").value||0)+Number($("otherCost").value||0),p=s-c;$("calculatedProfit").textContent=money(p);$("profitPercent").textContent=s?`${(p/s*100).toFixed(1)}%`:"0%"}["salePrice","materialCost","laborCost","otherCost"].forEach(id=>$(id).oninput=profit);function service(){const t=Number($("sheetCount").value||0)*Number($("cutPrice").value||0)+Number($("edgeMeters").value||0)*Number($("edgePrice").value||0)+Number($("drillingCost").value||0);$("serviceTotal").textContent=money(t)}["sheetCount","cutPrice","edgeMeters","edgePrice","drillingCost"].forEach(id=>$(id).oninput=service);onSnapshot(query(collection(db,"finance"),orderBy("createdAt","desc")),s=>{operations=s.docs.map(d=>({id:d.id,...d.data()}));renderOps();kpis();renderCharts()},console.error);onSnapshot(query(collection(db,"debts"),orderBy("createdAt","desc")),s=>{debts=s.docs.map(d=>({id:d.id,...d.data()}));renderDebts();kpis()},console.error);
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V25.1 — Hisob-kitob</title>
+  <link rel="stylesheet" href="./hisob.css?v=24.2">
+
+  <style>
+    *{box-sizing:border-box}
+    .accounting-page{margin:0;background:#f3f7f4;color:#132019;font-family:Arial,sans-serif}
+    .accounting-shell{max-width:1650px;margin:auto;padding:22px}
+    .accounting-login{max-width:470px;margin:7vh auto;background:#fff;padding:34px;border-radius:22px;box-shadow:0 24px 70px rgba(7,95,56,.15)}
+    .accounting-login img{width:92px;height:92px;object-fit:contain;display:block}
+    .accounting-login form{display:grid;gap:12px;margin:22px 0}
+    .accounting-login input{padding:15px;border:1px solid #dfe8e2;border-radius:12px;width:100%}
+    .accounting-login button{border:0;background:#087943;color:#fff;padding:13px;border-radius:10px;font-weight:800}
+  </style>
+
+</head>
+<body class="accounting-page">
+  <main class="accounting-shell">
+    <section class="accounting-login" id="accountingLogin">
+      <img src="./logo.png" alt="Ibrat Mebel">
+      <p>BUVAYDA IBRAT MEBEL</p>
+      <h1>Hisob-kitob tizimi</h1>
+      <form id="accountingLoginForm">
+        <input id="accountingEmail" type="email" placeholder="Email" required>
+        <input id="accountingPassword" type="password" placeholder="Parol" required>
+        <button type="submit">Kirish</button>
+      </form>
+      <p id="accountingLoginMessage"></p>
+    </section>
+
+    <section id="accountingApp" hidden>
+      <header class="accounting-header">
+        <div>
+          <p>BUVAYDA IBRAT MEBEL V24.2</p>
+          <h1>Hisob-kitob va qarzdorlik</h1>
+          <span id="accountingUser"></span>
+        </div>
+        <div>
+          <button id="accountingLogout" class="danger-button">Chiqish</button>
+        </div>
+      </header>
+
+      <section class="accounting-kpis">
+        <article><span>Bugungi kirim</span><strong id="todayIncome">0 so‘m</strong></article>
+        <article><span>Bugungi chiqim</span><strong id="todayExpense">0 so‘m</strong></article>
+        <article><span>Bugungi foyda</span><strong id="todayProfit">0 so‘m</strong></article>
+        <article><span>Oylik kirim</span><strong id="monthIncome">0 so‘m</strong></article>
+        <article><span>Oylik chiqim</span><strong id="monthExpense">0 so‘m</strong></article>
+        <article><span>Jami qarzdorlik</span><strong id="totalDebt">0 so‘m</strong></article>
+      </section>
+
+      <nav class="accounting-tabs">
+        <button class="active" data-tab="operations">Kirim-chiqim</button>
+        <button data-tab="debts">Qarzdorlik</button>
+        <button data-tab="reports">Hisobotlar</button>
+        <button data-tab="calculator">Kalkulyator</button>
+      </nav>
+
+      <section class="accounting-view active" data-view="operations">
+        <div class="accounting-grid form-list">
+          <form class="accounting-card accounting-form" id="operationForm">
+            <h2>Yangi operatsiya</h2>
+            <label>Turi<select id="operationType"><option value="income">Kirim</option><option value="expense">Chiqim</option></select></label>
+            <label>Kategoriya<input id="operationCategory" required></label>
+            <label>Summa<input id="operationAmount" type="number" min="0" required></label>
+            <label>To‘lov turi<select id="paymentMethod"><option>Naqd</option><option>Bank</option><option>Click</option><option>Payme</option><option>Uzum</option></select></label>
+            <label>Sana<input id="operationDate" type="date" required></label>
+            <label>Izoh<textarea id="operationNote"></textarea></label>
+            <button type="submit">Saqlash</button>
+          </form>
+          <article class="accounting-card">
+            <div class="list-head"><h2>Operatsiyalar</h2><button id="exportCsv">CSV eksport</button></div>
+            <div class="filter-row">
+              <input id="operationSearch" placeholder="Qidirish...">
+              <select id="filterType"><option value="">Barchasi</option><option value="income">Kirim</option><option value="expense">Chiqim</option></select>
+              <input id="filterFrom" type="date">
+              <input id="filterTo" type="date">
+            </div>
+            <div id="operationsList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="accounting-view" data-view="debts">
+        <div class="accounting-grid form-list">
+          <form class="accounting-card accounting-form" id="debtForm">
+            <input id="debtId" type="hidden">
+            <h2>Qarzdorlik qo‘shish</h2>
+            <label>Ism<input id="debtName" required></label>
+            <label>Telefon<input id="debtPhone"></label>
+            <label>Yo‘nalish<select id="debtDirection"><option value="receivable">Bizga qarzdor</option><option value="payable">Biz qarzdormiz</option></select></label>
+            <label>Summa<input id="debtAmount" type="number" min="0" required></label>
+            <label>Muddat<input id="debtDueDate" type="date"></label>
+            <label>Izoh<textarea id="debtNote"></textarea></label>
+            <button type="submit">Saqlash</button>
+            <button type="button" id="cancelDebtEdit">Bekor qilish</button>
+          </form>
+          <article class="accounting-card">
+            <input id="debtSearch" placeholder="Qarzdorni qidirish...">
+            <div id="debtsList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="accounting-view" data-view="reports">
+        <div class="accounting-grid two">
+          <article class="accounting-card"><h2>Oylik kirim-chiqim</h2><canvas id="monthlyChart"></canvas></article>
+          <article class="accounting-card"><h2>Chiqim kategoriyalari</h2><canvas id="categoryExpenseChart"></canvas></article>
+        </div>
+        <article class="accounting-card"><div id="reportTable"></div></article>
+      </section>
+
+      <section class="accounting-view" data-view="calculator">
+        <div class="accounting-grid two">
+          <form class="accounting-card accounting-form" onsubmit="return false">
+            <h2>Xizmat kalkulyatori</h2>
+            <label>List soni<input id="sheetCount" type="number" min="0" value="0"></label>
+            <label>Kesish narxi<input id="cutPrice" type="number" min="0" value="0"></label>
+            <label>Kromka metri<input id="edgeMeters" type="number" min="0" value="0"></label>
+            <label>Kromka narxi<input id="edgePrice" type="number" min="0" value="0"></label>
+            <label>Teshish<input id="drillingCost" type="number" min="0" value="0"></label>
+            <label>Material<input id="materialCost" type="number" min="0" value="0"></label>
+            <label>Ish haqi<input id="laborCost" type="number" min="0" value="0"></label>
+            <label>Boshqa xarajat<input id="otherCost" type="number" min="0" value="0"></label>
+            <label>Sotuv narxi<input id="salePrice" type="number" min="0" value="0"></label>
+          </form>
+          <article class="accounting-card">
+            <h2>Natija</h2>
+            <p>Xizmatlar jami: <strong id="serviceTotal">0 so‘m</strong></p>
+            <p>Hisoblangan foyda: <strong id="calculatedProfit">0 so‘m</strong></p>
+            <p>Foyda foizi: <strong id="profitPercent">0%</strong></p>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="accountingToast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="./hisob.js?v=24.2"></script>
+</body>
+</html>
