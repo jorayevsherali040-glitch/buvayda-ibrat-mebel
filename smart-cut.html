@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>BUVAYDA IBRAT MEBEL V26 — Smart Kesish</title>
+  <link rel="stylesheet" href="./smart-cut-customer.css?v=26">
+</head>
+<body>
+  <header class="sc-top">
+    <a class="sc-brand" href="./site.html">
+      <span class="sc-logo">BM</span>
+      <span><strong>BUVAYDA IBRAT MEBEL</strong><small>Smart Kesish V26</small></span>
+    </a>
+    <nav>
+      <a href="./site.html">Bosh sahifa</a>
+      <a href="./site.html#xizmatlar">Xizmatlar</a>
+      <a href="./site.html#mahsulotlar">Mahsulotlar</a>
+      <a class="active" href="./smart-cut.html">Smart Kesish</a>
+      <a href="tel:+998958027755">Aloqa</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sc-hero">
+      <div>
+        <p>MIJOZLAR UCHUN BEPUL KALKULYATOR</p>
+        <h1>Detallaringizni kiriting — kerakli list va kromkani hisoblang</h1>
+        <span>Login shart emas. O‘lchamlarni kiriting, natijani ko‘ring va buyurtmani yuboring.</span>
+      </div>
+      <div class="sc-hero-stats">
+        <article><strong>2800×2070</strong><span>Standart list</span></article>
+        <article><strong>2750×1830</strong><span>Muqobil list</span></article>
+        <article><strong>PDF</strong><span>Hisobni saqlash</span></article>
+        <article><strong>Telegram</strong><span>Buyurtma yuborish</span></article>
+      </div>
+    </section>
+
+    <section class="sc-layout">
+      <div class="sc-main-card">
+        <div class="sc-section-title">
+          <div><p>1-QADAM</p><h2>List parametrlarini tanlang</h2></div>
+        </div>
+
+        <div class="sc-sheet-grid">
+          <label>List turi
+            <select id="sheetPreset">
+              <option value="2800x2070">2800 × 2070 mm</option>
+              <option value="2750x1830">2750 × 1830 mm</option>
+              <option value="2440x1830">2440 × 1830 mm</option>
+              <option value="custom">Boshqa o‘lcham</option>
+            </select>
+          </label>
+          <label>List eni (mm)<input id="sheetWidth" type="number" min="100" value="2800"></label>
+          <label>List bo‘yi (mm)<input id="sheetHeight" type="number" min="100" value="2070"></label>
+          <label>Chiqindi zaxirasi
+            <select id="wastePercent">
+              <option value="5">5%</option>
+              <option value="8" selected>8%</option>
+              <option value="10">10%</option>
+              <option value="15">15%</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="sc-section-title second">
+          <div><p>2-QADAM</p><h2>Detallarni kiriting</h2></div>
+          <button id="addDemo" class="ghost">Namuna qo‘shish</button>
+        </div>
+
+        <form id="detailForm" class="sc-detail-form">
+          <label>Detal eni (mm)<input id="detailWidth" type="number" min="1" required placeholder="600"></label>
+          <label>Detal bo‘yi (mm)<input id="detailHeight" type="number" min="1" required placeholder="450"></label>
+          <label>Soni<input id="detailQty" type="number" min="1" value="1" required></label>
+          <label>Kromka
+            <select id="edgeType">
+              <option value="none">Kromkasiz</option>
+              <option value="1long">1 uzun tomon</option>
+              <option value="2long">2 uzun tomon</option>
+              <option value="1short">1 qisqa tomon</option>
+              <option value="2short">2 qisqa tomon</option>
+              <option value="4">4 tomon</option>
+            </select>
+          </label>
+          <button type="submit">＋ Detal qo‘shish</button>
+        </form>
+
+        <div class="sc-table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>O‘lcham</th><th>Soni</th><th>Kromka</th><th>Maydon</th><th></th></tr></thead>
+            <tbody id="detailRows"><tr class="empty-row"><td colspan="6">Hali detal qo‘shilmagan.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="sc-map-head">
+          <div><p>VIZUAL NATIJA</p><h2>Taxminiy joylashuv xaritasi</h2></div>
+        </div>
+        <div id="cuttingMap" class="cutting-map">
+          <div class="map-empty">Detal qo‘shilgach, list xaritasi shu yerda ko‘rinadi.</div>
+        </div>
+      </div>
+
+      <aside class="sc-summary">
+        <p>HISOB NATIJASI</p>
+        <h2>Taxminiy hisob</h2>
+        <div class="summary-row"><span>Jami detal</span><strong id="totalDetails">0 dona</strong></div>
+        <div class="summary-row"><span>Kerakli maydon</span><strong id="totalArea">0 m²</strong></div>
+        <div class="summary-row"><span>Taxminiy list</span><strong id="sheetCount">0 list</strong></div>
+        <div class="summary-row"><span>Taxminiy chiqindi</span><strong id="wasteResult">0%</strong></div>
+        <div class="summary-row"><span>Taxminiy kromka</span><strong id="edgeTotal">0 m</strong></div>
+
+        <div class="price-box">
+          <h3>Taxminiy narx</h3>
+          <label>1 list narxi<input id="sheetPrice" type="number" min="0" value="0" placeholder="0"></label>
+          <label>1 m kromka narxi<input id="edgePrice" type="number" min="0" value="0" placeholder="0"></label>
+          <label>Kesish xizmati<input id="cutService" type="number" min="0" value="0" placeholder="0"></label>
+          <strong id="grandTotal">0 so‘m</strong>
+        </div>
+
+        <div class="summary-actions">
+          <button id="downloadPdf">PDF chiqarish</button>
+          <button id="sendOrder" class="green">Buyurtma yuborish</button>
+          <button id="clearAll" class="ghost">Hisobni tozalash</button>
+        </div>
+        <small>Bu hisob taxminiy. Yakuniy hisob ustalar tomonidan tekshiriladi.</small>
+      </aside>
+    </section>
+
+    <section class="customer-order" id="customerOrder">
+      <div class="sc-section-title">
+        <div><p>3-QADAM</p><h2>Buyurtma ma’lumotlari</h2></div>
+      </div>
+      <div class="customer-grid">
+        <label>Ismingiz<input id="customerName" placeholder="Ism"></label>
+        <label>Telefon raqamingiz<input id="customerPhone" placeholder="+998"></label>
+        <label>Telegram username<input id="customerTelegram" placeholder="@username"></label>
+        <label>Izoh<input id="customerNote" placeholder="Rang, brend yoki boshqa izoh"></label>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script type="module" src="./smart-cut-customer.js?v=26"></script>
+</body>
+</html>

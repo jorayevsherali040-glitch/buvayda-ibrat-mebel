@@ -1,0 +1,27 @@
+BUVAYDA IBRAT MEBEL V26 — FULL STABLE FIX
+
+TUZATILDI:
+- JFIF/JPEG kodi sahifa sifatida ochilib qolishiga qarshi to‘liq tekshiruv qilindi.
+- Barcha .html fayllar haqiqiy UTF-8 HTML ekanligi tekshirildi.
+- logo.png yetishmovchiligi tuzatildi.
+- Barcha lokal CSS, JS va rasm havolalari tekshirildi.
+- .gitattributes va .nojekyll qo‘shildi.
+- GitHub Pages uchun barcha matn fayllari LF va UTF-8 formatida saqlandi.
+- 404.html bosh menyuga tenglashtirildi.
+- JavaScript fayllari sintaksis tekshiruvidan o‘tdi.
+- Kesh versiyasi V26 ga yangilandi.
+
+YUKLASH:
+1. ZIP faylni kompyuterda Extract qiling.
+2. GitHub repository root qismidagi eski fayllarni yangilari bilan almashtiring.
+3. RASMLARNI ALOHIDA OCHMANG VA NOMINI .HTML QILIB O‘ZGARTIRMANG.
+4. Barcha fayllarni birgalikda yuklang.
+5. Commit: V26 FULL STABLE FIX
+6. Settings → Pages → Deploy from a branch → main → /(root)
+7. Deploy tugagach Ctrl + Shift + R bosing.
+
+TO‘G‘RI MANZILLAR:
+Bosh menyu: /buvayda-ibrat-mebel/
+Asosiy sayt: /buvayda-ibrat-mebel/site.html
+V25 ERP: /buvayda-ibrat-mebel/v25.html
+Hisob-kitob: /buvayda-ibrat-mebel/hisob.html

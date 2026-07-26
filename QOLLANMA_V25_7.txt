@@ -1,0 +1,13 @@
+BUVAYDA IBRAT MEBEL V25.7 — CLEAN PROCESS EDITION
+
+- Professional xizmat jarayonlari bo‘limidagi barcha rasmlar olib tashlandi.
+- Kartalar matn va raqam bilan zamonaviy ko‘rinishga o‘tkazildi.
+- Kunduzgi rejimda sarlavha va matn ranglari to‘g‘rilandi.
+- Tungi rejimda sarlavhalar oq, matnlar kulrang, kartalar qora bo‘ldi.
+- Mobil ko‘rinish yaxshilandi.
+
+GitHub:
+1. ZIP ichidagi barcha fayllarni root qismiga yuklang.
+2. site.html va v11.css almashtirilganini tekshiring.
+3. Commit: V25.7 CLEAN PROCESS EDITION
+4. Deploy tugagach Ctrl + Shift + R bosing.
